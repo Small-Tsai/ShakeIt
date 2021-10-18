@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         askPermission()
+
+        
+
+
     }
 
     private fun askPermission() {
@@ -50,22 +54,23 @@ class MainActivity : AppCompatActivity() {
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(
                     deniedList,
-                    "Core fundamental are based on these permissions",
-                    "OK",
-                    "Cancel"
+                    "主要功能需要使用到以下權限",
+                    "確定",
+                    "取消"
                 )
             }
             .onForwardToSettings { scope, deniedList ->
                 scope.showForwardToSettingsDialog(
                     deniedList,
-                    "You need to allow necessary permissions in Settings manually",
-                    "OK",
-                    "Cancel"
+                    "您需要到設定頁面手動開啟權限",
+                    "確定",
+                    "取消"
                 )
             }
             .request { allGranted, grantedList, deniedList ->
                 if (allGranted) {
-                    Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "所有權限已開啟", Toast.LENGTH_LONG).show()
+
                 } else {
                     Toast.makeText(
                         this,

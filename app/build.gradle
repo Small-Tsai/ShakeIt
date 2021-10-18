@@ -41,6 +41,9 @@ android {
 
 dependencies {
 
+    //permission
+    implementation 'com.guolindev.permissionx:permissionx:1.6.0'
+
     //google
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
 

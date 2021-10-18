@@ -5,6 +5,12 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="com.tsai.shakeit.ui.home.HomeViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,30 +23,33 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MapsActivity" />
+            tools:context=".MapsActivity"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
 
         <EditText
+            android:id="@+id/editText"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="14dp"
-            android:gravity="center"
+            android:layout_marginStart="48dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/square_button_black"
+            android:gravity="center"
             android:inputType="number"
-            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:padding="2dp"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/walk_fab"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="68dp"
-            android:background="@drawable/circle"
-            android:src="@drawable/walking"
+            android:layout_marginTop="12dp"
+            android:foreground="@drawable/walking_icon"
+            android:onClick="@{()-> viewModel.isWalk()}"
+            app:backgroundTint="@color/white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/idSearchView"
@@ -57,6 +66,19 @@
             app:layout_constraintStart_toEndOf="@+id/map"
             app:layout_constraintTop_toTopOf="parent"
             app:queryHint="Search Here" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/ride_fab"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/white"
+            android:foreground="@drawable/ride"
+            android:onClick="@{() -> viewModel.isRide()}"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/walk_fab" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

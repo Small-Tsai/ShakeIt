@@ -15,6 +15,8 @@ import com.tsai.shakeit.util.MyContext
 
 class HomeViewModel : ViewModel() {
     var binding: FragmentHomeBinding? = null
+
+
     val _isWalkOrRide = MutableLiveData<Boolean?>()
     val isWalkOrRide: LiveData<Boolean?>
         get() = _isWalkOrRide
@@ -55,7 +57,6 @@ class HomeViewModel : ViewModel() {
             }
         }
         _isWalkOrRide.value = false
-
     }
 
 

@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="48dp"
             android:layout_marginTop="20dp"
+            android:text="10"
             android:background="@drawable/square_button_black"
             android:gravity="center"
             android:inputType="number"
@@ -47,7 +48,6 @@
             android:layout_marginTop="12dp"
             android:foreground="@drawable/walking_icon"
             android:onClick="@{()-> viewModel.isWalk()}"
-            app:backgroundTint="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
 
@@ -73,7 +73,6 @@
             android:layout_height="42dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
-            android:backgroundTint="@color/white"
             android:foreground="@drawable/ride"
             android:onClick="@{() -> viewModel.isRide()}"
             app:layout_constraintStart_toStartOf="parent"

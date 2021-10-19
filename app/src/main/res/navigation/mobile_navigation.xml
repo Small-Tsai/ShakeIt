@@ -22,4 +22,10 @@
         android:name="com.tsai.shakeit.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <dialog
+        android:id="@+id/homeDialogFragment"
+        android:name="com.tsai.shakeit.ui.home.HomeDialogFragment"
+        android:label="HomeDialogFragment" />
+
+    <action android:id="@+id/navTo_homeDialog" app:destination="@id/homeDialogFragment"/>
 </navigation>

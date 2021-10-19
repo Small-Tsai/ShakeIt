@@ -27,5 +27,14 @@
         android:name="com.tsai.shakeit.ui.home.HomeDialogFragment"
         android:label="HomeDialogFragment" />
 
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.tsai.shakeit.ui.menu.MenuFragment"
+        android:label="MenuFragment" />
+
+
     <action android:id="@+id/navTo_homeDialog" app:destination="@id/homeDialogFragment"/>
+    <action android:id="@+id/navTo_Menu" app:destination="@id/menuFragment"/>
+
 </navigation>

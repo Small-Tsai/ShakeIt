@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.tsai.shakeit.ui.menu.MenuViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,6 +21,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:alpha="5"
+            android:clickable="true"
             android:backgroundTint="@color/white"
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="@+id/shop_Image"
@@ -86,19 +90,21 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
-            android:layout_height="420dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
             android:background="#0C000000"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/appCompatButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shop_Image"
-            tools:listitem="@layout/menu_product_row"/>
+            tools:listitem="@layout/menu_product_row" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appCompatButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="45dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:elevation="5dp"
@@ -106,15 +112,13 @@
             android:text="查看訂單"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="32dp"
             android:layout_height="32dp"
-
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/icon_back"
             android:backgroundTint="@color/white"

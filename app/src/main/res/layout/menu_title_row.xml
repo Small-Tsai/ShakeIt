@@ -17,10 +17,11 @@
             />
 
         <TextView
+            android:id="@+id/typeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
             android:fontFamily="@font/noto_sans"
             android:text="人氣精選古法調製紅茶"

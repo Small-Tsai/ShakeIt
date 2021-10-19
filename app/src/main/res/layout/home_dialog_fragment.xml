@@ -5,15 +5,18 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.tsai.shakeit.ui.home.HomeDialogViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:behavior_hideable="false"
         app:behavior_peekHeight="120dp"
         app:layout_behavior="@string/bottom_sheet_behavior"
-        android:id="@+id/bottom_sheet"
         tools:context=".ui.home.HomeDialogFragment">
 
         <TextView
@@ -78,12 +81,25 @@
             android:layout_marginEnd="16dp"
             android:background="@color/white"
             android:drawableTop="@drawable/circle"
+            android:onClick="@{()-> viewModel.navToMenu()}"
             android:text="查看菜單"
             app:layout_constraintBottom_toBottomOf="@+id/nav_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/nav_btn"
             app:layout_constraintTop_toTopOf="@+id/nav_btn" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/empty_heart"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

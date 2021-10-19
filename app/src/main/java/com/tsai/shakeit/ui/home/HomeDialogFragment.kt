@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tsai.shakeit.R
@@ -23,9 +24,17 @@ class HomeDialogFragment : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+
         viewModel = ViewModelProvider(this).get(HomeDialogViewModel::class.java)
         binding = HomeDialogFragmentBinding.inflate(inflater, container, false)
+        binding.viewModel = viewModel
+
+        viewModel.hasNavToMenu.observe(viewLifecycleOwner, Observer {
+            if (it == true) {
+                TODO("Nav to Menu")
+            }
+        })
         return binding.root
     }
 

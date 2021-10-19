@@ -17,7 +17,7 @@ class HomeViewModel : ViewModel() {
     var binding: FragmentHomeBinding? = null
 
 
-    val _isWalkOrRide = MutableLiveData<Boolean?>()
+    private val _isWalkOrRide = MutableLiveData<Boolean?>()
     val isWalkOrRide: LiveData<Boolean?>
         get() = _isWalkOrRide
 
@@ -37,8 +37,8 @@ class HomeViewModel : ViewModel() {
     @SuppressLint("UseCompatLoadingForDrawables")
     fun isRide() {
 
-        if (isWalkOrRide.value == true && i>0) {
-            i=0
+        if (isWalkOrRide.value == true && i > 0) {
+            i = 0
             binding?.let {
                 binding!!.walkFab.foreground =
                     MyContext.appContext?.getDrawable(R.drawable.walking_icon)

@@ -1,4 +1,4 @@
-package com.tsai.shakeit
+package com.tsai.shakeit.ui.menu
 
 import androidx.lifecycle.ViewModel
 

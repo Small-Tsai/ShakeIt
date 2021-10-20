@@ -34,8 +34,7 @@ class HomeDialogFragment : BottomSheetDialogFragment() {
 
         viewModel.hasNavToMenu.observe(viewLifecycleOwner, Observer {
             if (it == true) {
-              findNavController().navigate(MenuFragmentDirections.navToMenu())
-                viewModel.navToMenuDone()
+               findNavController().navigate(MenuFragmentDirections.navToMenu())
             }
         })
         return binding.root

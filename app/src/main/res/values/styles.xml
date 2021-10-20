@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="black_shadow">
+        <item name="android:shadowRadius">0.5</item>
+        <item name="android:fontFamily">@font/noto_sans</item>
+        <item name="android:shadowColor">#1E1818</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+</resources>

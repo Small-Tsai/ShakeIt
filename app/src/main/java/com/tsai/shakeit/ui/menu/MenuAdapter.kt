@@ -12,16 +12,17 @@ import com.tsai.shakeit.databinding.MenuTitleRowBinding
 import com.tsai.shakeit.ui.home.TAG
 import com.tsai.shakeit.data.Menu
 
-class MenuAdapter : ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
+class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
 
-    class ProductViewHolder(private var binding: MenuProductRowBinding) :
+    inner class ProductViewHolder(private var binding: MenuProductRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(product: Product) {
+        fun bind(product: Product, viewModel: MenuViewModel) {
             binding.product = product
+            binding.viewModel = viewModel
         }
     }
 
-    class TitleViewHolder(private var binding: MenuTitleRowBinding) :
+    inner class TitleViewHolder(private var binding: MenuTitleRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(title: String) {
             binding.typeTitle.text = title
@@ -61,7 +62,7 @@ class MenuAdapter : ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
         Log.d(TAG, getItem(position).toString())
         when (holder) {
             is ProductViewHolder -> {
-                holder.bind((getItem(position) as Menu.MenuProduct).product)
+                holder.bind((getItem(position) as Menu.MenuProduct).product , viewModel)
             }
             is TitleViewHolder -> {
                 holder.bind((getItem(position) as Menu.Title).type)

@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         findNavController(R.id.nav_host_fragment_activity_main).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             when (navController.currentDestination?.id) {
                 R.id.menuFragment -> binding.navView.visibility = View.GONE
+                R.id.drinksDetailFragment -> binding.navView.visibility = View.GONE
                 else -> binding.navView.visibility = View.VISIBLE
 
             }

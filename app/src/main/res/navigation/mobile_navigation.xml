@@ -33,8 +33,23 @@
         android:name="com.tsai.shakeit.ui.menu.MenuFragment"
         android:label="MenuFragment" />
 
+    <fragment
+        android:id="@+id/drinksDetailFragment"
+        android:name="com.tsai.shakeit.ui.detail.DrinksDetailFragment"
+        android:label="DrinksDetailFragment" >
+        <argument
+            android:name="product"
+            app:argType="com.tsai.shakeit.data.Product" />
+    </fragment>
+
 
     <action android:id="@+id/navTo_homeDialog" app:destination="@id/homeDialogFragment"/>
     <action android:id="@+id/navTo_Menu" app:destination="@id/menuFragment"/>
+    <action
+        android:id="@+id/navToDetail"
+        app:destination="@id/drinksDetailFragment"
+        app:enterAnim="@anim/bottom_to_top"
+        app:exitAnim="@anim/top_to_bottom"
+        app:popExitAnim="@anim/top_to_bottom" />
 
 </navigation>

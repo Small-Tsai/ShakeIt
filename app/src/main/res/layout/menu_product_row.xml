@@ -8,11 +8,17 @@
         <variable
             name="product"
             type="com.tsai.shakeit.data.Product" />
+
+        <variable
+            name="viewModel"
+            type="com.tsai.shakeit.ui.menu.MenuViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="@{() -> viewModel.doNavToOrder(product)}">
 
 
         <androidx.cardview.widget.CardView
@@ -58,11 +64,11 @@
 
         <TextView
             android:id="@+id/productPrice"
+            priceText="@{product.price}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/noto_sans"
-            priceText="@{product.price}"
             android:textSize="14dp"
             app:layout_constraintBottom_toBottomOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent" />

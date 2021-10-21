@@ -1,6 +1,8 @@
 package com.tsai.shakeit.ext
 
 import androidx.fragment.app.Fragment
+import com.tsai.shakeit.data.Order
+import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.factory.DetailViewModelFactory
 
@@ -10,6 +12,6 @@ import com.tsai.shakeit.factory.DetailViewModelFactory
  * Extension functions for Fragment.
  */
 
-fun Fragment.getVmFactory(product: Product): DetailViewModelFactory {
-    return DetailViewModelFactory(product)
+fun Fragment.getVmFactory(product: Product? = null , order: Order? = null ): DetailViewModelFactory {
+    return DetailViewModelFactory(product,order)
 }

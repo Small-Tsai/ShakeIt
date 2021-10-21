@@ -36,14 +36,23 @@
     <fragment
         android:id="@+id/drinksDetailFragment"
         android:name="com.tsai.shakeit.ui.detail.DrinksDetailFragment"
-        android:label="DrinksDetailFragment" >
+        android:label="DrinksDetailFragment">
         <argument
             android:name="product"
             app:argType="com.tsai.shakeit.data.Product" />
     </fragment>
 
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.tsai.shakeit.ui.orderdetail.OrderDetailFragment"
+        android:label="OrderDetailFragment" >
+        <argument android:name="order"
+            app:argType="com.tsai.shakeit.data.Order" />
+    </fragment>
 
-    <action android:id="@+id/navTo_homeDialog" app:destination="@id/homeDialogFragment"/>
+    <action
+        android:id="@+id/navTo_homeDialog"
+        app:destination="@id/homeDialogFragment" />
     <action
         android:id="@+id/navTo_Menu"
         app:destination="@id/menuFragment"
@@ -64,5 +73,12 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/navToOrderDetail"
+        app:destination="@id/orderDetailFragment"
+        app:enterAnim="@anim/bottom_to_top"
+        app:exitAnim="@anim/top_to_bottom"
+        app:popExitAnim="@anim/top_to_bottom" />
 
 </navigation>

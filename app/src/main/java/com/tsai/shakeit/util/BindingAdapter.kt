@@ -5,6 +5,7 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.databinding.BindingAdapter
+import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.home.TAG
 
@@ -29,4 +30,15 @@ fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, 
         false -> false
     }
     text = content
+}
+
+@BindingAdapter("othersText")
+fun TextView.bindOthers(orderProduct: OrderProduct) {
+    text =
+        "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
+}
+
+@BindingAdapter("qtyText")
+fun TextView.bindQty(qty: Int) {
+    text = "x$qty"
 }

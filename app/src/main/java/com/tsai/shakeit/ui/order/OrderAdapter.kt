@@ -18,6 +18,7 @@ class OrderAdapter(val viewModel: OrderViewModel) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
             binding.order = order
+            binding.viewModel = viewModel
             binding.executePendingBindings()
         }
 

@@ -100,7 +100,7 @@ class DrinksDetailViewModel(val data: Product) : ViewModel() {
         if (selectedPositionList.contains(i)) {
             mContentList["others"]?.remove(content)
             selectedPositionList.remove(i)
-            Log.d(TAG, mContentList.toString())
+//            Log.d(TAG, mContentList.toString())
         } else {
             selectedPositionList.add(i)
 
@@ -109,7 +109,7 @@ class DrinksDetailViewModel(val data: Product) : ViewModel() {
             } else {
                 mContentList["others"]?.add(content)
             }
-            Log.d(TAG, mContentList.toString())
+//            Log.d(TAG, mContentList.toString())
         }
     }
 
@@ -129,7 +129,7 @@ class DrinksDetailViewModel(val data: Product) : ViewModel() {
             rangeCapacityToIce -> mContentList["ice"] = arrayListOf(content)
             rangeIceToSugar -> mContentList["sugar"] = arrayListOf(content)
         }
-        Log.d(TAG, mContentList.toString())
+//        Log.d(TAG, mContentList.toString())
     }
 
     private fun selectRange(lastSize: Int, nextSize: Int): IntRange {

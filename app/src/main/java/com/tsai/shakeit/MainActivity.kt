@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             when (navController.currentDestination?.id) {
                 R.id.menuFragment -> binding.navView.visibility = View.GONE
                 R.id.drinksDetailFragment -> binding.navView.visibility = View.GONE
+                R.id.orderDetailFragment -> binding.navView.visibility = View.GONE
                 else -> binding.navView.visibility = View.VISIBLE
 
             }

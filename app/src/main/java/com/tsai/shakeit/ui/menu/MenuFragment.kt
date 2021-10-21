@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.tsai.shakeit.R
 import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ui.detail.DrinksDetailFragmentDirections
+import com.tsai.shakeit.ui.order.OrderFragmentDirections
 
 class MenuFragment : Fragment() {
 
@@ -31,12 +31,16 @@ class MenuFragment : Fragment() {
             adapter.submitList(it)
         })
 
-        viewModel.navToOrder.observe(viewLifecycleOwner, Observer {
+        viewModel.navToDetail.observe(viewLifecycleOwner, Observer {
            it?.let {  findNavController().navigate(DrinksDetailFragmentDirections.navToDetail(it)) }
         })
 
         viewModel.popback.observe(viewLifecycleOwner, Observer {
             it?.let { findNavController().popBackStack() }
+        })
+
+        viewModel.navToOrder.observe(viewLifecycleOwner, Observer {
+            it?.let { findNavController().navigate(OrderFragmentDirections.navToOrder()) }
         })
 
         binding.recyclerView.adapter = adapter

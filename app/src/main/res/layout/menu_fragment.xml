@@ -21,8 +21,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:alpha="5"
-            android:clickable="true"
             android:backgroundTint="@color/white"
+            android:clickable="true"
             app:cardCornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="@+id/addOrder_img"
             app:layout_constraintTop_toTopOf="@+id/addOrder_img">
@@ -109,6 +109,7 @@
             android:layout_marginBottom="8dp"
             android:elevation="5dp"
             android:fontFamily="@font/noto_sans"
+            android:onClick="@{()->viewModel.doNavToOrder()}"
             android:text="查看訂單"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -120,9 +121,9 @@
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:onClick="@{() ->viewModel.popBack()}"
             android:background="@drawable/icon_back"
             android:backgroundTint="@color/white"
+            android:onClick="@{() ->viewModel.popBack()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

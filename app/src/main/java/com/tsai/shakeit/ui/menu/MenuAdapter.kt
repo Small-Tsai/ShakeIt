@@ -19,6 +19,7 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
         fun bind(product: Product, viewModel: MenuViewModel) {
             binding.product = product
             binding.viewModel = viewModel
+            binding.executePendingBindings()
         }
     }
 
@@ -26,10 +27,11 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
         RecyclerView.ViewHolder(binding.root) {
         fun bind(title: String) {
             binding.typeTitle.text = title
+            binding.executePendingBindings()
         }
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<Menu>() {
+    private companion object DiffCallback : DiffUtil.ItemCallback<Menu>() {
         override fun areItemsTheSame(oldItem: Menu, newItem: Menu): Boolean {
             return oldItem === newItem
         }
@@ -59,7 +61,6 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d(TAG, getItem(position).toString())
         when (holder) {
             is ProductViewHolder -> {
                 holder.bind((getItem(position) as Menu.MenuProduct).product , viewModel)

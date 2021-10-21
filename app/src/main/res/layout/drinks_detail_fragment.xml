@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -31,27 +31,27 @@
                 android:layout_height="match_parent"
                 tools:context=".ui.detail.DrinksDetailFragment">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView_productImg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:elevation="5dp"
-                    app:cardCornerRadius="20dp"
+
+                <ImageView
+                    android:id="@+id/addOrder_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="174dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/img"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
-                        android:id="@+id/addOrder_img"
-                        android:layout_width="match_parent"
-                        android:layout_height="174dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/img"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.cardview.widget.CardView>
-
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/icon_back"
+                    android:onClick="@{() ->viewModel.popBack()}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/addOrder_Title"
@@ -59,11 +59,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:text="@{viewModel.data.name}"
                     android:textSize="20dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/cardView_productImg" />
+                    app:layout_constraintTop_toBottomOf="@+id/addOrder_img" />
 
                 <TextView
                     android:id="@+id/addOrder_content"
@@ -76,6 +76,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/addOrder_Title" />
 
+                <View
+                    android:id="@+id/separate_line"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/gery"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/addOrder_content" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/detail_rev"
                     android:layout_width="0dp"
@@ -83,14 +95,18 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/addOrder_content"
+                    app:layout_constraintTop_toBottomOf="@+id/separate_line"
                     tools:itemCount="20" />
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/bottom_cardView"
@@ -157,17 +173,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:onClick="@{() ->viewModel.popBack()}"
-            android:background="@drawable/icon_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

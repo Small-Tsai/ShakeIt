@@ -3,17 +3,14 @@ package com.tsai.shakeit.ui.detail
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.RadioButton
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.tsai.shakeit.data.Menu
-import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.databinding.DrinksSelectRowBinding
 import com.tsai.shakeit.databinding.DrinksSelectTitleBinding
-import com.tsai.shakeit.databinding.MenuProductRowBinding
-import com.tsai.shakeit.databinding.MenuTitleRowBinding
 import com.tsai.shakeit.ui.home.TAG
-import com.tsai.shakeit.ui.menu.MenuViewModel
+import com.tsai.shakeit.util.MyContext
 
 class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     ListAdapter<DrinksDetail, RecyclerView.ViewHolder>(DiffCallback) {
@@ -21,7 +18,10 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     inner class ContentViewHolder(private var binding: DrinksSelectRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(content: String, viewModel: DrinksDetailViewModel) {
-            binding.selectContent.text = content
+            binding.viewModel = viewModel
+            binding.viewHolder = this
+            binding.content = content
+            binding.executePendingBindings()
         }
     }
 
@@ -29,10 +29,11 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(title: String) {
             binding.selectTitle.text = title
+            binding.executePendingBindings()
         }
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<DrinksDetail>() {
+    private companion object DiffCallback : DiffUtil.ItemCallback<DrinksDetail>() {
         override fun areItemsTheSame(oldItem: DrinksDetail, newItem: DrinksDetail): Boolean {
             return oldItem === newItem
         }
@@ -62,7 +63,7 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d(TAG, getItem(position).toString())
+
         when (holder) {
             is ContentViewHolder -> {
                 holder.bind((getItem(position) as DrinksDetail.DetailContent).content, viewModel)
@@ -82,7 +83,7 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     }
 }
 
-sealed class DrinksDetail() {
+sealed class DrinksDetail {
     data class DetailTitle(val type: String) : DrinksDetail()
     data class DetailContent(val content: String) : DrinksDetail()
 }

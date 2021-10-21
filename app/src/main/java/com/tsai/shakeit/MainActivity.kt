@@ -3,8 +3,6 @@ package com.tsai.shakeit
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AnimationUtils
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -12,9 +10,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.tsai.shakeit.databinding.ActivityMainBinding
-import com.tsai.shakeit.ui.home.HomeDialogFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -36,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_order
             )
         )
 

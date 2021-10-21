@@ -3,12 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
-            name="product"
-            type="com.tsai.shakeit.data.Product" />
+            name="content"
+            type="String" />
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.detail.DrinksDetailViewModel" />
+
+        <variable
+            name="viewHolder"
+            type="com.tsai.shakeit.ui.detail.DrinksAdapter.ContentViewHolder" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,6 +25,8 @@
             android:id="@+id/radio_group"
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,10 +34,14 @@
 
             <RadioButton
                 android:id="@+id/select_content"
+                mRadioButton="@{content}"
+                position="@{viewHolder.adapterPosition}"
+                viewModel="@{viewModel}"
                 android:layout_width="wrap_content"
-                android:buttonTint="@color/black"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/black"
                 android:gravity="center_vertical"
+                android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content)}"
                 android:text="大"
                 android:textSize="14dp" />
 

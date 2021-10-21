@@ -1,9 +1,6 @@
 package com.tsai.shakeit.ui.detail
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tsai.shakeit.databinding.DrinksDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.home.TAG
 
 class DrinksDetailFragment : BottomSheetDialogFragment() {
 
@@ -43,8 +39,12 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
             adapter.submitList(it)
         })
 
-        viewModel.popback.observe(viewLifecycleOwner, Observer {
+        viewModel.popBack.observe(viewLifecycleOwner, Observer {
             it?.let { findNavController().popBackStack() }
+        })
+
+        viewModel.refresh.observe(viewLifecycleOwner, Observer {
+            it?.let { adapter.notifyDataSetChanged() }
         })
 
         binding.detailRev.adapter = adapter

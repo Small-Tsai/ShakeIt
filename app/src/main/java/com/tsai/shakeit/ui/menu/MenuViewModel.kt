@@ -1,12 +1,10 @@
 package com.tsai.shakeit.ui.menu
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tsai.shakeit.data.Menu
 import com.tsai.shakeit.data.Product
-import com.tsai.shakeit.ui.home.TAG
 
 const val REDTEA = "紅茶"
 const val GREENTEA = "綠茶"
@@ -18,9 +16,14 @@ class MenuViewModel : ViewModel() {
     val productList: LiveData<List<Menu>>
         get() = _productList
 
-    private val _navToOrder = MutableLiveData<Product?>()
-    val navToOrder: LiveData<Product?>
+    private val _navToDetail = MutableLiveData<Product?>()
+    val navToDetail: LiveData<Product?>
+        get() = _navToDetail
+
+    private val _navToOrder = MutableLiveData<Boolean?>()
+    val navToOrder: LiveData<Boolean?>
         get() = _navToOrder
+
 
     private val _popBack = MutableLiveData<Boolean?>()
     val popback: LiveData<Boolean?>
@@ -188,8 +191,13 @@ class MenuViewModel : ViewModel() {
         _productList.value = mList
     }
 
-    fun doNavToOrder(product: Product) {
-        _navToOrder.value = product
+    fun doNavToDetail(product: Product) {
+        _navToDetail.value = product
+        _navToDetail.value = null
+    }
+
+    fun doNavToOrder() {
+        _navToOrder.value = true
         _navToOrder.value = null
     }
 
@@ -197,5 +205,8 @@ class MenuViewModel : ViewModel() {
         _popBack.value = true
         _popBack.value = null
     }
+
+
+
 }
 

@@ -18,10 +18,10 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.tsai.shakeit.ui.notifications.NotificationsFragment"
+        android:id="@+id/navigation_order"
+        android:name="com.tsai.shakeit.ui.order.OrderFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_order" />
     <dialog
         android:id="@+id/homeDialogFragment"
         android:name="com.tsai.shakeit.ui.home.HomeDialogFragment"
@@ -44,12 +44,25 @@
 
 
     <action android:id="@+id/navTo_homeDialog" app:destination="@id/homeDialogFragment"/>
-    <action android:id="@+id/navTo_Menu" app:destination="@id/menuFragment"/>
+    <action
+        android:id="@+id/navTo_Menu"
+        app:destination="@id/menuFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_enter_anim"
+        app:popExitAnim="@anim/nav_default_exit_anim" />
     <action
         android:id="@+id/navToDetail"
         app:destination="@id/drinksDetailFragment"
         app:enterAnim="@anim/bottom_to_top"
         app:exitAnim="@anim/top_to_bottom"
         app:popExitAnim="@anim/top_to_bottom" />
+    <action
+        android:id="@+id/navToOrder"
+        app:destination="@id/navigation_order"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
 </navigation>

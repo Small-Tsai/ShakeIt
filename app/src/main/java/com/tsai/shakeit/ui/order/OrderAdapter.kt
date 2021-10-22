@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Menu
 import com.tsai.shakeit.data.Order
+import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.databinding.OrderRowBinding
 import com.tsai.shakeit.ui.order.OrderAdapter.*
 
 class OrderAdapter(val viewModel: OrderViewModel) :
     ListAdapter<Order, OrderViewHolder>(DiffCallback) {
-
 
     inner class OrderViewHolder(private var binding: OrderRowBinding, viewModel: OrderViewModel) :
         RecyclerView.ViewHolder(binding.root) {

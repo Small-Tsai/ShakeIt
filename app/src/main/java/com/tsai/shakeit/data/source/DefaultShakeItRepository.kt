@@ -3,7 +3,6 @@ package com.tsai.shakeit.data.source
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
-import com.tsai.shakeit.data.Result
 
 class DefaultShakeItRepository (
     private val FireBaseDataSource: ShakeItDataSource
@@ -20,5 +19,4 @@ class DefaultShakeItRepository (
     override suspend fun postOrderToFireBase() {
         return FireBaseDataSource.postOrderToFireBase()
     }
-
 }

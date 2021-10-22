@@ -9,10 +9,15 @@ import com.tsai.shakeit.data.source.ShakeItRepository
 
 class OrderDetailViewModel(order: Order?, private val repository: ShakeItRepository) : ViewModel() {
 
-    private val _order = MutableLiveData<List<OrderProduct>>().apply {
-        value = order?.orderProduct
-    }
+    private var _order = MutableLiveData<List<OrderProduct>>()
     val order: LiveData<List<OrderProduct>>
         get() = _order
 
+    init {
+        getOrderProduct()
+    }
+
+    private fun getOrderProduct() {
+        _order = repository.getFireBaseOrderProduct()
+    }
 }

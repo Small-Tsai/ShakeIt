@@ -10,6 +10,6 @@ fun Long.toDisplayFormat(): String {
 }
 
 fun Timestamp.toTimeFromTimeStamp(): String {
-    return SimpleDateFormat("yyyy.MM.dd hh:mm", Locale.TAIWAN).format(this.toDate())
+    return SimpleDateFormat("yyyy.MM.dd  hh:mm", Locale.TAIWAN).format(this.toDate())
         .toString()
 }

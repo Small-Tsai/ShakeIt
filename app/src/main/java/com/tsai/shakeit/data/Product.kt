@@ -3,13 +3,6 @@ package com.tsai.shakeit.data
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-//
-//@Parcelize
-//data class Drinks(
-//    val product: List<Product>
-//) : Parcelable
-
-
 @Parcelize
 data class Product(
     val name: String = "",

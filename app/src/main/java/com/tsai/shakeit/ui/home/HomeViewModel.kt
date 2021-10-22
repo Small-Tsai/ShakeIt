@@ -1,21 +1,16 @@
 package com.tsai.shakeit.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.util.Log
-import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tsai.shakeit.R
+import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.databinding.FragmentHomeBinding
-import com.tsai.shakeit.util.MyContext
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(repository: ShakeItRepository) : ViewModel() {
     var binding: FragmentHomeBinding? = null
-
 
     private val _isWalkOrRide = MutableLiveData<Boolean?>()
     val isWalkOrRide: LiveData<Boolean?>
@@ -41,19 +36,19 @@ class HomeViewModel : ViewModel() {
             i = 0
             binding?.let {
                 binding!!.walkFab.foreground =
-                    MyContext.appContext?.getDrawable(R.drawable.walking_icon)
+                    ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
             }
             binding?.let {
-                binding!!.rideFab.foreground = MyContext.appContext?.getDrawable(R.drawable.ride)
+                binding!!.rideFab.foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
             }
         } else {
             i += 1
             binding?.let {
-                binding!!.walkFab.foreground = MyContext.appContext?.getDrawable(R.drawable.ride)
+                binding!!.walkFab.foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
             }
             binding?.let {
                 binding!!.rideFab.foreground =
-                    MyContext.appContext?.getDrawable(R.drawable.walking_icon)
+                    ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
             }
         }
         _isWalkOrRide.value = false

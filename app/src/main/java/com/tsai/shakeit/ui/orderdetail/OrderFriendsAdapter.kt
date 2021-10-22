@@ -11,31 +11,26 @@ import com.tsai.shakeit.ui.orderdetail.OrderDetailAdapter.*
 import com.tsai.shakeit.ui.orderdetail.OrderFriendsAdapter.*
 
 class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
-    ListAdapter<OrderProduct, OrderFriendsViewHolder>(DiffCallback) {
+    ListAdapter<String, OrderFriendsViewHolder>(DiffCallback) {
 
-    var count = 0
-
-    fun submitCount(size:Int){
-        count = size
-    }
 
     class OrderFriendsViewHolder(
         private val binding: OrderFriendsRowBinding,
         viewModel: OrderDetailViewModel
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(orderProduct: OrderProduct) {
-            binding.orderProduct = orderProduct
+        fun bind(name: String) {
+            binding.userName.text = name
             binding.executePendingBindings()
         }
     }
 
-    private companion object DiffCallback : DiffUtil.ItemCallback<OrderProduct>() {
-        override fun areItemsTheSame(oldItem: OrderProduct, newItem: OrderProduct): Boolean {
+    private companion object DiffCallback : DiffUtil.ItemCallback<String>() {
+        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
             return oldItem === newItem
         }
 
-        override fun areContentsTheSame(oldItem: OrderProduct, newItem: OrderProduct): Boolean {
+        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
             return oldItem == newItem
         }
 
@@ -52,7 +47,5 @@ class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
     override fun onBindViewHolder(holder: OrderFriendsViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-
-    override fun getItemCount(): Int = count
 
 }

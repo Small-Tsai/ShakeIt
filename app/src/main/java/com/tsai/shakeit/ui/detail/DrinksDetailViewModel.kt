@@ -4,10 +4,15 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.tsai.shakeit.data.Product
+import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.home.TAG
+import kotlinx.coroutines.launch
 
-class DrinksDetailViewModel(val data: Product) : ViewModel() {
+class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRepository) : ViewModel() {
 
     private val _product = MutableLiveData<List<DrinksDetail>>()
     val product: LiveData<List<DrinksDetail>>
@@ -28,6 +33,13 @@ class DrinksDetailViewModel(val data: Product) : ViewModel() {
     var selectedPositionList = mutableListOf<Int>()
     var mContentList: MutableMap<String, ArrayList<String>> = mutableMapOf()
 
+    // Create a new user with a first and last name
+    fun addNewDocToFireBase() {
+
+        viewModelScope.launch {
+            repository.postOrderToFireBase()
+        }
+    }
 
     init {
         _qty.value = 1

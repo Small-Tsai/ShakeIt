@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "345224929102",
+    "project_id": "shakeit-329401",
+    "storage_bucket": "shakeit-329401.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:345224929102:android:308b06fc1c4fb20e17481f",
+        "android_client_info": {
+          "package_name": "com.tsai.shakeit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "345224929102-uv7gc71rflsnkrb10h0lglbvfvl53dkv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBvAdXWOrbLLniZo8ZBSX7DCLY_GgI9fk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "345224929102-uv7gc71rflsnkrb10h0lglbvfvl53dkv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

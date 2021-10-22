@@ -1,16 +1,12 @@
 package com.tsai.shakeit.ui.detail
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.RadioButton
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.DrinksSelectRowBinding
 import com.tsai.shakeit.databinding.DrinksSelectTitleBinding
-import com.tsai.shakeit.ui.home.TAG
-import com.tsai.shakeit.util.MyContext
 
 class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     ListAdapter<DrinksDetail, RecyclerView.ViewHolder>(DiffCallback) {

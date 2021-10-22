@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -29,8 +30,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.tsai.shakeit.R
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.FragmentHomeBinding
-import com.tsai.shakeit.util.MyContext
+import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ui.order.OrderViewModel
 import kotlin.properties.Delegates
 
 
@@ -41,7 +44,10 @@ const val REQUEST_ENABLE_GPS = 1
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel by viewModels<HomeViewModel> {
+        getVmFactory()
+    }
+
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mMap: GoogleMap
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
@@ -54,8 +60,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         viewModel.binding = binding
@@ -84,8 +89,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         setAnimation(b)
     }
 
-    val fromTop = AnimationUtils.loadAnimation(MyContext.appContext, R.anim.from_top_anim)
-    val toBottom = AnimationUtils.loadAnimation(MyContext.appContext, R.anim.to_bottom_anim)
+    val fromTop = AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.from_top_anim)
+    val toBottom = AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.to_bottom_anim)
     private fun setAnimation(b: Boolean) {
         if (b) {
             binding.rideFab.startAnimation(toBottom)

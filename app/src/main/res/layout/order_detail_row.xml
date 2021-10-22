@@ -34,6 +34,7 @@
                 android:layout_height="80dp"
                 android:elevation="5dp"
                 android:scaleType="centerCrop"
+                imageUrl="@{orderProduct.product_Img}"
                 android:src="@drawable/img"
                 tools:layout_editor_absoluteX="15dp"
                 tools:layout_editor_absoluteY="17dp" />
@@ -97,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="@{orderProduct.userName}"
+            android:text="@{orderProduct.user_Name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/order_product_title" />
 

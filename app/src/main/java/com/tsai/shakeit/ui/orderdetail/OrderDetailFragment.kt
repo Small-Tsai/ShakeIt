@@ -1,6 +1,7 @@
 package com.tsai.shakeit.ui.orderdetail
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ui.home.TAG
 
 class OrderDetailFragment : Fragment() {
 
@@ -39,6 +41,7 @@ class OrderDetailFragment : Fragment() {
             val nameList = it.map { order -> order.user_Name }.distinct()
             it?.let { friendsAdapter.submitList(nameList) }
             binding.totalPrice = it.sumOf { it.price }
+            Log.d(TAG, it.sumOf { it.price }.toString())
         })
 
         binding.orderDetailRev.adapter = adapter

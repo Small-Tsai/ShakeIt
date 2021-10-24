@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
-    private val _hasNavToMenu = MutableLiveData<Boolean?>()
-    val hasNavToMenu: LiveData<Boolean?>
+    private val _hasNavToMenu = MutableLiveData<String?>()
+    val hasNavToMenu: LiveData<String?>
         get() = _hasNavToMenu
 
     private val _isInserted = MutableLiveData<Boolean>()
@@ -30,7 +30,7 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
 
     val name = "茶湯會"
     val branch = "公館商圈店"
-    val shop_Id = "zgyek87FE2EljEtTyFt1"
+    val shop_Id = "oA5Ze5yYAG7Dp5QcVB7B"
     val shop_Img = "images/teasoup"
 
     init {
@@ -38,8 +38,8 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
     }
 
 
-    fun navToMenu() {
-        _hasNavToMenu.value = true
+    fun navToMenu(shopId: String) {
+        _hasNavToMenu.value = shopId
         _hasNavToMenu.value = null
     }
 

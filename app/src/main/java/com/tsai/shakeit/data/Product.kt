@@ -14,9 +14,10 @@ data class Product(
     val others: ArrayList<String> = arrayListOf(),
     val shopId: String = "",
     val type: String = "",
-    val id: Long = 0,
-    val shopName:String?=null,
-    val shopAddress:String?=null
+    val id: String = "",
+    val shop_Name: String = "",
+    val shopAddress: String = "",
+    val branch: String = ""
 ) : Parcelable
 
 

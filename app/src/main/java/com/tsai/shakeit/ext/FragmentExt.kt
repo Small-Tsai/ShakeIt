@@ -12,7 +12,14 @@ import com.tsai.shakeit.factory.DetailViewModelFactory
  * Extension functions for Fragment.
  */
 
-fun Fragment.getVmFactory(product: Product? = null , order: Order? = null ): DetailViewModelFactory {
+fun Fragment.getVmFactory(
+    product: Product? = null,
+    order: Order? = null,
+    shopId: String = ""
+): DetailViewModelFactory {
     val repository = (requireContext().applicationContext as ShakeItApplication).shakeItRepository
-    return DetailViewModelFactory(product,order,repository)
+    return DetailViewModelFactory(product, order, shopId, repository)
 }
+
+
+

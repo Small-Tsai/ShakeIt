@@ -10,26 +10,27 @@ import java.lang.ref.Reference
 
 @Parcelize
 data class Order(
-    val address: String? = null,
-    val order_Name: String? = null,
-    val shop_Name: String? = null,
-    val user_Id: Long? = null,
-    val order_Id: String? = null,
-    val invitation: ArrayList<Long>? = null,
+    val address: String = "",
+    val order_Name: String = "",
+    val shop_Name: String = "",
+    val user_Id: Long = 0,
+    var order_Id: String = "",
+    val invitation: ArrayList<Long>? = arrayListOf(),
     val date: Timestamp? = null,
     val orderProduct: List<OrderProduct> = listOf(),
-    val order_Price: Int? = null
+    val order_Price: Int = 0,
+    val branch: String = ""
 ) : Parcelable
 
 @Parcelize
 data class OrderProduct(
-    val name: String? = null,
-    val ice: String? = null,
-    val capacity: String? = null,
-    val qty: Int? = null,
-    val sugar: String? = null,
-    val others: String? = null,
-    val user_Name: String? = null,
-    val product_Img: String? = null,
+    val name: String = "",
+    val ice: String = "",
+    val capacity: String = "",
+    val qty: Int = 0,
+    val sugar: String = "",
+    val others: String = "",
+    val user_Name: String = "",
+    val product_Img: String = "",
     val price: Int = 0
 ) : Parcelable

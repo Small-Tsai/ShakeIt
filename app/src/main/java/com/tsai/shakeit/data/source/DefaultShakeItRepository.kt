@@ -14,8 +14,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getFireBaseOrder()
     }
 
-    override fun getFireBaseOrderProduct(): MutableLiveData<List<OrderProduct>> {
-        return shakeItDataSource.getFireBaseOrderProduct()
+    override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {
+        return shakeItDataSource.getFireBaseOrderProduct(orderId)
     }
 
     override fun getFavorite(): MutableLiveData<List<Shop>> {
@@ -26,11 +26,15 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postFavorite(shop)
     }
 
-    override suspend fun postOrderToFireBase() {
-        return shakeItDataSource.postOrderToFireBase()
+    override suspend fun postOrderToFireBase(order: Order, orderProduct: OrderProduct): Result<Boolean> {
+        return shakeItDataSource.postOrderToFireBase(order, orderProduct)
     }
 
     override suspend fun deleteFavorite(shopId: String): Result<Boolean> {
         return shakeItDataSource.deleteFavorite(shopId)
+    }
+
+    override suspend fun getShopInfo(shopId: String): Result<Shop> {
+        return shakeItDataSource.getShopInfo(shopId)
     }
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -49,7 +50,3 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
 }
 
 
-sealed class Favorite {
-    data class ShopName(val name: String) : Favorite()
-    data class ShopImg(val img: List<Shop>) : Favorite()
-}

@@ -5,14 +5,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.tsai.shakeit.data.Order
+import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.home.TAG
 import kotlinx.coroutines.launch
 
-class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRepository) : ViewModel() {
+private const val ICE="ice"
+private const val CAPACITY="capacity"
+private const val SUGAR="sugar"
+private const val OTHERS="others"
+
+
+class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRepository) :
+    ViewModel() {
 
     private val _product = MutableLiveData<List<DrinksDetail>>()
     val product: LiveData<List<DrinksDetail>>
@@ -35,14 +45,36 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
 
     // Create a new user with a first and last name
     fun addNewDocToFireBase() {
+        val mOrder = Order(
+            shop_Name = data.shop_Name,
+            branch = data.branch,
+            date = Timestamp.now(),
+            order_Name = "我的訂單",
+        )
+        val mOrderProduct = _qty.value?.let {
+
+            OrderProduct(
+                name = data.name,
+                ice = mContentList[ICE]!!.first(),
+                capacity = mContentList[CAPACITY]!!.first(),
+                qty = it,
+                sugar = mContentList[SUGAR]!!.first(),
+                others = mContentList[OTHERS].toString()
+
+            )
+        }
         viewModelScope.launch {
-            repository.postOrderToFireBase()
+            mOrderProduct?.let {
+                repository.postOrderToFireBase(mOrder,mOrderProduct)
+            }
+
         }
     }
 
     init {
         _qty.value = 1
         filterList()
+        Log.d(TAG, data.toString())
     }
 
     fun plus() {
@@ -109,18 +141,18 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     private fun refactorListInOthersRange(i: Int, content: String) {
 
         if (selectedPositionList.contains(i)) {
-            mContentList["others"]?.remove(content)
+            mContentList[OTHERS]?.remove(content)
             selectedPositionList.remove(i)
 //            Log.d(TAG, mContentList.toString())
         } else {
             selectedPositionList.add(i)
 
-            if (mContentList["others"] == null) {
-                mContentList["others"] = arrayListOf(content)
+            if (mContentList[OTHERS] == null) {
+                mContentList[OTHERS] = arrayListOf(content)
             } else {
-                mContentList["others"]?.add(content)
+                mContentList[OTHERS]?.add(content)
             }
-//            Log.d(TAG, mContentList.toString())
+            Log.d(TAG, mContentList.toString())
         }
     }
 
@@ -136,9 +168,9 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
         selectedPositionList = mList
 
         when (range) {
-            rangeCapacity -> mContentList["capacity"] = arrayListOf(content)
-            rangeCapacityToIce -> mContentList["ice"] = arrayListOf(content)
-            rangeIceToSugar -> mContentList["sugar"] = arrayListOf(content)
+            rangeCapacity -> mContentList[CAPACITY] = arrayListOf(content)
+            rangeCapacityToIce -> mContentList[ICE] = arrayListOf(content)
+            rangeIceToSugar -> mContentList[SUGAR] = arrayListOf(content)
         }
 //        Log.d(TAG, mContentList.toString())
     }

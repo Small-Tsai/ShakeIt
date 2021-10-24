@@ -23,9 +23,9 @@ import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.TAG
 import java.util.function.LongFunction
 
-@BindingAdapter("shopName","branch")
-fun TextView.bindShopName(name: String, branch: String) {
-    text = "$name $branch"
+@BindingAdapter("shopName", "branch")
+fun TextView.bindShopName(name: String? , branch: String?) {
+    name?.let { text = "$name ($branch)"  }
 }
 
 @BindingAdapter("totalPrice")
@@ -46,7 +46,6 @@ fun bindDisplayFormatTime(textView: TextView, time: Timestamp?) {
 @BindingAdapter("editorControllerStatus")
 fun bindEditorControllerStatus(imageButton: AppCompatImageButton, qty: Int) {
     imageButton.apply {
-        Log.d(TAG, qty.toString())
         isClickable = true
     }
 }
@@ -77,7 +76,6 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
     imgUrl?.let { Log.d(TAG, imgUrl) }
     val gsReference = imgUrl?.let { Firebase.storage.reference.child("$it.jpeg") }
     gsReference?.downloadUrl?.addOnSuccessListener { uri ->
-        Log.d(TAG, "success Image")
         Glide.with(imgView.context)
             .load(uri)
             .into(imgView)

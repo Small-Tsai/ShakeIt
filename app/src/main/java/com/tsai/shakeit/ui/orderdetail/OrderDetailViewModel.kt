@@ -1,13 +1,16 @@
 package com.tsai.shakeit.ui.orderdetail
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ui.home.TAG
 
-class OrderDetailViewModel(order: Order?, private val repository: ShakeItRepository) : ViewModel() {
+class OrderDetailViewModel(private val mOrder: Order?, private val repository: ShakeItRepository) :
+    ViewModel() {
 
     private var _order = MutableLiveData<List<OrderProduct>>()
     val order: LiveData<List<OrderProduct>>
@@ -22,6 +25,8 @@ class OrderDetailViewModel(order: Order?, private val repository: ShakeItReposit
     }
 
     private fun getOrderProduct() {
-        _order = repository.getFireBaseOrderProduct()
+        mOrder?.let {
+            _order = repository.getFireBaseOrderProduct(mOrder.order_Id)
+        }
     }
 }

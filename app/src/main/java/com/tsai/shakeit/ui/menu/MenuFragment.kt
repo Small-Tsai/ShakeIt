@@ -2,19 +2,32 @@ package com.tsai.shakeit.ui.menu
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.databinding.MenuFragmentBinding
+import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.detail.DrinksDetailFragmentDirections
+import com.tsai.shakeit.ui.home.HomeDialogViewModel
+import com.tsai.shakeit.ui.home.TAG
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 
 class MenuFragment : Fragment() {
 
-    private lateinit var viewModel: MenuViewModel
+    private val viewModel by viewModels<MenuViewModel> {
+        getVmFactory(
+            shopId =
+            MenuFragmentArgs.fromBundle(
+                requireArguments()
+            ).shopId
+        )
+    }
+
     private lateinit var binding: MenuFragmentBinding
 
     override fun onCreateView(
@@ -22,7 +35,6 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        viewModel = ViewModelProvider(this).get(MenuViewModel::class.java)
         binding = MenuFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         val adapter = MenuAdapter(viewModel)
@@ -41,6 +53,10 @@ class MenuFragment : Fragment() {
 
         viewModel.navToOrder.observe(viewLifecycleOwner, Observer {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToOrder()) }
+        })
+
+        viewModel.shop.observe(viewLifecycleOwner, Observer {
+            it?.let { binding.shopInfo = it }
         })
 
         binding.recyclerView.adapter = adapter

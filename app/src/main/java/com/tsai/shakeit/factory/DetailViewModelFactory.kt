@@ -9,18 +9,16 @@ import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.HomeDialogViewModel
 import com.tsai.shakeit.ui.home.HomeViewModel
+import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.order.OrderViewModel
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
 
-/**
- * Created by Wayne Chen in Jul. 2019.
- *
- * Factory for all ViewModels which need [Product].
- */
+
 @Suppress("UNCHECKED_CAST")
 class DetailViewModelFactory(
     private val product: Product? = null,
     private val order: Order? = null,
+    private val shopId:String = "",
     private val repository: ShakeItRepository
 ) : ViewModelProvider.Factory {
 
@@ -44,6 +42,9 @@ class DetailViewModelFactory(
 
                 isAssignableFrom(HomeDialogViewModel::class.java) ->
                     HomeDialogViewModel(repository)
+
+                isAssignableFrom(MenuViewModel::class.java) ->
+                    MenuViewModel(shopId,repository)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

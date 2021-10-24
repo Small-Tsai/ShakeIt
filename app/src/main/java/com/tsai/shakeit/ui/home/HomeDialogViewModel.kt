@@ -31,6 +31,7 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
     val name = "茶湯會"
     val branch = "公館商圈店"
     val shop_Id = "zgyek87FE2EljEtTyFt1"
+    val shop_Img = "images/teasoup"
 
     init {
 //        getMyFavorite()
@@ -45,7 +46,14 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
     fun postMyFavorite() {
         viewModelScope.launch {
             when (val result =
-                repository.postFavorite(Shop(name = name, branch = branch, shop_Id = shop_Id))) {
+                repository.postFavorite(
+                    Shop(
+                        name = name,
+                        branch = branch,
+                        shop_Id = shop_Id,
+                        shop_Img = shop_Img
+                    )
+                )) {
                 is Result.Success -> {
                     Toast.makeText(
                         ShakeItApplication.instance,
@@ -74,7 +82,7 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
         }
     }
 
-     fun deleteFavorite(){
+    fun deleteFavorite() {
         viewModelScope.launch {
             repository.deleteFavorite(shop_Id)
         }

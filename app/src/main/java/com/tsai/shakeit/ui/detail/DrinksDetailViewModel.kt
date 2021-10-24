@@ -35,7 +35,6 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
 
     // Create a new user with a first and last name
     fun addNewDocToFireBase() {
-
         viewModelScope.launch {
             repository.postOrderToFireBase()
         }

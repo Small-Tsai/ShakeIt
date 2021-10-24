@@ -5,25 +5,32 @@ import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
-import com.tsai.shakeit.ui.favorite.Favorite
 
-class DefaultShakeItRepository (
-    private val FireBaseDataSource: ShakeItDataSource
+class DefaultShakeItRepository(
+    private val shakeItDataSource: ShakeItDataSource
 ) : ShakeItRepository {
 
-    override fun getFireBaseOrder() : MutableLiveData<List<Order>> {
-       return FireBaseDataSource.getFireBaseOrder()
+    override fun getFireBaseOrder(): MutableLiveData<List<Order>> {
+        return shakeItDataSource.getFireBaseOrder()
     }
 
     override fun getFireBaseOrderProduct(): MutableLiveData<List<OrderProduct>> {
-        return FireBaseDataSource.getFireBaseOrderProduct()
+        return shakeItDataSource.getFireBaseOrderProduct()
     }
 
-    override suspend fun getFavorite(): Result<List<Shop>> {
-        return FireBaseDataSource.getFavorite()
+    override fun getFavorite(): MutableLiveData<List<Shop>> {
+        return shakeItDataSource.getFavorite()
+    }
+
+    override suspend fun postFavorite(shop: Shop): Result<Boolean> {
+        return shakeItDataSource.postFavorite(shop)
     }
 
     override suspend fun postOrderToFireBase() {
-        return FireBaseDataSource.postOrderToFireBase()
+        return shakeItDataSource.postOrderToFireBase()
+    }
+
+    override suspend fun deleteFavorite(shopId: String): Result<Boolean> {
+        return shakeItDataSource.deleteFavorite(shopId)
     }
 }

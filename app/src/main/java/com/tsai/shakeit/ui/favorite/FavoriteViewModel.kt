@@ -17,50 +17,35 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
     val favorite: LiveData<List<Favorite>>
         get() = _favorite
 
+    private var _shop = MutableLiveData<List<Shop>>()
+    val shop: LiveData<List<Shop>>
+        get() = _shop
 
     init {
         getFavoriteData()
     }
 
     private fun getFavoriteData() {
-
         viewModelScope.launch {
-
-            val favoriteList = mutableListOf<Favorite>()
-
-            val fireBaseData = when (val result = repository.getFavorite()) {
-                is Result.Success -> {
-                    result.data
-                }
-                is Result.Fail -> {
-                    null
-                }
-                is Result.Error -> {
-                    null
-                }
-                else -> {
-                    null
-                }
-            }
-
-            val titleList = fireBaseData?.map { it.name }?.distinct()
-            val imgList = fireBaseData?.map { it.shop_Img }
-
-
-            Log.d(TAG, imgList.toString())
-            titleList?.let { title ->
-                title.forEach { name ->
-                    favoriteList.add(Favorite.ShopName(name))
-                    favoriteList.add(Favorite.ShopImg(fireBaseData.filter { it.name == name }))
-
-                }
-            }
-
-            Log.d(TAG, favoriteList.toString())
-            _favorite.value = favoriteList
+            _shop = repository.getFavorite()
         }
     }
 
+    fun buildFavoriteList(shop:List<Shop>){
+
+        val favoriteList = mutableListOf<Favorite>()
+        val titleList = shop.map { it.name }.distinct()
+
+        titleList.let { title ->
+            title.forEach { name ->
+                shop.let {
+                    favoriteList.add(Favorite.ShopName(name))
+                    favoriteList.add(Favorite.ShopImg(shop.filter { it.name == name }))
+                }
+            }
+        }
+        _favorite.value = favoriteList
+    }
 }
 
 

@@ -27,6 +27,7 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         binding = DrinksDetailFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
 

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.home.HomeDialogViewModel" />
@@ -21,12 +20,13 @@
 
         <TextView
             android:id="@+id/textView"
+            branch="@{viewModel.branch}"
+            shopName="@{viewModel.name}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/roboto"
-            android:text="可不可熟成紅茶 小蔡店"
             android:textColor="@color/black"
             android:textSize="20dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,9 +94,10 @@
             android:layout_height="25dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="32dp"
-            android:background="@drawable/empty_heart"
+            android:background="@{viewModel.isInserted? @drawable/heart : @drawable/emptyheart }"
             android:clickable="true"
             android:focusable="true"
+            android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite() : viewModel.postMyFavorite()}"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

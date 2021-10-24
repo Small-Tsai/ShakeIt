@@ -37,8 +37,11 @@ class FavoriteFragment : Fragment() {
 
 
         viewModel.favorite.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, it.toString())
             it?.let { adapter.submitList(it) }
+        })
+
+        viewModel.shop.observe(viewLifecycleOwner, Observer {
+            viewModel.buildFavoriteList(it)
         })
 
         binding.favoriteRev.adapter = adapter

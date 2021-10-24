@@ -23,6 +23,11 @@ import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.TAG
 import java.util.function.LongFunction
 
+@BindingAdapter("shopName","branch")
+fun TextView.bindShopName(name: String, branch: String) {
+    text = "$name $branch"
+}
+
 @BindingAdapter("totalPrice")
 fun TextView.bindTotalPrice(totalPrice: Int) {
     text = "訂單小計 $ $totalPrice"
@@ -81,4 +86,5 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             Log.d(TAG, it.toString())
         }
 }
+
 

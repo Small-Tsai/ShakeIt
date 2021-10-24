@@ -9,12 +9,16 @@ import com.tsai.shakeit.ui.favorite.Favorite
 
 interface ShakeItDataSource {
 
+    suspend fun postFavorite(shop: Shop): Result<Boolean>
+
     suspend fun postOrderToFireBase()
+
+    suspend fun deleteFavorite(shopId: String): Result<Boolean>
 
     fun getFireBaseOrder(): MutableLiveData<List<Order>>
 
     fun getFireBaseOrderProduct(): MutableLiveData<List<OrderProduct>>
 
-    suspend fun getFavorite(): Result<List<Shop>>
+    fun getFavorite(): MutableLiveData<List<Shop>>
 
 }

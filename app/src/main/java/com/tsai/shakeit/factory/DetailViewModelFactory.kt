@@ -6,6 +6,7 @@ import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
+import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.HomeViewModel
 import com.tsai.shakeit.ui.order.OrderViewModel
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
@@ -36,6 +37,9 @@ class DetailViewModelFactory(
 
                 isAssignableFrom(OrderViewModel::class.java) ->
                     OrderViewModel(repository)
+
+                isAssignableFrom(FavoriteViewModel::class.java) ->
+                    FavoriteViewModel(repository)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

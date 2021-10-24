@@ -30,5 +30,6 @@ data class OrderProduct(
     val sugar: String? = null,
     val others: String? = null,
     val user_Name: String? = null,
-    val product_Img: String? = null
+    val product_Img: String? = null,
+    val price: Int = 0
 ) : Parcelable

@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.Timestamp
@@ -17,7 +18,15 @@ import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toDisplayFormat
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
 import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
+import com.tsai.shakeit.ui.favorite.FavoriteImageAdapter
+import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.TAG
+import java.util.function.LongFunction
+
+@BindingAdapter("totalPrice")
+fun TextView.bindTotalPrice(totalPrice: Int) {
+    text = "訂單小計 $ $totalPrice"
+}
 
 @BindingAdapter("priceText")
 fun TextView.bindPrice(price: Int) {
@@ -60,8 +69,10 @@ fun TextView.bindQty(qty: Int) {
 
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {
-    val gsReference = imgUrl?.let { Firebase.storage.reference.child(it) }
+    imgUrl?.let { Log.d(TAG, imgUrl) }
+    val gsReference = imgUrl?.let { Firebase.storage.reference.child("$it.jpeg") }
     gsReference?.downloadUrl?.addOnSuccessListener { uri ->
+        Log.d(TAG, "success Image")
         Glide.with(imgView.context)
             .load(uri)
             .into(imgView)
@@ -70,3 +81,4 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             Log.d(TAG, it.toString())
         }
 }
+

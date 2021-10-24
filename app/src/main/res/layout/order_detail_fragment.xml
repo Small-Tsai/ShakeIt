@@ -7,6 +7,9 @@
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel" />
+        <variable
+            name="totalPrice"
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,14 +20,8 @@
 
         <TextView
             android:id="@+id/orderPage_title"
-            style="@style/black_shadow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/roboto"
-            android:text="你的團購訂單"
-            android:textSize="20dp"
+            style="@style/pageTitle"
+            android:text="你的商品"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
 
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/cardView3"
             app:layout_constraintEnd_toEndOf="parent"
@@ -111,11 +108,12 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
+                    android:id="@+id/order_totalPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto"
-                    android:text="訂單小計 $ 140"
+                    totalPrice="@{totalPrice}"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toTopOf="@+id/order_tel_btn"
                     app:layout_constraintStart_toStartOf="@+id/order_tel_btn" />

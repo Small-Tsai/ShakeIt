@@ -13,6 +13,10 @@ class OrderDetailViewModel(order: Order?, private val repository: ShakeItReposit
     val order: LiveData<List<OrderProduct>>
         get() = _order
 
+    private val _totalPrice = MutableLiveData<Int>()
+    val totalPrice: LiveData<Int>
+        get() = _totalPrice
+
     init {
         getOrderProduct()
     }

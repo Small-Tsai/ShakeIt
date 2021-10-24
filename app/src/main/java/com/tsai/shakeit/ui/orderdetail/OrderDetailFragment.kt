@@ -36,9 +36,9 @@ class OrderDetailFragment : Fragment() {
 
         viewModel.order.observe(viewLifecycleOwner, Observer { it ->
             it?.let { adapter.submitList(it) }
-
             val nameList = it.map { order -> order.user_Name }.distinct()
             it?.let { friendsAdapter.submitList(nameList) }
+            binding.totalPrice = it.sumOf { it.price }
         })
 
         binding.orderDetailRev.adapter = adapter

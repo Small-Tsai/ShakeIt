@@ -34,7 +34,15 @@ class DefaultShakeItRepository(
         return shakeItDataSource.deleteFavorite(shopId)
     }
 
+    override suspend fun deleteOrder(orderId: String): Result<Boolean> {
+        return shakeItDataSource.deleteOrder(orderId)
+    }
+
     override suspend fun getShopInfo(shopId: String): Result<Shop> {
         return shakeItDataSource.getShopInfo(shopId)
+    }
+
+    override suspend fun getOrderDataForMenu(orderId: String): Result<List<OrderProduct>> {
+        return shakeItDataSource.getOrderDataForMenu(orderId)
     }
 }

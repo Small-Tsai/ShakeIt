@@ -127,7 +127,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             //已獲取到權限
-            Toast.makeText(context, "已獲取到位置權限，可以準備開始獲取經緯度", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "已獲取到位置權限，可以準備開始獲取經緯度", Toast.LENGTH_SHORT).show()
             locationPermissionGranted = true
             checkGPSState()
         } else {
@@ -257,7 +257,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 .show()
         } else {
             getDeviceLocation()
-            Toast.makeText(context, "已獲取到位置權限且GPS已開啟，可以準備開始獲取經緯度", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(context, "已獲取到位置權限且GPS已開啟，可以準備開始獲取經緯度", Toast.LENGTH_SHORT).show()
         }
     }
 

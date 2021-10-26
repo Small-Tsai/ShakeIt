@@ -34,6 +34,9 @@
         android:label="MenuFragment" >
         <argument
             android:name="shopId"
+            app:argType="com.tsai.shakeit.data.Shop" />
+        <argument
+            android:name="orderId"
             app:argType="string" />
     </fragment>
 

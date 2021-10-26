@@ -19,7 +19,8 @@ data class Order(
     val date: Timestamp? = null,
     val orderProduct: List<OrderProduct> = listOf(),
     val order_Price: Int = 0,
-    val branch: String = ""
+    val branch: String = "",
+    val shop_Id: String = ""
 ) : Parcelable
 
 @Parcelize

@@ -8,6 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.data.Order
+import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -15,8 +17,8 @@ import kotlinx.coroutines.launch
 
 class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
-    private val _hasNavToMenu = MutableLiveData<String?>()
-    val hasNavToMenu: LiveData<String?>
+    private val _hasNavToMenu = MutableLiveData<Shop?>()
+    val hasNavToMenu: LiveData<Shop?>
         get() = _hasNavToMenu
 
     private val _isInserted = MutableLiveData<Boolean>()
@@ -27,19 +29,37 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
     val shop: LiveData<List<Shop>>
         get() = _shop
 
+    var _order = MutableLiveData<List<Order>>()
+
 
     val name = "茶湯會"
     val branch = "公館商圈店"
     val shop_Id = "oA5Ze5yYAG7Dp5QcVB7B"
     val shop_Img = "images/teasoup"
 
+    val selectedShop = Shop(
+        name = name,
+        branch = branch,
+        shop_Id = shop_Id,
+        shop_Img = shop_Img,
+    )
+
     init {
 //        getMyFavorite()
+        _order = repository.getFireBaseOrder()
     }
 
+    var orderId = ""
+    fun checkHasOrder(order: List<Order>) {
+        val currentShopOrder = order.filter { it.branch == branch }
 
-    fun navToMenu(shopId: String) {
-        _hasNavToMenu.value = shopId
+        if (currentShopOrder.isNotEmpty()) {
+            orderId = currentShopOrder.first().order_Id
+        }
+    }
+
+    fun navToMenu(shop: Shop) {
+        _hasNavToMenu.value = shop
         _hasNavToMenu.value = null
     }
 

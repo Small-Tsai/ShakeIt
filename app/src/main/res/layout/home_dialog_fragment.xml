@@ -77,7 +77,7 @@
             style="@style/homedialog_icon"
             android:layout_marginEnd="24dp"
             android:drawableTop="@drawable/menu_icon"
-            android:onClick="@{()-> viewModel.navToMenu(viewModel.shop_Id)}"
+            android:onClick="@{()-> viewModel.navToMenu(viewModel.selectedShop)}"
             android:text="查看菜單"
             app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="@+id/nav_btn"

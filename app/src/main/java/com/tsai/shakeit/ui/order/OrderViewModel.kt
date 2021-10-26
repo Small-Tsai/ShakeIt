@@ -36,8 +36,13 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     private fun getOrderData() {
-     _userOrderList = repository.getFireBaseOrder()
+        _userOrderList = repository.getFireBaseOrder()
+    }
 
+    fun deleteOrder(orderId: String) {
+        viewModelScope.launch {
+            repository.deleteOrder(orderId)
+        }
     }
 }
 

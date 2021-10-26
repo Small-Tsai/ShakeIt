@@ -4,9 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.menu.MenuViewModel" />
+
         <variable
             name="shopInfo"
             type="com.tsai.shakeit.data.Shop" />
@@ -16,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.menu.MenuFragment">
+
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -56,10 +61,10 @@
 
         <ImageView
             android:id="@+id/addOrder_img"
+            imageUrl="@{shopInfo.shop_Img}"
             android:layout_width="match_parent"
             android:layout_height="174dp"
             android:scaleType="centerCrop"
-            imageUrl="@{shopInfo.shop_Img}"
             android:src="@drawable/img_placeholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -76,12 +81,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            branch="@{shopInfo.branch}"
+            shopName="@{shopInfo.name}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="5dp"
             android:fontFamily="@font/noto_sans"
-            shopName="@{shopInfo.name}"
-            branch="@{shopInfo.branch}"
             android:text="loading..."
             android:textColor="@color/white"
             android:textSize="18dp"
@@ -105,6 +110,7 @@
             app:layout_constraintTop_toBottomOf="@+id/addOrder_img"
             tools:listitem="@layout/menu_product_row" />
 
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/appCompatButton"
             android:layout_width="match_parent"
@@ -119,6 +125,22 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textView9"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/color_circle"
+            android:paddingVertical="2dp"
+            android:paddingStart="9dp"
+            android:text=""
+            android:textColor="@color/black"
+            android:translationZ="90dp"
+            android:visibility="@{viewModel.hasOrder? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintEnd_toEndOf="@+id/appCompatButton"
+            app:layout_constraintTop_toTopOf="@+id/appCompatButton" />
 
         <ImageView
             android:id="@+id/imageView3"

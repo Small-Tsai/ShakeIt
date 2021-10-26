@@ -14,7 +14,11 @@ interface ShakeItDataSource {
 
     suspend fun deleteFavorite(shopId: String): Result<Boolean>
 
+    suspend fun deleteOrder(orderId: String): Result<Boolean>
+
     suspend fun getShopInfo(shopId: String): Result<Shop>
+
+    suspend fun getOrderDataForMenu(orderId: String): Result<List<OrderProduct>>
 
     fun getFireBaseOrder(): MutableLiveData<List<Order>>
 

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Product
+import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.favorite.FavoriteViewModel
@@ -18,8 +19,10 @@ import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
 class DetailViewModelFactory(
     private val product: Product? = null,
     private val order: Order? = null,
-    private val shopId:String = "",
-    private val repository: ShakeItRepository
+    private val shop:Shop? = null,
+    private val repository: ShakeItRepository,
+    private val orderId:String? =null
+
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -44,7 +47,7 @@ class DetailViewModelFactory(
                     HomeDialogViewModel(repository)
 
                 isAssignableFrom(MenuViewModel::class.java) ->
-                    MenuViewModel(shopId,repository)
+                    shop?.let { MenuViewModel(it,repository,orderId) }
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

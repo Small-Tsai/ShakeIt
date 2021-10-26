@@ -15,10 +15,10 @@ import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.home.TAG
 import kotlinx.coroutines.launch
 
-private const val ICE="ice"
-private const val CAPACITY="capacity"
-private const val SUGAR="sugar"
-private const val OTHERS="others"
+private const val ICE = "ice"
+private const val CAPACITY = "capacity"
+private const val SUGAR = "sugar"
+private const val OTHERS = "others"
 
 
 class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRepository) :
@@ -43,16 +43,17 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     var selectedPositionList = mutableListOf<Int>()
     var mContentList: MutableMap<String, ArrayList<String>> = mutableMapOf()
 
-    // Create a new user with a first and last name
     fun addNewDocToFireBase() {
+
         val mOrder = Order(
             shop_Name = data.shop_Name,
             branch = data.branch,
             date = Timestamp.now(),
             order_Name = "我的訂單",
+            shop_Id = data.shopId
         )
-        val mOrderProduct = _qty.value?.let {
 
+        val mOrderProduct = _qty.value?.let {
             OrderProduct(
                 name = data.name,
                 ice = mContentList[ICE]!!.first(),
@@ -60,21 +61,22 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
                 qty = it,
                 sugar = mContentList[SUGAR]!!.first(),
                 others = mContentList[OTHERS].toString()
-
+                    .substring(1, mContentList[OTHERS]!!.toString().length - 1),
+                price = data.price,
+                user_Name = "Small Tsai"
             )
         }
+
         viewModelScope.launch {
             mOrderProduct?.let {
-                repository.postOrderToFireBase(mOrder,mOrderProduct)
+                repository.postOrderToFireBase(mOrder, mOrderProduct)
             }
-
         }
     }
 
     init {
         _qty.value = 1
         filterList()
-        Log.d(TAG, data.toString())
     }
 
     fun plus() {

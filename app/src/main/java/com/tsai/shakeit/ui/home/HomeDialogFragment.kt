@@ -1,6 +1,7 @@
 package com.tsai.shakeit.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,7 @@ class HomeDialogFragment : BottomSheetDialogFragment() {
         viewModel.getMyFavorite()
 
         viewModel.hasNavToMenu.observe(viewLifecycleOwner, Observer {
-            it?.let { findNavController().navigate(MenuFragmentDirections.navToMenu(it)) }
+            it?.let { findNavController().navigate(MenuFragmentDirections.navToMenu(it,viewModel.orderId)) }
         })
 
         viewModel.shop.observe(viewLifecycleOwner, Observer {
@@ -40,6 +41,9 @@ class HomeDialogFragment : BottomSheetDialogFragment() {
             binding.viewModel = viewModel
         })
 
+        viewModel._order.observe(viewLifecycleOwner, Observer {
+            viewModel.checkHasOrder(it)
+        })
         return binding.root
     }
 

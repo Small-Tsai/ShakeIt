@@ -10,6 +10,10 @@
             type="com.tsai.shakeit.data.Order" />
 
         <variable
+            name="shopImg"
+            type="String" />
+
+        <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.order.OrderViewModel" />
     </data>
@@ -72,10 +76,11 @@
 
                     <ImageView
                         android:id="@+id/order_img"
+                        imageUrl="@{shopImg}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/kebuke" />
+                        android:src="@drawable/placedrink" />
 
                 </androidx.cardview.widget.CardView>
 

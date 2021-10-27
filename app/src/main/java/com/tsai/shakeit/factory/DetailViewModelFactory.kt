@@ -22,7 +22,6 @@ class DetailViewModelFactory(
     private val shop:Shop? = null,
     private val repository: ShakeItRepository,
     private val orderId:String? =null
-
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -44,7 +43,7 @@ class DetailViewModelFactory(
                     FavoriteViewModel(repository)
 
                 isAssignableFrom(HomeDialogViewModel::class.java) ->
-                    HomeDialogViewModel(repository)
+                    HomeDialogViewModel(repository,shop)
 
                 isAssignableFrom(MenuViewModel::class.java) ->
                     shop?.let { MenuViewModel(it,repository,orderId) }

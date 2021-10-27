@@ -16,11 +16,11 @@ import com.tsai.shakeit.factory.DetailViewModelFactory
 fun Fragment.getVmFactory(
     product: Product? = null,
     order: Order? = null,
-    shopId: Shop? = null,
+    shopData: Shop? = null,
     orderId: String? = null
 ): DetailViewModelFactory {
     val repository = (requireContext().applicationContext as ShakeItApplication).shakeItRepository
-    return DetailViewModelFactory(product, order, shopId, repository,orderId)
+    return DetailViewModelFactory(product, order, shopData, repository,orderId)
 }
 
 

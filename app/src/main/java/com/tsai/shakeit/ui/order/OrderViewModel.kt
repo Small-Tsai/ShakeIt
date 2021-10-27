@@ -13,6 +13,7 @@ import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.data.succeeded
 import com.tsai.shakeit.ui.home.TAG
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.function.LongFunction
 
@@ -26,8 +27,23 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToOrderDetail: LiveData<Order?>
         get() = _navToOrderDetail
 
+    private val _shopImg = MutableLiveData<String>()
+    val shopImg: LiveData<String>
+        get() = _shopImg
+
     init {
         getOrderData()
+    }
+
+
+    fun getShopImage(shopId: String) {
+        viewModelScope.launch {
+            when (val result = repository.getShopInfo(shopId)) {
+                is Result.Success -> {
+                    _shopImg.value = result.data.shop_Img
+                }
+            }
+        }
     }
 
     fun doNavToOrderDetail(order: Order) {

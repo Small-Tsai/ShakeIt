@@ -1,7 +1,6 @@
 package com.tsai.shakeit.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,10 @@ class HomeDialogFragment : BottomSheetDialogFragment() {
 
 
     private val viewModel by viewModels<HomeDialogViewModel> {
-        getVmFactory()
+        getVmFactory(
+            shopData =
+            HomeDialogFragmentArgs.fromBundle(requireArguments()).shopData
+        )
     }
 
     private lateinit var binding: HomeDialogFragmentBinding
@@ -41,9 +43,10 @@ class HomeDialogFragment : BottomSheetDialogFragment() {
             binding.viewModel = viewModel
         })
 
-        viewModel._order.observe(viewLifecycleOwner, Observer {
+        viewModel.order.observe(viewLifecycleOwner, Observer {
             viewModel.checkHasOrder(it)
         })
+
         return binding.root
     }
 

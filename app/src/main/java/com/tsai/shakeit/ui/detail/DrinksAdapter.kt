@@ -13,10 +13,12 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
 
     inner class ContentViewHolder(private var binding: DrinksSelectRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: String, viewModel: DrinksDetailViewModel) {
+        fun bind(content: HashMap<String, Int>, viewModel: DrinksDetailViewModel) {
             binding.viewModel = viewModel
             binding.viewHolder = this
-            binding.content = content
+            val key = content.keys.first()
+            binding.content = key
+            binding.price = content[key]!!
             binding.executePendingBindings()
         }
     }
@@ -81,5 +83,5 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
 
 sealed class DrinksDetail {
     data class DetailTitle(val type: String) : DrinksDetail()
-    data class DetailContent(val content: String) : DrinksDetail()
+    data class DetailContent(val content: HashMap<String, Int>) : DrinksDetail()
 }

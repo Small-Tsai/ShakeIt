@@ -1,10 +1,7 @@
 package com.tsai.shakeit.data.source
 
 import androidx.lifecycle.MutableLiveData
-import com.tsai.shakeit.data.Order
-import com.tsai.shakeit.data.OrderProduct
-import com.tsai.shakeit.data.Result
-import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.data.*
 
 class DefaultShakeItRepository(
     private val shakeItDataSource: ShakeItDataSource
@@ -12,6 +9,10 @@ class DefaultShakeItRepository(
 
     override fun getFireBaseOrder(): MutableLiveData<List<Order>> {
         return shakeItDataSource.getFireBaseOrder()
+    }
+
+    override fun getShopOrder(shopId: String): MutableLiveData<List<Order>> {
+        return shakeItDataSource.getShopOrder(shopId)
     }
 
     override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {
@@ -26,8 +27,15 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postFavorite(shop)
     }
 
-    override suspend fun postOrderToFireBase(order: Order, orderProduct: OrderProduct): Result<Boolean> {
+    override suspend fun postOrderToFireBase(
+        order: Order,
+        orderProduct: OrderProduct
+    ): Result<Boolean> {
         return shakeItDataSource.postOrderToFireBase(order, orderProduct)
+    }
+
+    override suspend fun postProduct(product: Product): Result<Boolean> {
+        return shakeItDataSource.postProduct(product)
     }
 
     override suspend fun deleteFavorite(shopId: String): Result<Boolean> {
@@ -42,7 +50,16 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getShopInfo(shopId)
     }
 
-    override suspend fun getOrderDataForMenu(orderId: String): Result<List<OrderProduct>> {
-        return shakeItDataSource.getOrderDataForMenu(orderId)
+    override suspend fun getAllShop(): Result<List<Shop>> {
+        return shakeItDataSource.getAllShop()
     }
+
+    override suspend fun getProduct(shopId: String): Result<List<Product>> {
+        return shakeItDataSource.getProduct(shopId)
+    }
+
+    override suspend fun updateOrderTotalPrice(totalPrice: Int , shopId: String): Result<Boolean> {
+        return shakeItDataSource.updateOrderTotalPrice(totalPrice , shopId)
+    }
+
 }

@@ -12,9 +12,6 @@ import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.home.TAG
 import kotlinx.coroutines.launch
 
-const val REDTEA = "紅茶"
-const val GREENTEA = "綠茶"
-const val WULONG = "烏龍茶"
 
 class MenuViewModel(
     private val selectedShop: Shop,
@@ -45,10 +42,6 @@ class MenuViewModel(
     val shop: LiveData<Shop?>
         get() = _shop
 
-    private var _userOrderList = MutableLiveData<List<Order>>()
-    val userOrderList: LiveData<List<Order>>
-        get() = _userOrderList
-
     private var _orderProduct = MutableLiveData<List<OrderProduct>>()
     val orderProduct: LiveData<List<OrderProduct>>
         get() = _orderProduct
@@ -65,185 +58,86 @@ class MenuViewModel(
         _hasOrder.value = false
     }
 
-    private val mockData =
-        listOf(
-            Product(
-                "熟成紅茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                REDTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店",
-            ),
-            Product(
-                "熟成綠茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                GREENTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店",
+    fun updateOrderTotalPrice(totalPrice:Int){
+        viewModelScope.launch {
+            when(val result = repository.updateOrderTotalPrice(totalPrice,selectedShop.shop_Id)){
+//                is Result.Success -> Log.d(TAG,"update total price")
+            }
 
-                ),
-            Product(
-                "熟成紅茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                REDTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成紅茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                REDTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成烏龍茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                WULONG,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成紅茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                REDTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成烏龍茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                WULONG,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成綠茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                GREENTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成烏龍茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                WULONG,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成綠茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                GREENTEA,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成烏龍茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                WULONG,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-            Product(
-                "熟成烏龍茶",
-                "好香",
-                arrayListOf("大", "中"),
-                arrayListOf("全糖", "半糖", "微糖", "無糖"),
-                arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-                35,
-                arrayListOf("加珍珠", "加椰果"),
-                selectedShop.shop_Id,
-                WULONG,
-                shop_Name = "茶湯會",
-                branch = "公館商圈店"
-            ),
-        )
+        }
+    }
+
+//    val data = Product(
+//        "熟成紅茶",
+//        "好香",
+//        hashMapOf(
+//            "大" to 35,
+//            "中" to 30,
+//        ),
+//        arrayListOf("全糖", "半糖", "微糖", "無糖"),
+//        arrayListOf("正常冰", "少冰", "微冰", "去冰"),
+//        35,
+//        hashMapOf(
+//            "白玉珍珠" to 10,
+//            "百香蒟蒻凍" to 20,
+//            "水玉" to 10,
+//            "桂玉" to 10
+//        ),
+//        selectedShop.shop_Id,
+//        REDTEA,
+//        shop_Name = "可不可熟成紅茶",
+//        branch = "台北市政店",
+//        shopAddress = "台北市信義區忠孝東路五段17之2號"
+//    )
+
+//    fun postProduct() {
+//        viewModelScope.launch {
+//            repository.postProduct(data)
+//        }
+//    }
 
     init {
-        filterMyList()
+        getProduct()
         _orderProduct = repository.getFireBaseOrderProduct(selectedShop.shop_Id)
     }
 
-    fun filterMyList() {
+    private val _branchProduct = MutableLiveData<List<Product>>()
+    val branchProduct: LiveData<List<Product>>
+        get() = _branchProduct
+
+    private fun getProduct() {
+        viewModelScope.launch {
+            when (val result = repository.getProduct(selectedShop.shop_Id)) {
+                is Result.Success -> {
+                    _branchProduct.value = result.data!!
+                }
+                is Result.Fail -> {
+                    Toast.makeText(
+                        ShakeItApplication.instance,
+                        "商品獲取失敗..",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is Result.Error -> {
+                    Log.d(TAG, "getProduct Error")
+                }
+            }
+        }
+    }
+
+    fun filterMyList(productList: List<Product>) {
 
         val mList = mutableListOf<Menu>()
         val titleList = mutableListOf<String>()
 
-        for (i in mockData.indices) {
-            titleList.add(mockData[i].type)
+        for (i in productList.indices) {
+            titleList.add(productList[i].type)
         }
 
         val newTitleList = titleList.distinct()
 
         for (i in newTitleList.indices) {
-            val list = mockData.filter { it.type == newTitleList[i] }
+            val list = productList.filter { it.type == newTitleList[i] }
             mList.add(Menu.Title(newTitleList[i]))
             for (x in list.indices) {
                 mList.add(Menu.MenuProduct(list[x]))

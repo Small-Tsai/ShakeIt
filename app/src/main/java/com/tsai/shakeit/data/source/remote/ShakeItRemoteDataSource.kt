@@ -7,10 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.ktx.*
 import com.tsai.shakeit.ShakeItApplication
-import com.tsai.shakeit.data.Order
-import com.tsai.shakeit.data.OrderProduct
-import com.tsai.shakeit.data.Result
-import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ui.home.TAG
 import okhttp3.internal.wait
@@ -22,6 +19,7 @@ private const val KEY_CREATED_TIME = "date"
 private const val FAVORITE = "favorite"
 private const val SHOP = "shop"
 private const val ORDER_PRODUCT = "orderProduct"
+private const val PRODUCT = "product"
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
 
@@ -84,6 +82,36 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Fail("orderProduct Failed"))
                     }
                 }
+        }
+
+    override suspend fun postProduct(product: Product): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val fireBaseProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
+            val document = fireBaseProduct.document()
+
+            product.id = document.id
+
+            document
+                .set(product)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.i(TAG, "Product: $product")
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Log.w(
+                                TAG,
+                                "[${this::class.simpleName}] Error post documents. ${it.message}"
+                            )
+                            continuation.resume(Result.Error(it))
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("Product Failed"))
+                    }
+                }
+
+
         }
 
     override suspend fun deleteFavorite(shopId: String): Result<Boolean> =
@@ -169,31 +197,79 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getOrderDataForMenu(orderId: String): Result<List<OrderProduct>> =
+    override suspend fun getAllShop(): Result<List<Shop>> =
         suspendCoroutine { continuation ->
 
-            val order = FirebaseFirestore.getInstance().collection(ORDERS)
-            val document = order.document(orderId).collection(ORDER_PRODUCT)
+            val shop = FirebaseFirestore.getInstance().collection(SHOP)
 
-            document
+            shop
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                      val orderData = task.result!!.toObjects(OrderProduct::class.java)
-                        continuation.resume(Result.Success(orderData))
-
+                        val shopData = task.result!!.toObjects(Shop::class.java)
+                        continuation.resume(Result.Success(shopData))
                     } else {
                         task.exception?.let {
                             Log.w(
                                 TAG,
-                                "[${this::class.simpleName}] Error delete documents. ${it.message}"
+                                "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
                             )
                             return@addOnCompleteListener
                         }
-                        continuation.resume(Result.Fail("deleteFavorite Failed"))
+                        continuation.resume(Result.Fail("getShopInfo Failed"))
                     }
                 }
+        }
 
+    override suspend fun getProduct(shopId: String): Result<List<Product>> =
+        suspendCoroutine { continuation ->
+
+            val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
+
+
+            branchProduct
+                .whereEqualTo("shopId", shopId)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val shopData = task.result!!.toObjects(Product::class.java)
+//                        Log.d(TAG, shopData.toString())
+                        continuation.resume(Result.Success(shopData))
+                    } else {
+                        task.exception?.let {
+                            Log.w(
+                                TAG,
+                                "[${this::class.simpleName}] Error get documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("getProduct Failed"))
+                    }
+                }
+        }
+
+    override suspend fun updateOrderTotalPrice(totalPrice: Int , shopId: String): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val order = FirebaseFirestore.getInstance().collection(ORDERS)
+            val document = order.document(shopId)
+
+            document
+                .update("order_Price" , totalPrice)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Log.w(
+                                TAG,
+                                "[${this::class.simpleName}] Error update documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("update Failed"))
+                    }
+                }
         }
 
     override fun getFireBaseOrder(): MutableLiveData<List<Order>> {
@@ -216,6 +292,31 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
                 liveData.value = list
             }
+        return liveData
+    }
+
+    override fun getShopOrder(shopId: String): MutableLiveData<List<Order>> {
+
+        val liveData = MutableLiveData<List<Order>>()
+
+        FirebaseFirestore.getInstance()
+            .collection(ORDERS)
+            .whereEqualTo("shop_Id", shopId)
+            .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, e ->
+
+                val list = mutableListOf<Order>()
+
+                if (snapshot != null) {
+                    for (document in snapshot) {
+//                        Log.d(TAG, "Current data: ${document.data}")
+                        val order = document.toObject(Order::class.java)
+                        list.add(order)
+                    }
+                }
+                liveData.value = list
+            }
+        Log.d(TAG, "return")
         return liveData
     }
 

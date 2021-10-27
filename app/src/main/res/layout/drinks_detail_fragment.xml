@@ -37,7 +37,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="174dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/img"
+                    android:src="@drawable/img_placeholder"
+                    imageUrl="@{viewModel.data.product_Img}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -47,6 +48,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="16dp"
+                    android:scaleType="centerCrop"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/icon_back"
                     android:onClick="@{() ->viewModel.popBack()}"

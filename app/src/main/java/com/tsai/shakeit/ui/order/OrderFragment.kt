@@ -39,6 +39,11 @@ class OrderFragment : Fragment() {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToOrderDetail(it)) }
         })
 
+        viewModel.shopImg.observe(viewLifecycleOwner, Observer {
+            it?.let { adapter.submitImg(it) }
+            adapter.notifyDataSetChanged()
+        })
+
         binding.orderRev.adapter = adapter
         return binding.root
     }

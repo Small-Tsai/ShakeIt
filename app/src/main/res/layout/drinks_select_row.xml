@@ -9,6 +9,10 @@
             type="String" />
 
         <variable
+            name="price"
+            type="int" />
+
+        <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.detail.DrinksDetailViewModel" />
 
@@ -52,7 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/noto_sans"
-            android:text="+$ 0"
+            price="@{price}"
+            content="@{content}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

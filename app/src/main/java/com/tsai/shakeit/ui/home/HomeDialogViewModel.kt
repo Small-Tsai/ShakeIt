@@ -2,20 +2,18 @@ package com.tsai.shakeit.ui.home
 
 import android.util.Log
 import android.widget.Toast
-import androidx.core.graphics.scaleMatrix
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Order
-import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import kotlinx.coroutines.launch
 
-class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel() {
+class HomeDialogViewModel(private val repository: ShakeItRepository, val shopData: Shop? ) : ViewModel() {
 
     private val _hasNavToMenu = MutableLiveData<Shop?>()
     val hasNavToMenu: LiveData<Shop?>
@@ -29,29 +27,16 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
     val shop: LiveData<List<Shop>>
         get() = _shop
 
-    var _order = MutableLiveData<List<Order>>()
-
-
-    val name = "茶湯會"
-    val branch = "公館商圈店"
-    val shop_Id = "oA5Ze5yYAG7Dp5QcVB7B"
-    val shop_Img = "images/teasoup"
-
-    val selectedShop = Shop(
-        name = name,
-        branch = branch,
-        shop_Id = shop_Id,
-        shop_Img = shop_Img,
-    )
+    var order = MutableLiveData<List<Order>>()
 
     init {
-//        getMyFavorite()
-        _order = repository.getFireBaseOrder()
+        order = repository.getShopOrder(shopData!!.shop_Id)
+        Log.d(TAG,"shopData = $shopData")
     }
 
     var orderId = ""
     fun checkHasOrder(order: List<Order>) {
-        val currentShopOrder = order.filter { it.branch == branch }
+        val currentShopOrder = order.filter { it.branch == shopData!!.branch }
 
         if (currentShopOrder.isNotEmpty()) {
             orderId = currentShopOrder.first().order_Id
@@ -66,18 +51,11 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
     fun postMyFavorite() {
         viewModelScope.launch {
             when (val result =
-                repository.postFavorite(
-                    Shop(
-                        name = name,
-                        branch = branch,
-                        shop_Id = shop_Id,
-                        shop_Img = shop_Img
-                    )
-                )) {
+                repository.postFavorite(shopData!!)) {
                 is Result.Success -> {
                     Toast.makeText(
                         ShakeItApplication.instance,
-                        "已將 ${name + branch} 加入收藏",
+                        "已將 ${shopData.name + shopData.branch} 加入收藏",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -95,7 +73,6 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
         }
     }
 
-
     fun getMyFavorite() {
         viewModelScope.launch {
             _shop = repository.getFavorite()
@@ -104,11 +81,11 @@ class HomeDialogViewModel(private val repository: ShakeItRepository) : ViewModel
 
     fun deleteFavorite() {
         viewModelScope.launch {
-            repository.deleteFavorite(shop_Id)
+            repository.deleteFavorite(shopData!!.shop_Id)
         }
     }
 
     fun checkHasFavorite(shop: List<Shop>) {
-        _isInserted.value = shop.map { it.shop_Id }.contains(shop_Id)
+        _isInserted.value = shop.map { it.shop_Id }.contains(shopData!!.shop_Id)
     }
 }

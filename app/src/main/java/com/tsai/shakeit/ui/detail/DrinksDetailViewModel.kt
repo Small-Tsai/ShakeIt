@@ -50,7 +50,8 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
             branch = data.branch,
             date = Timestamp.now(),
             order_Name = "我的訂單",
-            shop_Id = data.shopId
+            shop_Id = data.shopId,
+
         )
 
         val mOrderProduct = _qty.value?.let {
@@ -63,7 +64,8 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
                 others = mContentList[OTHERS].toString()
                     .substring(1, mContentList[OTHERS]!!.toString().length - 1),
                 price = data.price,
-                user_Name = "Small Tsai"
+                user_Name = "Small Tsai",
+                product_Img = data.product_Img
             )
         }
 
@@ -90,13 +92,13 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     private fun filterList() {
         val detailList = mutableListOf<DrinksDetail>()
         detailList.add(DrinksDetail.DetailTitle("容量"))
-        data.capacity.forEach { detailList.add(DrinksDetail.DetailContent(it)) }
+        data.capacity.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         detailList.add(DrinksDetail.DetailTitle("冰量"))
-        data.ice.forEach { detailList.add(DrinksDetail.DetailContent(it)) }
+        data.ice.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it to 0))) }
         detailList.add(DrinksDetail.DetailTitle("甜度"))
-        data.sugar.forEach { detailList.add(DrinksDetail.DetailContent(it)) }
+        data.sugar.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it to 0))) }
         detailList.add(DrinksDetail.DetailTitle("加料"))
-        data.others.forEach { detailList.add(DrinksDetail.DetailContent(it)) }
+        data.others.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         _product.value = detailList
     }
 

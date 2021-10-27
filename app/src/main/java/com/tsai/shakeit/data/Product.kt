@@ -7,17 +7,18 @@ import kotlinx.parcelize.Parcelize
 data class Product(
     val name: String = "",
     val content: String = "",
-    val capacity: ArrayList<String> = arrayListOf(),
+    val capacity: HashMap<String, Int> = hashMapOf(),
     val sugar: ArrayList<String> = arrayListOf(),
     val ice: ArrayList<String> = arrayListOf(),
     val price: Int = 0,
-    val others: ArrayList<String> = arrayListOf(),
+    val others: HashMap<String, Int> = hashMapOf(),
     val shopId: String = "",
     val type: String = "",
-    val id: String = "",
+    var id: String = "",
     val shop_Name: String = "",
     val shopAddress: String = "",
-    val branch: String = ""
+    val branch: String = "",
+    val product_Img: String = "",
 ) : Parcelable
 
 

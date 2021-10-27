@@ -40,7 +40,7 @@ class OrderDetailFragment : Fragment() {
             it?.let { adapter.submitList(it) }
             val nameList = it.map { order -> order.user_Name }.distinct()
             it?.let { friendsAdapter.submitList(nameList) }
-            binding.totalPrice = it.sumOf { it.price }*it.sumOf { it.qty }
+            binding.totalPrice = it.sumOf { it.price * it.qty }
         })
 
         binding.orderDetailRev.adapter = adapter

@@ -12,4 +12,5 @@
     <color name="grey2">#F0F0F0</color>
     <color name="darkgrey">#88000000</color>
     <color name="grey_yellow">#DFDBD7</color>
+    <color name="translucent_40">#66000000</color>
 </resources>

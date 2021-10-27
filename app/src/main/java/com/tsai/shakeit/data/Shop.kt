@@ -11,7 +11,7 @@ data class Shop(
     val lat: Double = 0.0,
     val lon: Double = 0.0,
     val tel: String = "",
-    val time: ArrayList<String>? = arrayListOf(),
+    val time: HashMap<String,String>? = hashMapOf(),
     val address: String = "",
     val avg_Score: Double = 0.0,
     val shop_Img: String = "",

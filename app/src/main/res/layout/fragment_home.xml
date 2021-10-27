@@ -21,7 +21,7 @@
         <fragment
             android:id="@+id/map"
             class="com.google.android.libraries.maps.SupportMapFragment"
-            app:mapId="@string/dark_map_id"
+            app:mapId="@string/map_id"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".MapsActivity"

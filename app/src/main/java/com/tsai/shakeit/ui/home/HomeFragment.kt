@@ -110,7 +110,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
                 val iconGen = IconGenerator(binding.root.context)
                 mMap.addMarker(
                     MarkerOptions().position(newPosition).snippet(shop.branch)
-                        .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon(shop.name)))
+//                        .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon(shop.name)))
                 )
             }
         })

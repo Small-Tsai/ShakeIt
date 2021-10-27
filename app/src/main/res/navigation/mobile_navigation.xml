@@ -63,7 +63,9 @@
 
     <action
         android:id="@+id/navTo_homeDialog"
-        app:destination="@id/homeDialogFragment" />
+        app:destination="@id/homeDialogFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     <action
         android:id="@+id/navTo_Menu"
         app:destination="@id/menuFragment"

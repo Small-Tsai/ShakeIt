@@ -40,4 +40,12 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="MyBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/MYBottomSheetStyle</item>
+    </style>
+
+    <style name="MYBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@color/translucent_40</item>
+    </style>
+
 </resources>

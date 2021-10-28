@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 class MenuViewModel(
     private val selectedShop: Shop,
     private val repository: ShakeItRepository,
-    val orderId: String?
 ) :
     ViewModel() {
 
@@ -107,7 +106,7 @@ class MenuViewModel(
 
     private fun getProduct() {
         viewModelScope.launch {
-            when (val result = repository.getProduct(selectedShop.shop_Id)) {
+            when (val result = repository.getProduct(selectedShop.name)) {
                 is Result.Success -> {
                     _branchProduct.value = result.data!!
                 }

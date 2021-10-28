@@ -30,7 +30,10 @@ class OrderFragment : Fragment() {
 
         binding = FragmentOrderBinding.inflate(inflater, container, false)
 
+        binding.lifecycleOwner = viewLifecycleOwner
+
         val adapter = OrderAdapter(viewModel)
+
         viewModel.userOrderList.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
         })

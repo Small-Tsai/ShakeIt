@@ -1,7 +1,6 @@
 package com.tsai.shakeit.ui.home
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,18 +12,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.maps.android.ui.IconGenerator
 import com.permissionx.guolindev.PermissionX
+import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
-import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ui.menu.MenuFragmentDirections
+import com.tsai.shakeit.util.CurrentFragmentType
+import com.tsai.shakeit.util.Logger
 import kotlin.properties.Delegates
 
 
@@ -33,7 +36,7 @@ const val REQUEST_LOCATION_PERMISSION = 0
 const val REQUEST_ENABLE_GPS = 1
 
 
-class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private val viewModel by viewModels<HomeViewModel> {
         getVmFactory()
@@ -46,6 +49,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
     private var lon by Delegates.notNull<Double>()
     private var locationPermissionGranted = false
 
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +59,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         viewModel.binding = binding
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+
+        val mContext = binding.root.context
 
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -62,87 +71,151 @@ class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
         viewModel.isWalkOrRide.observe(viewLifecycleOwner, Observer {
             when (it) {
-                true -> onAddButtonClicked(it)
+                true -> viewModel.onAddButtonClicked(it)
                 false -> {
-                    onAddButtonClicked(it)
+                    viewModel.onAddButtonClicked(it)
                     viewModel.isNull()
                 }
             }
         })
 
-        val mContext = binding.root.context
+        viewModel.hasNavToMenu.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                findNavController().navigate(
+                    MenuFragmentDirections.navToMenu(it)
+                )
+            }
+        })
+
+        viewModel.Favorite.observe(viewLifecycleOwner, Observer {
+            viewModel.mShopId?.let { it1 -> viewModel.checkHasFavorite(it1) }
+        })
+
+        viewModel._selectedShop.observe(viewLifecycleOwner, Observer {
+            binding.shop = it
+            viewModel.checkHasFavorite(it.shop_Id)
+        })
+
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
         return binding.root
     }
 
-    private fun onAddButtonClicked(b: Boolean) {
-        setVisibility(b)
-        setAnimation(b)
-    }
-
-    val fromTop = AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.from_top_anim)
-    val toBottom = AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.to_bottom_anim)
-    private fun setAnimation(b: Boolean) {
-        if (b) {
-            binding.rideFab.startAnimation(toBottom)
-        } else {
-            binding.rideFab.startAnimation(fromTop)
-        }
-    }
-
-    private fun setVisibility(b: Boolean) {
-        if (b) binding.rideFab.visibility = View.VISIBLE
-        else binding.rideFab.visibility = View.GONE
-    }
-
-
     override fun onMapReady(googleMap: GoogleMap) {
-        askPermission()
 
         mMap = googleMap
-//        mMap.setMapStyle(MapStyleOptions(getResources()
-//            .getString(R.string.style_json)));
 
-
-        viewModel.shopData.observe(viewLifecycleOwner, Observer { shopData ->
+        viewModel.shopLiveData.observe(viewLifecycleOwner, Observer { shopData ->
             shopData.forEach { shop ->
                 val newPosition = LatLng(shop.lat, shop.lon)
                 val iconGen = IconGenerator(binding.root.context)
                 mMap.addMarker(
-                    MarkerOptions().position(newPosition).snippet(shop.branch)
+                    MarkerOptions().position(newPosition).snippet(shop.shop_Id)
 //                        .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon(shop.name)))
                 )
             }
         })
 
-        viewModel.snippet.observe(viewLifecycleOwner, Observer { snippet ->
-            snippet?.let {
-                val filterShop = viewModel.shopData.value?.filter { it.branch == snippet }?.first()
-                filterShop?.let {
-                    viewModel.navDone()
-                    findNavController().navigate(HomeDialogFragmentDirections.navToHomeDialog(filterShop))
-                }
-            }
-        })
+        askPermission()
+        setBottomSheetBehavior()
+        setMyLocationButtonPosition()
+    }
 
 
-        mMap.setOnMarkerClickListener {
+    private fun setMyLocationButtonPosition() {
 
-            viewModel.navToDetail(it.snippet)
-            return@setOnMarkerClickListener true
-        }
-
-        mMap.uiSettings.isZoomControlsEnabled = true
         val map = view?.findViewById<View>(R.id.map)
         val myPositionBtn = map?.findViewById<View>("2".toInt())
         val rlp = myPositionBtn?.layoutParams as RelativeLayout.LayoutParams
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
-        rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-        rlp.setMargins(0, 0, 30, 280)
 
+        rlp.apply {
+            addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
+            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
+            setMargins(0, 0, 30, 280)
+
+        }
+    }
+
+    private fun setBottomSheetBehavior() {
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
+        mMap.setOnMarkerClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
+            viewModel.getSelectedShopSnippet(it.snippet)
+            return@setOnMarkerClickListener true
+        }
+
+        mMap.setOnMapClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        mMap.setOnCameraMoveListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                bottomSheetBehavior.halfExpandedRatio = 0.14f
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            }
+        }
+
+        var x = 0
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        Logger.d("expand")
+                    }
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                    }
+
+                }
+            }
+
+            val fromTop =
+                AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
+            val toTopGone =
+                AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+                if (slideOffset > 0.4f) {
+                    if (x == 0) {
+                        Logger.d("$x")
+                        x = 1
+                        binding.apply {
+                            idSearchView.startAnimation(toTopGone)
+                            walkFab.startAnimation(toTopGone)
+                            editText.startAnimation(toTopGone)
+                            idSearchView.visibility = View.GONE
+                            walkFab.visibility = View.GONE
+                            editText.visibility = View.GONE
+                        }
+
+                    }
+                }
+
+                if (x == 1 && slideOffset < 0.4f) {
+                    Logger.d("$x")
+                    x = 0
+                    binding.apply {
+                        idSearchView.startAnimation(fromTop)
+                        walkFab.startAnimation(fromTop)
+                        editText.startAnimation(fromTop)
+                        idSearchView.visibility = View.VISIBLE
+                        walkFab.visibility = View.VISIBLE
+                        editText.visibility = View.VISIBLE
+                    }
+                }
+            }
+        })
     }
 
     private fun askPermission() {
+
         PermissionX.init(this)
             .permissions(
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -198,6 +271,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
 
                             mMap.uiSettings.isMyLocationButtonEnabled = true
                             mMap.isMyLocationEnabled = true
+                            mMap.uiSettings.isZoomControlsEnabled = true
 
                             val currentPosition = LatLng(lat, lon)
                             mMap.moveCamera(
@@ -217,12 +291,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickList
             Log.e("Exception: %s", e.message, e)
         }
     }
-
-    override fun onMarkerClick(marker: Marker?): Boolean {
-        TODO()
-    }
-
-
 }
 
 

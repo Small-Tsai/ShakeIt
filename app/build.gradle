@@ -43,6 +43,7 @@ android {
 
 dependencies {
 
+
     //permission
     implementation 'com.guolindev.permissionx:permissionx:1.6.0'
 

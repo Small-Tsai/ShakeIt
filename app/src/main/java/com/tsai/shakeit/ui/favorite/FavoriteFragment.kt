@@ -31,6 +31,7 @@ class FavoriteFragment : Fragment() {
 
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
 
         val adapter = FavoriteAdapter(viewModel)

@@ -22,14 +22,6 @@
         android:name="com.tsai.shakeit.ui.order.OrderFragment"
         android:label="@string/title_order"
         tools:layout="@layout/fragment_order" />
-    <dialog
-        android:id="@+id/homeDialogFragment"
-        android:name="com.tsai.shakeit.ui.home.HomeDialogFragment"
-        android:label="HomeDialogFragment" >
-        <argument
-            android:name="shopData"
-            app:argType="com.tsai.shakeit.data.Shop" />
-    </dialog>
 
 
     <fragment
@@ -37,11 +29,8 @@
         android:name="com.tsai.shakeit.ui.menu.MenuFragment"
         android:label="MenuFragment" >
         <argument
-            android:name="shopId"
+            android:name="shopData"
             app:argType="com.tsai.shakeit.data.Shop" />
-        <argument
-            android:name="orderId"
-            app:argType="string" />
     </fragment>
 
     <fragment
@@ -61,11 +50,6 @@
             app:argType="com.tsai.shakeit.data.Order" />
     </fragment>
 
-    <action
-        android:id="@+id/navTo_homeDialog"
-        app:destination="@id/homeDialogFragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     <action
         android:id="@+id/navTo_Menu"
         app:destination="@id/menuFragment"

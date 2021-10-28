@@ -20,10 +20,7 @@ class MenuFragment : Fragment() {
             shopData =
             MenuFragmentArgs.fromBundle(
                 requireArguments()
-            ).shopId,
-            orderId = MenuFragmentArgs.fromBundle(
-                requireArguments()
-            ).orderId
+            ).shopData,
         )
     }
 
@@ -36,6 +33,8 @@ class MenuFragment : Fragment() {
 
         binding = MenuFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+
         val adapter = MenuAdapter(viewModel)
 
         viewModel.productList.observe(viewLifecycleOwner, Observer {

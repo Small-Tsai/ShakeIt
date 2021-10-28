@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/bg_dialog_corner.xml" value="0.4748717948717949" />
         <entry key="app/src/main/res/drawable-v24/color_circle.xml" value="0.4546875" />
+        <entry key="app/src/main/res/drawable-v24/corner_radius2.xml" value="0.22864583333333333" />
         <entry key="app/src/main/res/drawable-v24/menu.xml" value="0.2625" />
         <entry key="app/src/main/res/drawable-v24/navigate.xml" value="0.2625" />
         <entry key="app/src/main/res/drawable-v24/ride.xml" value="0.14166666666666666" />
@@ -17,7 +18,9 @@
         <entry key="app/src/main/res/drawable/walking.xml" value="0.44769230769230767" />
         <entry key="app/src/main/res/drawable/walking_icon.xml" value="0.14907407407407408" />
         <entry key="app/src/main/res/drawable/whitecircle.xml" value="0.2625" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/comment.xml" value="0.4005208333333333" />
+        <entry key="app/src/main/res/layout/comment_fragment.xml" value="0.4005208333333333" />
         <entry key="app/src/main/res/layout/drinks_detail_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/drinks_select_row.xml" value="0.39323467230443976" />
         <entry key="app/src/main/res/layout/drinks_select_title.xml" value="0.25729166666666664" />
@@ -27,13 +30,13 @@
         <entry key="app/src/main/res/layout/favorite_shoptitle_row.xml" value="0.24791666666666667" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_favorite.xml" value="0.335" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.27976878612716766" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_item_list_dialog_list_dialog.xml" value="0.11197916666666667" />
         <entry key="app/src/main/res/layout/fragment_item_list_dialog_list_dialog_item.xml" value="0.12604166666666666" />
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/fragment_order.xml" value="0.375" />
-        <entry key="app/src/main/res/layout/home_dialog_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/home_dialog_fragment.xml" value="0.23333333333333334" />
         <entry key="app/src/main/res/layout/menu_fragment.xml" value="0.335" />
         <entry key="app/src/main/res/layout/menu_product_row.xml" value="0.4098731884057971" />
         <entry key="app/src/main/res/layout/menu_title_row.xml" value="0.4098731884057971" />

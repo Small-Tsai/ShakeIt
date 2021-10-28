@@ -32,6 +32,7 @@ class OrderDetailFragment : Fragment() {
 
         binding = OrderDetailFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val adapter = OrderDetailAdapter(viewModel)
         val friendsAdapter = OrderFriendsAdapter(viewModel)

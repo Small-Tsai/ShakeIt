@@ -10,7 +10,6 @@ import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ui.home.TAG
-import okhttp3.internal.wait
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -221,14 +220,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getProduct(shopId: String): Result<List<Product>> =
+    override suspend fun getProduct(shopName: String): Result<List<Product>> =
         suspendCoroutine { continuation ->
 
             val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
 
 
             branchProduct
-                .whereEqualTo("shopId", shopId)
+                .whereEqualTo("shop_Name", shopName)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

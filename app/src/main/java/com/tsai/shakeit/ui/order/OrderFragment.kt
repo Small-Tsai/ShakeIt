@@ -29,7 +29,6 @@ class OrderFragment : Fragment() {
     ): View {
 
         binding = FragmentOrderBinding.inflate(inflater, container, false)
-
         binding.lifecycleOwner = viewLifecycleOwner
 
         val adapter = OrderAdapter(viewModel)
@@ -45,6 +44,10 @@ class OrderFragment : Fragment() {
         viewModel.shopImg.observe(viewLifecycleOwner, Observer {
             it?.let { adapter.submitImg(it) }
             adapter.notifyDataSetChanged()
+        })
+
+        viewModel.shopId.observe(viewLifecycleOwner, Observer {
+            it?.let { findNavController().navigate(OrderFragmentDirections.navToSendComment(it)) }
         })
 
         binding.orderRev.adapter = adapter

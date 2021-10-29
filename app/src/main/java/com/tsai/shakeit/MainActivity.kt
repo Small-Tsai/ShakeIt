@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL
                 R.id.navigation_order -> CurrentFragmentType.ORDER
                 R.id.navigation_favorite -> CurrentFragmentType.FAVORITE
-                R.id.homeDialogFragment -> CurrentFragmentType.HOME_DIALOG
                 else -> viewModel.currentFragmentType.value
             }
         }

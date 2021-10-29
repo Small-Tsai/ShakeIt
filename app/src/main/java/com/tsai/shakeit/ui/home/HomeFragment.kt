@@ -14,10 +14,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.tabs.TabLayout
 import com.google.maps.android.ui.IconGenerator
 import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.MainViewModel
@@ -25,6 +27,7 @@ import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
@@ -91,9 +94,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             viewModel.mShopId?.let { it1 -> viewModel.checkHasFavorite(it1) }
         })
 
-        viewModel._selectedShop.observe(viewLifecycleOwner, Observer {
-            binding.shop = it
-            viewModel.checkHasFavorite(it.shop_Id)
+        viewModel._selectedShop.observe(viewLifecycleOwner, Observer {shop ->
+            binding.shop = shop
+            viewModel.checkHasFavorite(shop.shop_Id)
+
+            binding.apply {
+
+                viewpagerHome.let {
+                    tabsHome.setupWithViewPager(it)
+                    val adapter =CommentPagerAdapter(childFragmentManager , shopId = shop.shop_Id)
+                    it.adapter = adapter
+                    it.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabsHome))
+                }
+
+            }
+        })
+
+        viewModel.navToComment.observe(viewLifecycleOwner, Observer {
+            it?.let { findNavController().navigate(HomeFragmentDirections.navToComment()) }
         })
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
@@ -162,6 +180,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         var x = 0
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
+
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
 

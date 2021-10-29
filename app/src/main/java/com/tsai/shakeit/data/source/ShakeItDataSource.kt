@@ -11,6 +11,8 @@ interface ShakeItDataSource {
 
     suspend fun postProduct(product: Product): Result<Boolean>
 
+    suspend fun postComment(shopId: String , comment: Comment): Result<Boolean>
+
     suspend fun deleteFavorite(shopId: String): Result<Boolean>
 
     suspend fun deleteOrder(orderId: String): Result<Boolean>
@@ -22,6 +24,8 @@ interface ShakeItDataSource {
     suspend fun getProduct(shopId: String): Result<List<Product>>
 
     suspend fun updateOrderTotalPrice(totalPrice:Int , shopId: String):Result<Boolean>
+
+    suspend fun getComment(shopId: String): Result<List<Comment>>
 
     fun getFireBaseOrder(): MutableLiveData<List<Order>>
 

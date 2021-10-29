@@ -27,7 +27,7 @@
     <fragment
         android:id="@+id/menuFragment"
         android:name="com.tsai.shakeit.ui.menu.MenuFragment"
-        android:label="MenuFragment" >
+        android:label="MenuFragment">
         <argument
             android:name="shopData"
             app:argType="com.tsai.shakeit.data.Shop" />
@@ -45,10 +45,29 @@
     <fragment
         android:id="@+id/orderDetailFragment"
         android:name="com.tsai.shakeit.ui.orderdetail.OrderDetailFragment"
-        android:label="OrderDetailFragment" >
-        <argument android:name="order"
+        android:label="OrderDetailFragment">
+        <argument
+            android:name="order"
             app:argType="com.tsai.shakeit.data.Order" />
     </fragment>
+
+    <fragment
+        android:id="@+id/commentFragment"
+        android:name="com.tsai.shakeit.ui.home.comment.CommentFragment"
+        android:label="CommentFragment" />
+
+    <dialog
+        android:id="@+id/commentDialog"
+        android:name="com.tsai.shakeit.ui.order.sendcomment.CommentDialog"
+        android:label="CommentDialog" >
+        <argument
+            android:name="shopId"
+            app:argType="string" />
+    </dialog>
+
+    <action
+        android:id="@+id/navToComment"
+        app:destination="@id/commentFragment" />
 
     <action
         android:id="@+id/navTo_Menu"
@@ -86,5 +105,9 @@
         app:popExitAnim="@anim/nav_default_pop_exit_anim"
         app:popUpTo="@id/navigation_home"
         app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/navToSendComment"
+        app:destination="@id/commentDialog" />
 
 </navigation>

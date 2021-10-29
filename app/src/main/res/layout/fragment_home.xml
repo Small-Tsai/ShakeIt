@@ -102,6 +102,31 @@
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             tools:context=".ui.home.HomeDialogFragment">
 
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager_home"
+                android:layout_width="404dp"
+                android:layout_height="495dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tel_btn"
+                app:layout_constraintVertical_bias="0.0">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs_home"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@color/grey2"
+                    app:tabIndicatorColor="@color/grey2"
+                    app:tabSelectedTextColor="@color/black"
+                    app:tabTextColor="#888888">
+
+                </com.google.android.material.tabs.TabLayout>
+
+            </androidx.viewpager.widget.ViewPager>
+
             <View
                 android:layout_width="40dp"
                 android:layout_height="5dp"
@@ -150,7 +175,7 @@
                 app:layout_constraintStart_toEndOf="@+id/ratingBar" />
 
             <TextView
-                android:id="@+id/shopName"
+                android:id="@+id/commentUserName"
                 branch="@{shop.branch}"
                 shopName="@{shop.name}"
                 android:layout_width="wrap_content"
@@ -171,8 +196,8 @@
                 android:fontFamily="@font/noto_sans"
                 android:text="@{shop.address}"
                 android:textSize="14dp"
-                app:layout_constraintStart_toStartOf="@+id/shopName"
-                app:layout_constraintTop_toBottomOf="@+id/shopName" />
+                app:layout_constraintStart_toStartOf="@+id/commentUserName"
+                app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tel_btn"
@@ -224,7 +249,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="@{viewModel.isInserted? @drawable/heart : @drawable/emptyheart }"
-                app:layout_constraintBottom_toBottomOf="@+id/shopName"
+                app:layout_constraintBottom_toBottomOf="@+id/commentUserName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

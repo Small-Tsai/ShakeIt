@@ -7,11 +7,13 @@ import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ui.home.comment.CommentViewModel
 import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.HomeViewModel
 import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.order.OrderViewModel
+import com.tsai.shakeit.ui.order.sendcomment.CommentDialogViewModel
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
 
 
@@ -19,8 +21,9 @@ import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
 class ViewModelFactory(
     private val product: Product? = null,
     private val order: Order? = null,
-    private val shop:Shop? = null,
+    private val shop: Shop? = null,
     private val repository: ShakeItRepository,
+    private val shopId: String? = "",
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -45,7 +48,13 @@ class ViewModelFactory(
                     FavoriteViewModel(repository)
 
                 isAssignableFrom(MenuViewModel::class.java) ->
-                    shop?.let { MenuViewModel(it,repository) }
+                    shop?.let { MenuViewModel(it, repository) }
+
+                isAssignableFrom(CommentViewModel::class.java) ->
+                    CommentViewModel(repository , shopId)
+
+                isAssignableFrom(CommentDialogViewModel::class.java) ->
+                    CommentDialogViewModel(repository, shopId)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

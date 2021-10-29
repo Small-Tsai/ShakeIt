@@ -6,6 +6,7 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.cardview.widget.CardView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.viewModelScope
@@ -99,7 +100,7 @@ fun TextView.bindQty(qty: Int) {
 }
 
 @BindingAdapter("imageUrl")
-fun bindImage(imgView: ImageView, imgUrl: String?) {
+fun bindImage(imgView: ImageView, imgUrl: String? ) {
 
     if (!imgUrl.isNullOrEmpty()) {
         val gsReference = imgUrl.let { Firebase.storage.reference.child(it) }
@@ -115,6 +116,26 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             }
     }
 }
+
+@BindingAdapter("circleimageUrl")
+fun bindCircleImage(imgView: ImageView, imgUrl: String? ) {
+
+    if (!imgUrl.isNullOrEmpty()) {
+        val gsReference = imgUrl.let { Firebase.storage.reference.child(it) }
+        gsReference.downloadUrl.addOnSuccessListener { uri ->
+            Glide.with(imgView.context)
+                .load(uri)
+                .placeholder(R.drawable.placedrink)
+                .error(R.drawable.placedrink)
+                .circleCrop()
+                .into(imgView)
+        }
+            .addOnFailureListener {
+                Log.d(TAG, it.toString())
+            }
+    }
+}
+
 
 
 

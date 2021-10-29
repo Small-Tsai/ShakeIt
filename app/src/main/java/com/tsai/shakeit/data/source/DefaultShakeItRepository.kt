@@ -2,6 +2,7 @@ package com.tsai.shakeit.data.source
 
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.*
+import com.tsai.shakeit.data.Comment
 
 class DefaultShakeItRepository(
     private val shakeItDataSource: ShakeItDataSource
@@ -38,6 +39,10 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postProduct(product)
     }
 
+    override suspend fun postComment(shopId: String, comment: Comment) : Result<Boolean>{
+        return shakeItDataSource.postComment(shopId,comment)
+    }
+
     override suspend fun deleteFavorite(shopId: String): Result<Boolean> {
         return shakeItDataSource.deleteFavorite(shopId)
     }
@@ -58,8 +63,12 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getProduct(shopId)
     }
 
-    override suspend fun updateOrderTotalPrice(totalPrice: Int , shopId: String): Result<Boolean> {
-        return shakeItDataSource.updateOrderTotalPrice(totalPrice , shopId)
+    override suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean> {
+        return shakeItDataSource.updateOrderTotalPrice(totalPrice, shopId)
+    }
+
+    override suspend fun getComment(shopId: String): Result<List<Comment>> {
+        return shakeItDataSource.getComment(shopId)
     }
 
 }

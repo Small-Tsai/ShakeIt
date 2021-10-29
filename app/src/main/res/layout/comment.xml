@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="comment"
+            type="com.tsai.shakeit.data.Comment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/cardView4"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/gery"
-            android:foreground="@drawable/personicon"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="10dp"
+            android:scaleType="centerCrop"
+            android:background="@color/gery"
+            app:shapeAppearanceOverlay="@style/circle"
+            circleimageUrl="@{comment.user.user_Image}"
+            android:src="@drawable/personicon"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/shopName"
+            android:id="@+id/commentUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Small Tsai"
+            android:text="@{comment.user.user_Name}"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/cardView4"
             app:layout_constraintTop_toTopOf="@+id/cardView4" />
@@ -43,11 +44,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:progressTint="#FFEB3B"
-            android:rating="4.1"
+            android:rating="@{comment.rating}"
             android:secondaryProgressTint="#FFEB3B"
             app:layout_constraintBottom_toBottomOf="@+id/cardView4"
-            app:layout_constraintStart_toStartOf="@+id/shopName"
-            app:layout_constraintTop_toBottomOf="@+id/shopName" />
+            app:layout_constraintStart_toStartOf="@+id/commentUserName"
+            app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
 
         <View
             android:id="@+id/separation"
@@ -66,7 +67,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:singleLine="false"
-            android:text="每天都要喝爆"
+            android:text="@{comment.comment}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/cardView4"
             app:layout_constraintTop_toBottomOf="@+id/cardView4" />

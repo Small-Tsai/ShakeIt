@@ -19,6 +19,7 @@ private const val FAVORITE = "favorite"
 private const val SHOP = "shop"
 private const val ORDER_PRODUCT = "orderProduct"
 private const val PRODUCT = "product"
+private const val COMMENT = "Comment"
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
 
@@ -111,6 +112,32 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
 
 
+        }
+
+    override suspend fun postComment(shopId: String, comment: Comment): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val shopCollection = FirebaseFirestore.getInstance().collection(SHOP)
+            val document = shopCollection.document(shopId).collection(COMMENT).document()
+
+            document
+                .set(comment)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(ShakeItApplication.instance, "發佈成功！", Toast.LENGTH_SHORT)
+                            .show()
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Log.w(
+                                TAG,
+                                "[${this::class.simpleName}] Error post comment. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("post comment Failed"))
+                    }
+                }
         }
 
     override suspend fun deleteFavorite(shopId: String): Result<Boolean> =
@@ -247,14 +274,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun updateOrderTotalPrice(totalPrice: Int , shopId: String): Result<Boolean> =
+    override suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean> =
         suspendCoroutine { continuation ->
 
             val order = FirebaseFirestore.getInstance().collection(ORDERS)
             val document = order.document(shopId)
 
             document
-                .update("order_Price" , totalPrice)
+                .update("order_Price", totalPrice)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         continuation.resume(Result.Success(true))
@@ -267,6 +294,31 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                             return@addOnCompleteListener
                         }
                         continuation.resume(Result.Fail("update Failed"))
+                    }
+                }
+        }
+
+    override suspend fun getComment(shopId: String): Result<List<Comment>> =
+        suspendCoroutine { continuation ->
+
+            val comment = FirebaseFirestore.getInstance().collection(SHOP)
+            val document = comment.document(shopId).collection(COMMENT)
+
+            document
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val commentList = task.result.toObjects(Comment::class.java)
+                        continuation.resume(Result.Success(commentList))
+                    } else {
+                        task.exception?.let {
+                            Log.w(
+                                TAG,
+                                "[${this::class.simpleName}] Error getComment documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("getComment Failed"))
                     }
                 }
         }

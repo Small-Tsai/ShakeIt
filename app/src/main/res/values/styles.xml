@@ -27,7 +27,7 @@
 
     <style name="circle" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">20dp</item>
+        <item name="cornerSize">25dp</item>
     </style>
 
     <style name="homedialog_icon">
@@ -43,9 +43,12 @@
     <style name="MyBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/MYBottomSheetStyle</item>
     </style>
-
     <style name="MYBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@color/translucent_40</item>
+    </style>
+
+    <style name="CommentDialog">
+        <item name="android:windowBackground">@color/transparent</item>
     </style>
 
 </resources>

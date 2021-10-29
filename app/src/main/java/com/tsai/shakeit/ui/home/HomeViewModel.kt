@@ -60,23 +60,8 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             }
         }
         getMyFavorite()
-//        order = repository.getShopOrder(shopData!!.shop_Id)
-
     }
 
-
-//    fun getOrderData(shopId: String) {
-//        order = repository.getShopOrder(shopId)
-//    }
-
-//        var orderId = ""
-//    fun checkHasOrder(order: List<Order>) {
-//        Logger.d("order = $order")
-//        if (!order.isNullOrEmpty()) {
-//            val currentShopOrder = order.first()
-//                orderId = currentShopOrder.order_Id
-//        }
-//    }
 
 
     // use to check has favorite or not
@@ -86,16 +71,16 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    var mShopId:String? = null
-    fun checkHasFavorite(shopId:String) {
-            _isInserted.value = _Favorite.value?.map { it.shop_Id }?.contains(mShopId)
+    var mShopId: String? = null
+    fun checkHasFavorite(shopId: String) {
+        _isInserted.value = _Favorite.value?.map { it.shop_Id }?.contains(mShopId)
     }
 
 
     fun deleteFavorite(shopId: String) {
 
         viewModelScope.launch {
-            when(val result = repository.deleteFavorite(shopId)){
+            when (val result = repository.deleteFavorite(shopId)) {
                 is Result.Success -> {
                     checkHasFavorite(shopId)
                 }
@@ -138,10 +123,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         Log.d(TAG, "getSnippet $markerSnippet")
         _snippet.value = markerSnippet
         _selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
-    }
-
-    fun navDone() {
-        _snippet.value = null
     }
 
     fun displayOrNot() {
@@ -210,6 +191,15 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private fun setVisibility(b: Boolean) {
         if (b) binding?.rideFab?.visibility = View.VISIBLE
         else binding?.rideFab?.visibility = View.GONE
+    }
+
+    private val _navToComment = MutableLiveData<Boolean?>()
+    val navToComment: LiveData<Boolean?>
+        get() = _navToComment
+
+    fun navToComment() {
+        _navToComment.value = true
+        _navToComment.value = null
     }
 
 }

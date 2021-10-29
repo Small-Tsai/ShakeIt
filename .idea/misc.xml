@@ -20,7 +20,7 @@
         <entry key="app/src/main/res/drawable/whitecircle.xml" value="0.2625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/comment.xml" value="0.4005208333333333" />
-        <entry key="app/src/main/res/layout/comment_fragment.xml" value="0.4005208333333333" />
+        <entry key="app/src/main/res/layout/comment_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/drinks_detail_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/drinks_select_row.xml" value="0.39323467230443976" />
         <entry key="app/src/main/res/layout/drinks_select_title.xml" value="0.25729166666666664" />

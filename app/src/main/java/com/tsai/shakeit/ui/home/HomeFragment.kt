@@ -32,6 +32,7 @@ import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
 import kotlin.properties.Delegates
+import kotlin.random.Random
 
 
 const val TAG = "tsai"
@@ -51,7 +52,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var lat by Delegates.notNull<Double>()
     private var lon by Delegates.notNull<Double>()
     private var locationPermissionGranted = false
-
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
 
     override fun onCreateView(
@@ -102,16 +102,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 viewpagerHome.let {
                     tabsHome.setupWithViewPager(it)
-                    val adapter =CommentPagerAdapter(childFragmentManager , shopId = shop.shop_Id)
-                    it.adapter = adapter
+                    it.adapter = CommentPagerAdapter(childFragmentManager , shopId = shop.shop_Id)
                     it.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabsHome))
                 }
-
             }
-        })
-
-        viewModel.navToComment.observe(viewLifecycleOwner, Observer {
-            it?.let { findNavController().navigate(HomeFragmentDirections.navToComment()) }
         })
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
@@ -132,12 +126,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 )
             }
         })
-
         askPermission()
         setBottomSheetBehavior()
         setMyLocationButtonPosition()
     }
-
 
     private fun setMyLocationButtonPosition() {
 
@@ -155,9 +147,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun setBottomSheetBehavior() {
 
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
         val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
+        mainViewModel.commentSize.observe(viewLifecycleOwner, Observer {
+            binding.commentSize.text = "($it)"
+        })
+
+        mainViewModel.ratingAvg.observe(viewLifecycleOwner, Observer {
+            if(it.isNaN()){
+                binding.avgRating.text = "0"
+                binding.ratingBar.rating = it
+            }else{
+                binding.avgRating.text = "%.1f".format(it)
+                binding.ratingBar.rating = it
+            }
+        })
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         mMap.setOnMarkerClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -190,7 +196,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
                     }
-
                 }
             }
 

@@ -47,8 +47,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     val timeDisplay = MutableLiveData<Boolean>()
 
-//    var order = MutableLiveData<List<Order>>()
-
+    val _selectedShop = MutableLiveData<Shop>()
 
     init {
         timeDisplay.value = false
@@ -62,8 +61,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         getMyFavorite()
     }
 
-
-
     // use to check has favorite or not
     fun getMyFavorite() {
         viewModelScope.launch {
@@ -76,7 +73,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _isInserted.value = _Favorite.value?.map { it.shop_Id }?.contains(mShopId)
     }
 
-
     fun deleteFavorite(shopId: String) {
 
         viewModelScope.launch {
@@ -88,9 +84,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-
     fun postMyFavorite(shop: Shop) {
-        Logger.d("postshop = $shop")
 
         viewModelScope.launch {
             when (val result =
@@ -117,7 +111,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    val _selectedShop = MutableLiveData<Shop>()
+
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
         Log.d(TAG, "getSnippet $markerSnippet")
@@ -191,15 +185,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private fun setVisibility(b: Boolean) {
         if (b) binding?.rideFab?.visibility = View.VISIBLE
         else binding?.rideFab?.visibility = View.GONE
-    }
-
-    private val _navToComment = MutableLiveData<Boolean?>()
-    val navToComment: LiveData<Boolean?>
-        get() = _navToComment
-
-    fun navToComment() {
-        _navToComment.value = true
-        _navToComment.value = null
     }
 
 }

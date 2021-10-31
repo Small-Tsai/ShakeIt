@@ -49,6 +49,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToAddShop: LiveData<Boolean?>
         get() = _navToAddShop
 
+    private val _navToSetting = MutableLiveData<Boolean?>()
+    val navToSetting: LiveData<Boolean?>
+        get() = _navToSetting
+
     val timeDisplay = MutableLiveData<Boolean>()
 
     val _selectedShop = MutableLiveData<Shop>()
@@ -63,6 +67,11 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             }
         }
         getMyFavorite()
+    }
+
+    fun navToSetting(){
+        _navToSetting.value = true
+        _navToSetting.value = null
     }
 
     // use to check has favorite or not
@@ -115,7 +124,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
         Log.d(TAG, "getSnippet $markerSnippet")
@@ -146,7 +154,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     var i = 0
-
     @SuppressLint("UseCompatLoadingForDrawables")
     fun isRide() {
 

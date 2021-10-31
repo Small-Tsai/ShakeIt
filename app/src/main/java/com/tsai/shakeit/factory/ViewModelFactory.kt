@@ -16,6 +16,7 @@ import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.order.OrderViewModel
 import com.tsai.shakeit.ui.order.sendcomment.CommentDialogViewModel
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
+import com.tsai.shakeit.ui.setting.SettingViewModel
 
 
 @Suppress("UNCHECKED_CAST")
@@ -25,6 +26,7 @@ class ViewModelFactory(
     private val shop: Shop? = null,
     private val repository: ShakeItRepository,
     private val shopId: String? = "",
+    private val shopList: Array<Shop> = arrayOf(),
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -59,6 +61,9 @@ class ViewModelFactory(
 
                 isAssignableFrom(AddShopViewModel::class.java) ->
                     AddShopViewModel(repository)
+
+                isAssignableFrom(SettingViewModel::class.java) ->
+                    SettingViewModel(repository, shopList)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

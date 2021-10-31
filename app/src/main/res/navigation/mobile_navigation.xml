@@ -61,6 +61,15 @@
         android:name="com.tsai.shakeit.ui.addshop.AddShopFragment"
         android:label="AddShopFragment" />
 
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.tsai.shakeit.ui.setting.SettingFragment"
+        android:label="SettingFragment" >
+        <argument
+            android:name="shopInfo"
+            app:argType="com.tsai.shakeit.data.Shop[]" />
+    </fragment>
+
     <dialog
         android:id="@+id/commentDialog"
         android:name="com.tsai.shakeit.ui.order.sendcomment.CommentDialog"
@@ -121,5 +130,9 @@
         app:enterAnim="@anim/bottom_to_top"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popExitAnim="@anim/top_to_bottom" />
+
+    <action
+        android:id="@+id/navToSetting"
+        app:destination="@id/settingFragment" />
 
 </navigation>

@@ -2,14 +2,12 @@ package com.tsai.shakeit
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tsai.shakeit.databinding.ActivityMainBinding
@@ -46,6 +44,12 @@ class MainActivity : AppCompatActivity() {
                 Logger.i("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
             }
         )
+
+        viewModel.shopFilterList.observe(this, Observer {
+            viewModel.updateFilterShopList(it)
+        })
+
+
 
 //        val appBarConfiguration = AppBarConfiguration(
 //            setOf(

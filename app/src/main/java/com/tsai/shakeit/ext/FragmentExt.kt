@@ -17,10 +17,11 @@ fun Fragment.getVmFactory(
     product: Product? = null,
     order: Order? = null,
     shopData: Shop? = null,
-    shopId:String? = null
+    shopId:String? = null,
+    shopList:Array<Shop> = arrayOf()
 ): ViewModelFactory {
     val repository = (requireContext().applicationContext as ShakeItApplication).shakeItRepository
-    return ViewModelFactory(product, order, shopData, repository , shopId)
+    return ViewModelFactory(product, order, shopData, repository , shopId , shopList)
 }
 
 

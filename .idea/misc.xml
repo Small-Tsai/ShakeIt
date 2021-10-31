@@ -18,12 +18,13 @@
         <entry key="app/src/main/res/drawable/ic_baseline_access_time_24.xml" value="0.30666666666666664" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.2740740740740741" />
         <entry key="app/src/main/res/drawable/ic_baseline_remove_24.xml" value="0.2734375" />
+        <entry key="app/src/main/res/drawable/one_side_border.xml" value="0.2462962962962963" />
         <entry key="app/src/main/res/drawable/sendcomment_background.xml" value="0.42777777777777776" />
         <entry key="app/src/main/res/drawable/walking.xml" value="0.44769230769230767" />
         <entry key="app/src/main/res/drawable/walking_icon.xml" value="0.14907407407407408" />
         <entry key="app/src/main/res/drawable/whitecircle.xml" value="0.2625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/add_shop_fragment.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/add_shop_fragment.xml" value="0.335" />
         <entry key="app/src/main/res/layout/comment.xml" value="0.4005208333333333" />
         <entry key="app/src/main/res/layout/comment_dialog_fragment.xml" value="0.17255434782608695" />
         <entry key="app/src/main/res/layout/comment_fragment.xml" value="0.25" />
@@ -37,6 +38,8 @@
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_favorite.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/fragment_item.xml" value="0.15070921985815602" />
+        <entry key="app/src/main/res/layout/fragment_item_list.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_item_list_dialog_list_dialog.xml" value="0.11197916666666667" />
         <entry key="app/src/main/res/layout/fragment_item_list_dialog_list_dialog_item.xml" value="0.12604166666666666" />
         <entry key="app/src/main/res/layout/fragment_maps.xml" value="0.2953125" />
@@ -50,6 +53,8 @@
         <entry key="app/src/main/res/layout/order_detail_row.xml" value="0.375" />
         <entry key="app/src/main/res/layout/order_friends_row.xml" value="0.375" />
         <entry key="app/src/main/res/layout/order_row.xml" value="0.21715817694369974" />
+        <entry key="app/src/main/res/layout/setting_fragment.xml" value="0.335" />
+        <entry key="app/src/main/res/layout/setting_item_row.xml" value="0.335" />
         <entry key="app/src/main/res/layout/shop_date_row.xml" value="0.335" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.28229166666666666" />
       </map>

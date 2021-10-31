@@ -7,14 +7,16 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
-import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.home.TAG
+import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
+import com.tsai.shakeit.ui.setting.SettingViewModel
 
 @BindingAdapter("shopName", "branch")
 fun TextView.bindShopName(name: String?, branch: String?) {
@@ -125,6 +127,15 @@ fun bindCircleImage(imgView: ImageView, imgUrl: String? ) {
                 Log.d(TAG, it.toString())
             }
     }
+}
+
+@BindingAdapter("viewModel","shopName")
+fun SwitchMaterial.bindSwitch(viewModel: SettingViewModel, shopName:String){
+
+     isChecked = viewModel.dbFilterShopList.value?.let {
+         it.contains(shopName)
+     } == true
+
 }
 
 

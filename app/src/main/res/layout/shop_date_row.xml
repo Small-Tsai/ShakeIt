@@ -24,10 +24,13 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/open_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:focusableInTouchMode="false"
+            android:imeOptions="actionNext"
+            android:nextFocusForward="@id/close_time"
             android:hint="開始營業時間"
             android:gravity="center"
             android:inputType="datetime"
@@ -36,17 +39,19 @@
             app:layout_constraintTop_toTopOf="@+id/textView10" />
 
         <EditText
+            android:id="@+id/close_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:focusableInTouchMode="false"
             android:hint="結束營業時間"
             android:gravity="center"
             android:inputType="datetime"
-            app:layout_constraintBottom_toBottomOf="@+id/editText2"
+            app:layout_constraintBottom_toBottomOf="@+id/open_time"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/editText2"
-            app:layout_constraintTop_toTopOf="@+id/editText2" />
+            app:layout_constraintStart_toEndOf="@+id/open_time"
+            app:layout_constraintTop_toTopOf="@+id/open_time" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

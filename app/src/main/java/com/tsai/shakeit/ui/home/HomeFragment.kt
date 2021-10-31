@@ -68,6 +68,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+
         viewModel.isWalkOrRide.observe(viewLifecycleOwner, {
             when (it) {
                 true -> viewModel.onAddButtonClicked(it)
@@ -106,6 +107,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.navToAddShop.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigate(HomeFragmentDirections.navToAddShop()) }
+        })
+
+        viewModel.navToSetting.observe(viewLifecycleOwner, {
+            it?.let { findNavController().navigate(HomeFragmentDirections.navToSetting(viewModel.shopLiveData.value!!.toTypedArray())) }
         })
 
         binding.addShopFab.isExtended = false
@@ -148,7 +153,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
             addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
             setMargins(0, 0, 30, 280)
-
         }
     }
 

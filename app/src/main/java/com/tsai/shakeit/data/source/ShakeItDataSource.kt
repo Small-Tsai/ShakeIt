@@ -27,6 +27,10 @@ interface ShakeItDataSource {
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
 
+    suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
+
+    fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
+
     fun getFireBaseOrder(): MutableLiveData<List<Order>>
 
     fun getShopOrder(shopId: String): MutableLiveData<List<Order>>

@@ -33,10 +33,10 @@
                 class="com.google.android.libraries.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:mapId="@string/dark_map_id"
+                app:mapId="@string/map_id"
                 tools:context=".MapsActivity"
                 tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
+                tools:layout_editor_absoluteY="-36dp" />
 
             <EditText
                 android:id="@+id/editText"
@@ -49,7 +49,7 @@
                 android:inputType="number"
                 android:text="10"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
+                app:layout_constraintTop_toBottomOf="@+id/search_cv" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/walk_fab"
@@ -57,27 +57,45 @@
                 android:layout_height="42dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
+                android:backgroundTint="@color/white"
                 android:foreground="@drawable/walking_icon"
                 android:onClick="@{()-> viewModel.isWalk()}"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
+                app:layout_constraintTop_toBottomOf="@+id/search_cv" />
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/idSearchView"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/search_cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="24dp"
-                android:background="@drawable/corner_radius2"
-                android:backgroundTint="@color/white"
-                android:elevation="5dp"
-                app:iconifiedByDefault="false"
-                app:layout_constraintEnd_toStartOf="@+id/map"
-                app:layout_constraintStart_toEndOf="@+id/map"
-                app:layout_constraintTop_toTopOf="parent"
-                app:queryHint="Search Here" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/idSearchView"
+                    android:layout_width="300dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="10dp"
+                    app:iconifiedByDefault="false"
+                    app:queryHint="Search Here" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="315dp"
+                    android:onClick="@{()-> viewModel.navToSetting()}"
+                    android:layout_marginTop="14dp"
+                    android:backgroundTint="@color/white"
+                    android:foreground="@drawable/setting_lines"
+                    app:layout_constraintEnd_toEndOf="@+id/idSearchView" />
+
+
+            </androidx.cardview.widget.CardView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/ride_fab"
@@ -85,6 +103,7 @@
                 android:layout_height="42dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
+                android:backgroundTint="@color/white"
                 android:foreground="@drawable/ride"
                 android:onClick="@{() -> viewModel.isRide()}"
                 android:visibility="gone"
@@ -97,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginBottom="24dp"
+                android:backgroundTint="@color/white"
                 android:elevation="5dp"
                 android:fontFamily="@font/roboto"
                 android:gravity="center_vertical"

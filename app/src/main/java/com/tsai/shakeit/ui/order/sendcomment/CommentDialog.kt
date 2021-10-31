@@ -1,6 +1,7 @@
 package com.tsai.shakeit.ui.order.sendcomment
 
 import android.annotation.SuppressLint
+import android.app.TimePickerDialog
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
+import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import androidx.appcompat.app.AppCompatDialogFragment
@@ -20,6 +22,7 @@ import com.tsai.shakeit.R
 import com.tsai.shakeit.databinding.CommentDialogFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
+import java.util.*
 
 class CommentDialog : AppCompatDialogFragment() {
 
@@ -55,43 +58,43 @@ class CommentDialog : AppCompatDialogFragment() {
             viewModel.send(it)
         })
 
-        setRatingBar()
+    setRatingBar()
 
-        return binding.root
-    }
+    return binding.root
+}
 
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun setRatingBar() {
-        binding.sendRatingBar.onRatingBarChangeListener =
-            RatingBar.OnRatingBarChangeListener { p0, p1, p2 ->
-                Toast.makeText(
-                    context,
-                    "Given rating is: $p1",
-                    Toast.LENGTH_SHORT
-                ).show()
+@SuppressLint("ClickableViewAccessibility")
+private fun setRatingBar() {
+    binding.sendRatingBar.onRatingBarChangeListener =
+        RatingBar.OnRatingBarChangeListener { p0, p1, p2 ->
+            Toast.makeText(
+                context,
+                "Given rating is: $p1",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    binding.sendRatingBar.let {
+        it.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                val touchPositionX = event.x
+                val width: Int = it.getWidth()
+                val starsf = touchPositionX / width * 5.0f
+                val stars = starsf.toInt() + 1
+                it.setRating(stars.toFloat())
+                v.isPressed = false
             }
-
-        binding.sendRatingBar.let {
-            it.setOnTouchListener { v, event ->
-                if (event.action == MotionEvent.ACTION_UP) {
-                    val touchPositionX = event.x
-                    val width: Int = it.getWidth()
-                    val starsf = touchPositionX / width * 5.0f
-                    val stars = starsf.toInt() + 1
-                    it.setRating(stars.toFloat())
-                    v.isPressed = false
-                }
-                if (event.action == MotionEvent.ACTION_DOWN) {
-                    v.isPressed = true
-                }
-                if (event.action == MotionEvent.ACTION_CANCEL) {
-                    v.isPressed = false
-                }
-                true
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                v.isPressed = true
             }
+            if (event.action == MotionEvent.ACTION_CANCEL) {
+                v.isPressed = false
+            }
+            true
         }
     }
+}
 
 
 }

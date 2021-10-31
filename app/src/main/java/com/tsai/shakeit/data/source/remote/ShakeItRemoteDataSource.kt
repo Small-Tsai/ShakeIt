@@ -3,6 +3,7 @@ package com.tsai.shakeit.data.source.remote
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.ktx.*
@@ -10,6 +11,8 @@ import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ui.home.TAG
+import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.User
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -20,6 +23,8 @@ private const val SHOP = "shop"
 private const val ORDER_PRODUCT = "orderProduct"
 private const val PRODUCT = "product"
 private const val COMMENT = "Comment"
+private const val FILTER_SHOP = "filterShop"
+
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
 
@@ -305,7 +310,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             val document = comment.document(shopId).collection(COMMENT)
 
             document
-                .orderBy(KEY_CREATED_TIME,Query.Direction.DESCENDING)
+                .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -323,6 +328,55 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
                 }
         }
+
+    override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val filterShop = FirebaseFirestore.getInstance().collection(FILTER_SHOP)
+            val document = filterShop.document(User.userId)
+
+            document
+                .set(shopList)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Log.w(
+                                TAG,
+                                "Error updateFilterShop documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("getComment Failed"))
+                    }
+                }
+        }
+
+    override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
+
+        val liveData = MutableLiveData<List<String>>()
+
+        FirebaseFirestore.getInstance()
+            .collection(FILTER_SHOP)
+            .document(userId)
+            .addSnapshotListener { snapshot, e ->
+
+                var list = mutableListOf<String>()
+
+                Log.d(TAG, "Current data: ${snapshot?.data?.values}")
+
+                snapshot?.let {
+                    val data = snapshot.toObject(FilterShop::class.java)
+                  data?.filter_Shop?.forEach {
+                      list.add(it)
+                  }
+                }
+                liveData.value = list
+            }
+
+        return liveData
+    }
 
     override fun getFireBaseOrder(): MutableLiveData<List<Order>> {
 

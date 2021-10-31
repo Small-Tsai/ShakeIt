@@ -11,7 +11,7 @@ interface ShakeItRepository {
 
     suspend fun postProduct(product: Product): Result<Boolean>
 
-    suspend fun postComment(shopId: String , comment: Comment): Result<Boolean>
+    suspend fun postComment(shopId: String, comment: Comment): Result<Boolean>
 
     suspend fun deleteFavorite(shopId: String): Result<Boolean>
 
@@ -19,13 +19,17 @@ interface ShakeItRepository {
 
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
-    suspend fun getAllShop():Result<List<Shop>>
+    suspend fun getAllShop(): Result<List<Shop>>
 
     suspend fun getProduct(shopId: String): Result<List<Product>>
 
-    suspend fun updateOrderTotalPrice(totalPrice:Int , shopId: String):Result<Boolean>
+    suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean>
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
+
+    suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
+
+    fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 
     fun getFireBaseOrder(): MutableLiveData<List<Order>>
 
@@ -34,8 +38,6 @@ interface ShakeItRepository {
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
     fun getFavorite(): MutableLiveData<List<Shop>>
-
-
 
 
 }

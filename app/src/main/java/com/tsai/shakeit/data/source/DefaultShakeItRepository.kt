@@ -71,4 +71,12 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getComment(shopId)
     }
 
+    override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> {
+        return shakeItDataSource.updateFilteredShop(shopList)
+    }
+
+    override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
+        return shakeItDataSource.getFilteredShopList(userId)
+    }
+
 }

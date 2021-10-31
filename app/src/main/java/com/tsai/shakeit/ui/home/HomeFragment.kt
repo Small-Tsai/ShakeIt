@@ -13,6 +13,7 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
@@ -113,31 +114,38 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { findNavController().navigate(HomeFragmentDirections.navToSetting(viewModel.shopLiveData.value!!.toTypedArray())) }
         })
 
-        binding.addShopFab.isExtended = false
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
-        return binding.root
-    }
-
-    override fun onMapReady(googleMap: GoogleMap) {
-
-        mMap = googleMap
-
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
-            shopData.forEach { shop ->
-                val newPosition = LatLng(shop.lat, shop.lon)
+
+            val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
+            mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
+
+                mMap.clear()
+                shopData.forEach { shop ->
+                    if (!dbList.contains(shop.name)) {
+                        val newPosition = LatLng(shop.lat, shop.lon)
 //                val iconGen = IconGenerator(binding.root.context)
-                mMap.addMarker(
-                    MarkerOptions().position(newPosition).snippet(shop.shop_Id)
+                        mMap.addMarker(
+                            MarkerOptions().position(newPosition).snippet(shop.shop_Id)
 //                        .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon(shop.name)))
-                )
-            }
+                        )
+                    }
+                }
+            })
+
             binding.addShopFab.extend()
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.addShopFab.shrink()
             }, 1500)
         })
 
+        binding.addShopFab.isExtended = false
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
+        return binding.root
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
         askPermission()
         setBottomSheetBehavior()
         setMyLocationButtonPosition()

@@ -11,6 +11,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
@@ -129,12 +130,10 @@ fun bindCircleImage(imgView: ImageView, imgUrl: String? ) {
     }
 }
 
-@BindingAdapter("viewModel","shopName")
-fun SwitchMaterial.bindSwitch(viewModel: SettingViewModel, shopName:String){
+@BindingAdapter("mainViewModel","shopName")
+fun SwitchMaterial.bindSwitch(mainViewModel: MainViewModel, shopName:String){
 
-     isChecked = viewModel.dbFilterShopList.value?.let {
-         it.contains(shopName)
-     } == true
+     isChecked = mainViewModel.dbFilterShopList.value?.contains(shopName) != true
 
 }
 

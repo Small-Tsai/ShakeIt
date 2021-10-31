@@ -23,7 +23,6 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
     fun filterShop(shopName: String, mainViewModel: MainViewModel) {
         Logger.d(filteredList.toString())
         if (!filteredList.contains(shopName)) {
-
             filteredList.add(shopName)
             mainViewModel.shopFilterList.value = filteredList
 
@@ -33,9 +32,6 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
         }
     }
 
-    var dbFilterShopList = MutableLiveData<List<String>>()
-    fun getFilterList() {
-        dbFilterShopList = repository.getFilteredShopList(User.userId)
-    }
+
 
 }

@@ -2,6 +2,7 @@ package com.tsai.shakeit
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -35,6 +36,12 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
+        viewModel.getFilterList()
+
+        viewModel.dbFilterShopList.observe(this,{
+            Logger.d("it =$it")
+        })
 
         viewModel.currentFragmentType.observe(
             this,

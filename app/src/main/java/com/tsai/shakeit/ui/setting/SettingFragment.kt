@@ -40,9 +40,7 @@ class SettingFragment : Fragment() {
             adapter.submitList(it)
         })
 
-        viewModel.getFilterList()
-
-        viewModel.dbFilterShopList.observe(viewLifecycleOwner, {
+        mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, {
             Logger.d("$it")
            viewModel.filteredList = it as MutableList<String>
         })

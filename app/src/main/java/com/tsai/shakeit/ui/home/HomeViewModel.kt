@@ -69,6 +69,8 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         getMyFavorite()
     }
 
+
+
     fun navToSetting(){
         _navToSetting.value = true
         _navToSetting.value = null

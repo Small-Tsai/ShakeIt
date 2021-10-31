@@ -30,6 +30,11 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
+    var dbFilterShopList = MutableLiveData<List<String>>()
+    fun getFilterList() {
+        dbFilterShopList = repository.getFilteredShopList(User.userId)
+    }
+
 
 
 }

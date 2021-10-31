@@ -32,7 +32,7 @@
             android:onCheckedChanged="@{()->viewModel.filterShop(shopName,mainViewModel)}"
             android:paddingHorizontal="24dp"
             android:text="@{shopName}"
-            viewModel="@{viewModel}"
+            mainViewModel="@{mainViewModel}"
             shopName="@{shopName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -17,436 +17,459 @@
 
     </data>
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/homeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:context=".ui.home.HomeFragment">
 
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <fragment
+                android:id="@+id/map"
+                class="com.google.android.libraries.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".ui.home.HomeFragment">
+                app:mapId="@string/dark_map_id"
+                tools:context=".MapsActivity"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="0dp" />
 
-                <fragment
-                    android:id="@+id/map"
-                    class="com.google.android.libraries.maps.SupportMapFragment"
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="48dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/square_button_black"
+                android:gravity="center"
+                android:inputType="number"
+                android:text="10"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/walk_fab"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:foreground="@drawable/walking_icon"
+                android:onClick="@{()-> viewModel.isWalk()}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/idSearchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/corner_radius2"
+                android:backgroundTint="@color/white"
+                android:elevation="5dp"
+                app:iconifiedByDefault="false"
+                app:layout_constraintEnd_toStartOf="@+id/map"
+                app:layout_constraintStart_toEndOf="@+id/map"
+                app:layout_constraintTop_toTopOf="parent"
+                app:queryHint="Search Here" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/ride_fab"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:foreground="@drawable/ride"
+                android:onClick="@{() -> viewModel.isRide()}"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/walk_fab" />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/addShop_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="24dp"
+                android:elevation="5dp"
+                android:fontFamily="@font/roboto"
+                android:gravity="center_vertical"
+                android:onClick="@{()->viewModel.navToAddShop()}"
+                android:padding="10dp"
+                android:text="新增商家"
+                android:textSize="16sp"
+                app:icon="@drawable/store"
+                app:iconGravity="textStart"
+                app:iconPadding="3dp"
+                app:iconSize="26dp"
+                app:layout_constraintBottom_toBottomOf="@+id/map"
+                app:layout_constraintStart_toStartOf="@+id/map"
+                app:strokeWidth="1dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_dialog_corner"
+            android:elevation="10dp"
+            android:visibility="visible"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="250dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            tools:context=".ui.home.HomeDialogFragment">
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewpager_home"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tel_btn"
+                app:layout_constraintVertical_bias="0.0">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tabs_home"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:mapId="@string/dark_map_id"
-                    tools:context=".MapsActivity"
-                    tools:layout_editor_absoluteX="0dp"
-                    tools:layout_editor_absoluteY="0dp" />
+                    android:layout_height="48dp"
+                    android:background="@color/grey2"
+                    app:tabIndicatorColor="@color/grey2"
+                    app:tabSelectedTextColor="@color/black"
+                    app:tabTextColor="#888888">
 
-                <EditText
-                    android:id="@+id/editText"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="48dp"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/square_button_black"
-                    android:gravity="center"
-                    android:inputType="number"
-                    android:text="10"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
+                </com.google.android.material.tabs.TabLayout>
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/walk_fab"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
-                    android:foreground="@drawable/walking_icon"
-                    android:onClick="@{()-> viewModel.isWalk()}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/idSearchView" />
+            </androidx.viewpager.widget.ViewPager>
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/idSearchView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@drawable/corner_radius2"
-                    android:backgroundTint="@color/white"
-                    android:elevation="5dp"
-                    app:iconifiedByDefault="false"
-                    app:layout_constraintEnd_toStartOf="@+id/map"
-                    app:layout_constraintStart_toEndOf="@+id/map"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:queryHint="Search Here" />
+            <View
+                android:layout_width="40dp"
+                android:layout_height="5dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/corner_radius"
+                android:backgroundTint="@color/gery"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/ride_fab"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="12dp"
-                    android:foreground="@drawable/ride"
-                    android:onClick="@{() -> viewModel.isRide()}"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/walk_fab" />
+            </View>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/avgRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/roboto"
+                android:text="4.1"
+                android:textSize="13sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/shopAddress" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:progressTint="#FFEB3B"
+                android:rating="4.1"
+                android:secondaryProgressTint="#FFEB3B"
+                app:layout_constraintBottom_toBottomOf="@+id/avgRating"
+                app:layout_constraintStart_toEndOf="@+id/avgRating"
+                app:layout_constraintTop_toTopOf="@+id/avgRating" />
+
+            <TextView
+                android:id="@+id/commentSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text=""
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
+                app:layout_constraintStart_toEndOf="@+id/ratingBar" />
+
+            <TextView
+                android:id="@+id/commentUserName"
+                branch="@{shop.branch}"
+                shopName="@{shop.name}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/shopAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/noto_sans"
+                android:text="@{shop.address}"
+                android:textSize="14dp"
+                app:layout_constraintStart_toStartOf="@+id/commentUserName"
+                app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tel_btn"
+                style="@style/homedialog_icon"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="20dp"
+                android:drawableTop="@drawable/tele"
+                android:text="撥打電話"
+                app:cornerRadius="20dp"
+                app:layout_constraintEnd_toStartOf="@+id/nav_btn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/timeLayout" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/nav_btn"
+                style="@style/homedialog_icon"
+                android:drawableTop="@drawable/navigate"
+                android:text="開始導航"
+                app:cornerRadius="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tel_btn"
+                app:layout_constraintEnd_toStartOf="@+id/menu_btn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tel_btn"
+                app:layout_constraintTop_toTopOf="@+id/tel_btn" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/menu_btn"
+                style="@style/homedialog_icon"
+                android:layout_marginEnd="24dp"
+                android:drawableTop="@drawable/menu_icon"
+                android:onClick="@{()-> viewModel.navToMenu(shop)}"
+                android:text="查看菜單"
+                app:cornerRadius="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/nav_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/nav_btn"
+                app:layout_constraintTop_toTopOf="@+id/nav_btn" />
+
+            <ImageButton
+                android:id="@+id/imageButton"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="32dp"
+                android:background="@{viewModel.isInserted? @drawable/heart : @drawable/emptyheart }"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite(shop.shop_Id) : viewModel.postMyFavorite(shop)}"
+                app:layout_constraintBottom_toBottomOf="@+id/commentUserName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/commentSize"
+                app:layout_constraintStart_toEndOf="@+id/commentSize"
+                app:layout_constraintTop_toTopOf="@+id/commentSize"
+                app:srcCompat="@drawable/ic_baseline_directions_walk_24" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="10 分鐘"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="2dp"
+                android:text="營業時間"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintStart_toStartOf="@+id/avgRating"
+                app:layout_constraintTop_toBottomOf="@+id/avgRating"
+                app:srcCompat="@drawable/ic_baseline_access_time_24" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/drop_down"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="4dp"
+                android:backgroundTint="@color/white"
+                android:foreground="@drawable/dropdown"
+                android:onClick="@{()->viewModel.displayOrNot()}"
+                android:scaleType="centerInside"
+                app:layout_constraintBottom_toBottomOf="@+id/textView13"
+                app:layout_constraintStart_toEndOf="@+id/textView13"
+                app:layout_constraintTop_toTopOf="@+id/textView13" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/bottom_sheet"
+                android:id="@+id/timeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_dialog_corner"
-                android:elevation="10dp"
-                app:behavior_hideable="true"
-                app:behavior_peekHeight="250dp"
-                app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-                tools:context=".ui.home.HomeDialogFragment">
-
-                <androidx.viewpager.widget.ViewPager
-                    android:id="@+id/viewpager_home"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tel_btn"
-                    app:layout_constraintVertical_bias="0.0">
-
-                    <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tabs_home"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:background="@color/grey2"
-                        app:tabIndicatorColor="@color/grey2"
-                        app:tabSelectedTextColor="@color/black"
-                        app:tabTextColor="#888888">
-
-                    </com.google.android.material.tabs.TabLayout>
-
-                </androidx.viewpager.widget.ViewPager>
-
-                <View
-                    android:layout_width="40dp"
-                    android:layout_height="5dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/corner_radius"
-                    android:backgroundTint="@color/gery"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                </View>
+                android:layout_height="wrap_content"
+                android:visibility="@{viewModel.timeDisplay? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@id/drop_down">
 
                 <TextView
-                    android:id="@+id/avgRating"
+                    android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/roboto"
-                    android:text="4.1"
-                    android:textSize="13sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/shopAddress" />
-
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    style="@style/Widget.AppCompat.RatingBar.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:progressTint="#FFEB3B"
-                    android:rating="4.1"
-                    android:secondaryProgressTint="#FFEB3B"
-                    app:layout_constraintBottom_toBottomOf="@+id/avgRating"
-                    app:layout_constraintStart_toEndOf="@+id/avgRating"
-                    app:layout_constraintTop_toTopOf="@+id/avgRating" />
-
-                <TextView
-                    android:id="@+id/commentSize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text=""
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
-                    app:layout_constraintStart_toEndOf="@+id/ratingBar" />
-
-                <TextView
-                    android:id="@+id/commentUserName"
-                    branch="@{shop.branch}"
-                    shopName="@{shop.name}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="24dp"
-                    android:fontFamily="@font/roboto"
-                    android:textColor="@color/black"
-                    android:textSize="20dp"
+                    android:layout_marginStart="42dp"
+                    android:layout_marginTop="16dp"
+                    android:text="星期一"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/shopAddress"
+                    android:id="@+id/textView15"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:fontFamily="@font/noto_sans"
-                    android:text="@{shop.address}"
-                    android:textSize="14dp"
-                    app:layout_constraintStart_toStartOf="@+id/commentUserName"
-                    app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
+                    android:text="星期二"
+                    app:layout_constraintStart_toStartOf="@+id/textView14"
+                    app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/tel_btn"
-                    style="@style/homedialog_icon"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
-                    android:drawableTop="@drawable/tele"
-                    android:text="撥打電話"
-                    app:cornerRadius="20dp"
-                    app:layout_constraintEnd_toStartOf="@+id/nav_btn"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/timeLayout" />
+                <TextView
+                    android:id="@+id/textView16"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="星期三"
+                    app:layout_constraintStart_toStartOf="@+id/textView15"
+                    app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/nav_btn"
-                    style="@style/homedialog_icon"
-                    android:drawableTop="@drawable/navigate"
-                    android:text="開始導航"
-                    app:cornerRadius="20dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tel_btn"
-                    app:layout_constraintEnd_toStartOf="@+id/menu_btn"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/tel_btn"
-                    app:layout_constraintTop_toTopOf="@+id/tel_btn" />
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="星期四"
+                    app:layout_constraintStart_toStartOf="@+id/textView16"
+                    app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/menu_btn"
-                    style="@style/homedialog_icon"
+                <TextView
+                    android:id="@+id/textView18"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="星期五"
+                    app:layout_constraintStart_toStartOf="@+id/textView17"
+                    app:layout_constraintTop_toBottomOf="@+id/textView17" />
+
+                <TextView
+                    android:id="@+id/textView19"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="星期六"
+                    app:layout_constraintStart_toStartOf="@+id/textView18"
+                    app:layout_constraintTop_toBottomOf="@+id/textView18" />
+
+                <TextView
+                    android:id="@+id/textView20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="星期日"
+                    app:layout_constraintStart_toStartOf="@+id/textView19"
+                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+
+                <TextView
+                    android:id="@+id/textView21"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
-                    android:drawableTop="@drawable/menu_icon"
-                    android:onClick="@{()-> viewModel.navToMenu(shop)}"
-                    android:text="查看菜單"
-                    app:cornerRadius="20dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/nav_btn"
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView14"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/nav_btn"
-                    app:layout_constraintTop_toTopOf="@+id/nav_btn" />
-
-                <ImageButton
-                    android:id="@+id/imageButton"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginEnd="32dp"
-                    android:background="@{viewModel.isInserted? @drawable/heart : @drawable/emptyheart }"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite(shop.shop_Id) : viewModel.postMyFavorite(shop)}"
-                    app:layout_constraintBottom_toBottomOf="@+id/commentUserName"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="10dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/commentSize"
-                    app:layout_constraintStart_toEndOf="@+id/commentSize"
-                    app:layout_constraintTop_toTopOf="@+id/commentSize"
-                    app:srcCompat="@drawable/ic_baseline_directions_walk_24" />
+                    app:layout_constraintTop_toTopOf="@+id/textView14" />
 
                 <TextView
-                    android:id="@+id/textView12"
+                    android:id="@+id/textView22"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="10 分鐘"
-                    android:textSize="12sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                    app:layout_constraintStart_toEndOf="@+id/imageView"
-                    app:layout_constraintTop_toTopOf="@+id/imageView" />
-
-                <TextView
-                    android:id="@+id/textView13"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginBottom="2dp"
-                    android:text="營業時間"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                    app:layout_constraintStart_toEndOf="@+id/imageView2"
-                    app:layout_constraintTop_toTopOf="@+id/imageView2" />
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
                     android:layout_marginTop="8dp"
-                    app:layout_constraintStart_toStartOf="@+id/avgRating"
-                    app:layout_constraintTop_toBottomOf="@+id/avgRating"
-                    app:srcCompat="@drawable/ic_baseline_access_time_24" />
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintStart_toStartOf="@+id/textView21"
+                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/drop_down"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="4dp"
-                    android:backgroundTint="@color/white"
-                    android:foreground="@drawable/dropdown"
-                    android:onClick="@{()->viewModel.displayOrNot()}"
-                    android:scaleType="centerInside"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView13"
-                    app:layout_constraintStart_toEndOf="@+id/textView13"
-                    app:layout_constraintTop_toTopOf="@+id/textView13" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/timeLayout"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textView23"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="@{viewModel.timeDisplay? View.VISIBLE : View.GONE}"
-                    app:layout_constraintTop_toBottomOf="@id/drop_down">
+                    android:layout_marginTop="8dp"
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintStart_toStartOf="@+id/textView22"
+                    app:layout_constraintTop_toBottomOf="@+id/textView22" />
 
-                    <TextView
-                        android:id="@+id/textView14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="42dp"
-                        android:layout_marginTop="16dp"
-                        android:text="星期一"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                <TextView
+                    android:id="@+id/textView24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintStart_toStartOf="@+id/textView23"
+                    app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
-                    <TextView
-                        android:id="@+id/textView15"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="星期二"
-                        app:layout_constraintStart_toStartOf="@+id/textView14"
-                        app:layout_constraintTop_toBottomOf="@+id/textView14" />
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintStart_toStartOf="@+id/textView24"
+                    app:layout_constraintTop_toBottomOf="@+id/textView24" />
 
-                    <TextView
-                        android:id="@+id/textView16"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="星期三"
-                        app:layout_constraintStart_toStartOf="@+id/textView15"
-                        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+                <TextView
+                    android:id="@+id/textView26"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintStart_toStartOf="@+id/textView25"
+                    app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
-                    <TextView
-                        android:id="@+id/textView17"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="星期四"
-                        app:layout_constraintStart_toStartOf="@+id/textView16"
-                        app:layout_constraintTop_toBottomOf="@+id/textView16" />
-
-                    <TextView
-                        android:id="@+id/textView18"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="星期五"
-                        app:layout_constraintStart_toStartOf="@+id/textView17"
-                        app:layout_constraintTop_toBottomOf="@+id/textView17" />
-
-                    <TextView
-                        android:id="@+id/textView19"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="星期六"
-                        app:layout_constraintStart_toStartOf="@+id/textView18"
-                        app:layout_constraintTop_toBottomOf="@+id/textView18" />
-
-                    <TextView
-                        android:id="@+id/textView20"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="星期日"
-                        app:layout_constraintStart_toStartOf="@+id/textView19"
-                        app:layout_constraintTop_toBottomOf="@+id/textView19" />
-
-                    <TextView
-                        android:id="@+id/textView21"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView14"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/textView14" />
-
-                    <TextView
-                        android:id="@+id/textView22"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintStart_toStartOf="@+id/textView21"
-                        app:layout_constraintTop_toBottomOf="@+id/textView21" />
-
-                    <TextView
-                        android:id="@+id/textView23"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintStart_toStartOf="@+id/textView22"
-                        app:layout_constraintTop_toBottomOf="@+id/textView22" />
-
-                    <TextView
-                        android:id="@+id/textView24"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintStart_toStartOf="@+id/textView23"
-                        app:layout_constraintTop_toBottomOf="@+id/textView23" />
-
-                    <TextView
-                        android:id="@+id/textView25"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintStart_toStartOf="@+id/textView24"
-                        app:layout_constraintTop_toBottomOf="@+id/textView24" />
-
-                    <TextView
-                        android:id="@+id/textView26"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintStart_toStartOf="@+id/textView25"
-                        app:layout_constraintTop_toBottomOf="@+id/textView25" />
-
-                    <TextView
-                        android:id="@+id/textView27"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="上午10時-下午9:30"
-                        app:layout_constraintStart_toStartOf="@+id/textView26"
-                        app:layout_constraintTop_toBottomOf="@+id/textView26" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
+                <TextView
+                    android:id="@+id/textView27"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="上午10時-下午9:30"
+                    app:layout_constraintStart_toStartOf="@+id/textView26"
+                    app:layout_constraintTop_toBottomOf="@+id/textView26" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </layout>

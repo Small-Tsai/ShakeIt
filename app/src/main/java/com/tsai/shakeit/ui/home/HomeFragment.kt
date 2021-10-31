@@ -2,6 +2,8 @@ package com.tsai.shakeit.ui.home
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,16 +13,13 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
-import com.google.maps.android.ui.IconGenerator
 import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
@@ -32,12 +31,9 @@ import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
 import kotlin.properties.Delegates
-import kotlin.random.Random
 
 
 const val TAG = "tsai"
-const val REQUEST_LOCATION_PERMISSION = 0
-const val REQUEST_ENABLE_GPS = 1
 
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -72,7 +68,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        viewModel.isWalkOrRide.observe(viewLifecycleOwner, Observer {
+        viewModel.isWalkOrRide.observe(viewLifecycleOwner, {
             when (it) {
                 true -> viewModel.onAddButtonClicked(it)
                 false -> {
@@ -82,7 +78,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        viewModel.hasNavToMenu.observe(viewLifecycleOwner, Observer {
+        viewModel.hasNavToMenu.observe(viewLifecycleOwner, {
             it?.let {
                 findNavController().navigate(
                     MenuFragmentDirections.navToMenu(it)
@@ -90,11 +86,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        viewModel.Favorite.observe(viewLifecycleOwner, Observer {
+        viewModel.Favorite.observe(viewLifecycleOwner, {
             viewModel.mShopId?.let { it1 -> viewModel.checkHasFavorite(it1) }
         })
 
-        viewModel._selectedShop.observe(viewLifecycleOwner, Observer {shop ->
+        viewModel._selectedShop.observe(viewLifecycleOwner, { shop ->
             binding.shop = shop
             viewModel.checkHasFavorite(shop.shop_Id)
 
@@ -102,11 +98,17 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 viewpagerHome.let {
                     tabsHome.setupWithViewPager(it)
-                    it.adapter = CommentPagerAdapter(childFragmentManager , shopId = shop.shop_Id)
+                    it.adapter = CommentPagerAdapter(childFragmentManager, shopId = shop.shop_Id)
                     it.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabsHome))
                 }
             }
         })
+
+        viewModel.navToAddShop.observe(viewLifecycleOwner, {
+            it?.let { findNavController().navigate(HomeFragmentDirections.navToAddShop()) }
+        })
+
+        binding.addShopFab.isExtended = false
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
         return binding.root
@@ -116,16 +118,21 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         mMap = googleMap
 
-        viewModel.shopLiveData.observe(viewLifecycleOwner, Observer { shopData ->
+        viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
             shopData.forEach { shop ->
                 val newPosition = LatLng(shop.lat, shop.lon)
-                val iconGen = IconGenerator(binding.root.context)
+//                val iconGen = IconGenerator(binding.root.context)
                 mMap.addMarker(
                     MarkerOptions().position(newPosition).snippet(shop.shop_Id)
 //                        .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon(shop.name)))
                 )
             }
+            binding.addShopFab.extend()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.addShopFab.shrink()
+            }, 1500)
         })
+
         askPermission()
         setBottomSheetBehavior()
         setMyLocationButtonPosition()
@@ -145,19 +152,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    // custom BottomSheetUI
     private fun setBottomSheetBehavior() {
 
         val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
-        mainViewModel.commentSize.observe(viewLifecycleOwner, Observer {
+        mainViewModel.commentSize.observe(viewLifecycleOwner, {
             binding.commentSize.text = "($it)"
         })
 
-        mainViewModel.ratingAvg.observe(viewLifecycleOwner, Observer {
-            if(it.isNaN()){
+        mainViewModel.ratingAvg.observe(viewLifecycleOwner, {
+            if (it.isNaN()) {
                 binding.avgRating.text = "0"
                 binding.ratingBar.rating = it
-            }else{
+            } else {
                 binding.avgRating.text = "%.1f".format(it)
                 binding.ratingBar.rating = it
             }
@@ -195,6 +203,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     }
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                    }
+                    else -> {
                     }
                 }
             }
@@ -238,6 +248,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
     }
 
+    // require permission
     private fun askPermission() {
 
         PermissionX.init(this)
@@ -262,7 +273,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     "取消"
                 )
             }
-            .request { allGranted, grantedList, deniedList ->
+            .request { allGranted, _, deniedList ->
                 if (allGranted) {
                     locationPermissionGranted = true
                     getDeviceLocation()
@@ -277,12 +288,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
     }
 
+    // get location
     @SuppressLint("MissingPermission")
     private fun getDeviceLocation() {
         try {
             if (locationPermissionGranted
             ) {
-                val locationRequest = LocationRequest()
+                val locationRequest = LocationRequest.create()
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
                 mFusedLocationProviderClient.requestLocationUpdates(
@@ -303,7 +315,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                                     currentPosition,
                                     18F
                                 )
-                            );
+                            )
                         }
                     },
                     null

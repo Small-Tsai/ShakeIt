@@ -305,6 +305,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             val document = comment.document(shopId).collection(COMMENT)
 
             document
+                .orderBy(KEY_CREATED_TIME,Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

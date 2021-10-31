@@ -1,4 +1,4 @@
-package com.tsai.shakeit.ui.detail
+package com.tsai.shakeit.ui.menu.detail
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,8 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Product
@@ -62,7 +60,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
                 qty = it,
                 sugar = mContentList[SUGAR]!!.first(),
                 others = mContentList[OTHERS].toString()
-                    .substring(1, mContentList[OTHERS]!!.toString().length - 1),
+                    .substring(1, mContentList[OTHERS].toString().length - 1),
                 price = data.price,
                 user_Name = "Small Tsai",
                 product_Img = data.product_Img
@@ -79,6 +77,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     init {
         _qty.value = 1
         filterList()
+        mContentList[OTHERS]= arrayListOf("")
     }
 
     fun plus() {
@@ -117,8 +116,10 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     private val rangeIceToSugar = selectRange(resultSize, sugarSize)
     private val rangeSugarToOthers = selectRange(resultSize, othersSize)
     private var firstClick = 0
+    private var capacityPrice = 0
+    private var othersPrice = 0
 
-    fun doSelect(position: Int, content: String) {
+    fun doSelect(position: Int, content: String , price: Int) {
 
         if (firstClick == 0) {
             selectedPositionList.add(position); firstClick += 1
@@ -127,6 +128,8 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
         when (position) {
             in rangeCapacity -> {
                 refactorPositionList(position, selectedPositionList, rangeCapacity, content)
+                capacityPrice = price
+
             }
             in rangeCapacityToIce -> {
                 refactorPositionList(position, selectedPositionList, rangeCapacityToIce, content)
@@ -135,9 +138,11 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
                 refactorPositionList(position, selectedPositionList, rangeIceToSugar, content)
             }
             in rangeSugarToOthers -> {
+                othersPrice = price
                 refactorListInOthersRange(position, content)
             }
         }
+        data.price = capacityPrice+othersPrice
         _refresh.value = true
         _refresh.value = null
     }
@@ -151,7 +156,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
         } else {
             selectedPositionList.add(i)
 
-            if (mContentList[OTHERS] == null) {
+            if (mContentList[OTHERS] == arrayListOf("")) {
                 mContentList[OTHERS] = arrayListOf(content)
             } else {
                 mContentList[OTHERS]?.add(content)
@@ -164,7 +169,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
         i: Int,
         list: MutableList<Int>,
         range: IntRange,
-        content: String
+        content: String,
     ) {
         list.add(i)
         val mList = list.filter { it !in range } as MutableList<Int>

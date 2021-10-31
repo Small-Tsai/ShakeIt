@@ -1,36 +1,20 @@
 package com.tsai.shakeit.util
 
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.cardview.widget.CardView
-import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.Timestamp
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.tsai.shakeit.R
-import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
-import com.tsai.shakeit.data.Shop
-import com.tsai.shakeit.ext.toDisplayFormat
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
-import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
-import com.tsai.shakeit.ui.favorite.FavoriteImageAdapter
-import com.tsai.shakeit.ui.favorite.FavoriteViewModel
+import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.home.TAG
-import com.tsai.shakeit.ui.order.OrderViewModel
-import kotlinx.coroutines.launch
-import java.util.function.LongFunction
 
 @BindingAdapter("shopName", "branch")
 fun TextView.bindShopName(name: String?, branch: String?) {
@@ -90,8 +74,15 @@ fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, 
 
 @BindingAdapter("othersText")
 fun TextView.bindOthers(orderProduct: OrderProduct) {
-    text =
-        "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
+    if(orderProduct.others.isEmpty()){
+        text =
+            "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice}"
+    }else{
+        text =
+            "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
+    }
+
+
 }
 
 @BindingAdapter("qtyText")

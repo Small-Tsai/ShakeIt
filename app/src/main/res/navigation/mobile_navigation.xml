@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/drinksDetailFragment"
-        android:name="com.tsai.shakeit.ui.detail.DrinksDetailFragment"
+        android:name="com.tsai.shakeit.ui.menu.detail.DrinksDetailFragment"
         android:label="DrinksDetailFragment">
         <argument
             android:name="product"
@@ -56,10 +56,15 @@
         android:name="com.tsai.shakeit.ui.home.comment.CommentFragment"
         android:label="CommentFragment" />
 
+    <fragment
+        android:id="@+id/addShopFragment"
+        android:name="com.tsai.shakeit.ui.addshop.AddShopFragment"
+        android:label="AddShopFragment" />
+
     <dialog
         android:id="@+id/commentDialog"
         android:name="com.tsai.shakeit.ui.order.sendcomment.CommentDialog"
-        android:label="CommentDialog" >
+        android:label="CommentDialog">
         <argument
             android:name="shopId"
             app:argType="string" />
@@ -109,5 +114,12 @@
     <action
         android:id="@+id/navToSendComment"
         app:destination="@id/commentDialog" />
+
+    <action
+        android:id="@+id/navToAddShop"
+        app:destination="@id/addShopFragment"
+        app:enterAnim="@anim/bottom_to_top"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popExitAnim="@anim/top_to_bottom" />
 
 </navigation>

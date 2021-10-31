@@ -7,8 +7,9 @@ import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ui.addshop.AddShopViewModel
 import com.tsai.shakeit.ui.home.comment.CommentViewModel
-import com.tsai.shakeit.ui.detail.DrinksDetailViewModel
+import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.HomeViewModel
 import com.tsai.shakeit.ui.menu.MenuViewModel
@@ -55,6 +56,9 @@ class ViewModelFactory(
 
                 isAssignableFrom(CommentDialogViewModel::class.java) ->
                     CommentDialogViewModel(repository, shopId)
+
+                isAssignableFrom(AddShopViewModel::class.java) ->
+                    AddShopViewModel(repository)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

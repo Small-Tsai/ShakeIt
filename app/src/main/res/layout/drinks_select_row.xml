@@ -14,11 +14,11 @@
 
         <variable
             name="viewModel"
-            type="com.tsai.shakeit.ui.detail.DrinksDetailViewModel" />
+            type="com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel" />
 
         <variable
             name="viewHolder"
-            type="com.tsai.shakeit.ui.detail.DrinksAdapter.ContentViewHolder" />
+            type="com.tsai.shakeit.ui.menu.detail.DrinksAdapter.ContentViewHolder" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,19 +45,19 @@
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/black"
                 android:gravity="center_vertical"
-                android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content)}"
+                android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content , price)}"
                 android:text="大"
                 android:textSize="14dp" />
 
         </RadioGroup>
 
         <TextView
+            content="@{content}"
+            price="@{price}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/noto_sans"
-            price="@{price}"
-            content="@{content}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

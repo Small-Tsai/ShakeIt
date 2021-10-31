@@ -1,6 +1,5 @@
 package com.tsai.shakeit.ui.order.sendcomment
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,12 +8,12 @@ import com.tsai.shakeit.data.Comment
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.User
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ui.home.TAG
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.User.userId
 import com.tsai.shakeit.util.User.userImage
 import com.tsai.shakeit.util.User.userName
 import kotlinx.coroutines.launch
+import com.google.firebase.Timestamp
 
 class CommentDialogViewModel(
     private val repository: ShakeItRepository,
@@ -37,6 +36,14 @@ class CommentDialogViewModel(
         _popBack.value = null
     }
 
+    private val _clickable = MutableLiveData<Boolean>()
+    val clickable: LiveData<Boolean>
+        get() = _clickable
+
+    init {
+        _clickable.value = true
+    }
+
     fun postComment() {
         _comment.value = Comment(
             user = User(
@@ -45,19 +52,22 @@ class CommentDialogViewModel(
                 user_Image = userImage,
             ),
             comment = editComment,
-            rating = rating
+            rating = rating,
+            date = Timestamp.now()
         )
         Logger.d(_comment.value.toString())
 
     }
 
     fun send(comment: Comment) {
+        _clickable.value = false
         Logger.d("shop = $shopId")
         viewModelScope.launch {
             shopId?.let {
                 when (val result = repository.postComment(shopId, comment)) {
                     is Result.Success -> {
-                       leave()
+                        _clickable.value = true
+                        leave()
                     }
                 }
             }

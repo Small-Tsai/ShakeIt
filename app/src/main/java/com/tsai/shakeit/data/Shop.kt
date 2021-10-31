@@ -15,6 +15,7 @@ data class Shop(
     val address: String = "",
     val avg_Score: Double = 0.0,
     val shop_Img: String = "",
-    val branch: String = ""
+    val branch: String = "",
+    val menu_Img:String = ""
 ) : Parcelable {
 }

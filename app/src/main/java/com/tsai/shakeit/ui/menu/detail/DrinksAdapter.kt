@@ -1,4 +1,4 @@
-package com.tsai.shakeit.ui.detail
+package com.tsai.shakeit.ui.menu.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

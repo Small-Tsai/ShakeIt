@@ -45,6 +45,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val snippet: LiveData<String?>
         get() = _snippet
 
+    private val _navToAddShop = MutableLiveData<Boolean?>()
+    val navToAddShop: LiveData<Boolean?>
+        get() = _navToAddShop
+
     val timeDisplay = MutableLiveData<Boolean>()
 
     val _selectedShop = MutableLiveData<Shop>()
@@ -54,7 +58,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _isWalkOrRide.value = null
         viewModelScope.launch {
             when (val result = repository.getAllShop()) {
-                is Result.Success -> _shopLiveData.value = result.data
+                is Result.Success -> _shopLiveData.value = result.data!!
                 is Result.Fail -> Log.d(TAG, "getShop Failed")
             }
         }
@@ -126,6 +130,11 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun navToMenu(shop: Shop) {
         _hasNavToMenu.value = shop
         _hasNavToMenu.value = null
+    }
+
+    fun navToAddShop() {
+        _navToAddShop.value = true
+        _navToAddShop.value = null
     }
 
     fun isWalk() {

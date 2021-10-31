@@ -1,13 +1,5 @@
 package com.tsai.shakeit.ext
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.location.LocationManager
-import android.provider.Settings
-import com.tsai.shakeit.ui.home.REQUEST_ENABLE_GPS
-
 
 //已使用 permissionX 取代
 

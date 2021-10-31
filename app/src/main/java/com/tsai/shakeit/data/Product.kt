@@ -10,7 +10,7 @@ data class Product(
     val capacity: HashMap<String, Int> = hashMapOf(),
     val sugar: ArrayList<String> = arrayListOf(),
     val ice: ArrayList<String> = arrayListOf(),
-    val price: Int = 0,
+    var price: Int = 0,
     val others: HashMap<String, Int> = hashMapOf(),
     val shopId: String = "",
     val type: String = "",

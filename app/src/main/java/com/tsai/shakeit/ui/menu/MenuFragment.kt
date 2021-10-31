@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.detail.DrinksDetailFragmentDirections
+import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 
 class MenuFragment : Fragment() {

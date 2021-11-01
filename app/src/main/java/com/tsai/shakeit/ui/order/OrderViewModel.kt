@@ -42,6 +42,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
+
     fun doNavToOrderDetail(order: Order) {
         _navToOrderDetail.value = order
         _navToOrderDetail.value = null

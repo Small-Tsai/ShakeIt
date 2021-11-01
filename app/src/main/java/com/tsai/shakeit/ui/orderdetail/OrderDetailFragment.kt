@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 
 class OrderDetailFragment : Fragment() {
 
@@ -17,7 +19,11 @@ class OrderDetailFragment : Fragment() {
             order =
             OrderDetailFragmentArgs.fromBundle(
                 requireArguments()
-            ).order
+            ).order,
+            shopImg =
+            OrderDetailFragmentArgs.fromBundle(
+                requireArguments()
+            ).shopImg
         )
     }
 
@@ -40,6 +46,12 @@ class OrderDetailFragment : Fragment() {
             val nameList = it.map { order -> order.user_Name }.distinct()
             it?.let { friendsAdapter.submitList(nameList) }
             binding.totalPrice = it.sumOf { it.price * it.qty }
+        })
+
+        viewModel.navToMenu.observe(viewLifecycleOwner,{
+            it?.let {
+                findNavController().navigate(MenuFragmentDirections.navToMenu(it))
+            }
         })
 
         binding.orderDetailRev.adapter = adapter

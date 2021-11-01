@@ -27,6 +27,7 @@ class ViewModelFactory(
     private val repository: ShakeItRepository,
     private val shopId: String? = "",
     private val shopList: Array<Shop> = arrayOf(),
+    private val shopImg: String? = null,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -42,7 +43,7 @@ class ViewModelFactory(
                     product?.let { DrinksDetailViewModel(it, repository) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
-                    OrderDetailViewModel(order, repository)
+                    OrderDetailViewModel(order, repository,shopImg)
 
                 isAssignableFrom(OrderViewModel::class.java) ->
                     OrderViewModel(repository)

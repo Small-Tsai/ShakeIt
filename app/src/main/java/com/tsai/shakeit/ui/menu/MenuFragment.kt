@@ -12,6 +12,7 @@ import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
+import com.tsai.shakeit.util.Logger
 
 class MenuFragment : Fragment() {
 
@@ -55,6 +56,7 @@ class MenuFragment : Fragment() {
 
         viewModel.shop.observe(viewLifecycleOwner, Observer {
             it?.let { binding.shopInfo = it }
+            Logger.d("$it")
         })
 
         viewModel.orderProduct.observe(viewLifecycleOwner, Observer { orderList ->

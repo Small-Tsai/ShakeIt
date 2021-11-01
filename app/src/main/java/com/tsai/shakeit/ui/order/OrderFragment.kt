@@ -13,6 +13,7 @@ import com.tsai.shakeit.databinding.FragmentOrderBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.orderdetail.OrderDetailFragmentArgs
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
+import java.util.logging.Logger
 
 class OrderFragment : Fragment() {
 
@@ -38,7 +39,16 @@ class OrderFragment : Fragment() {
         })
 
         viewModel.navToOrderDetail.observe(viewLifecycleOwner, Observer {
-            it?.let { findNavController().navigate(OrderFragmentDirections.navToOrderDetail(it)) }
+            it?.let { order ->
+                viewModel.shopImg.value?.let { shopImg ->
+                    findNavController().navigate(
+                        OrderFragmentDirections.navToOrderDetail(
+                            order,
+                            shopImg
+                        )
+                    )
+                }
+            }
         })
 
         viewModel.shopImg.observe(viewLifecycleOwner, Observer {

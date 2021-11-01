@@ -1,6 +1,5 @@
 package com.tsai.shakeit.ui.menu
 
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ui.home.TAG
+import com.tsai.shakeit.util.Logger
 import kotlinx.coroutines.launch
 
 
@@ -57,9 +56,9 @@ class MenuViewModel(
         _hasOrder.value = false
     }
 
-    fun updateOrderTotalPrice(totalPrice:Int){
+    fun updateOrderTotalPrice(totalPrice: Int) {
         viewModelScope.launch {
-            when(val result = repository.updateOrderTotalPrice(totalPrice,selectedShop.shop_Id)){
+            when (val result = repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id)) {
 //                is Result.Success -> Log.d(TAG,"update total price")
             }
 
@@ -118,7 +117,7 @@ class MenuViewModel(
                     ).show()
                 }
                 is Result.Error -> {
-                    Log.d(TAG, "getProduct Error")
+                    Logger.d("getProduct Error")
                 }
             }
         }

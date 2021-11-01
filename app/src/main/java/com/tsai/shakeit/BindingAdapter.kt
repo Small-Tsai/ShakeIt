@@ -1,6 +1,5 @@
 package com.tsai.shakeit.util
 
-import android.util.Log
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -15,7 +14,6 @@ import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
-import com.tsai.shakeit.ui.home.TAG
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
 
@@ -77,10 +75,10 @@ fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, 
 
 @BindingAdapter("othersText")
 fun TextView.bindOthers(orderProduct: OrderProduct) {
-    if(orderProduct.others.isEmpty()){
+    if (orderProduct.others.isEmpty()) {
         text =
             "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice}"
-    }else{
+    } else {
         text =
             "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
     }
@@ -94,7 +92,7 @@ fun TextView.bindQty(qty: Int) {
 }
 
 @BindingAdapter("imageUrl")
-fun bindImage(imgView: ImageView, imgUrl: String? ) {
+fun bindImage(imgView: ImageView, imgUrl: String?) {
 
     if (!imgUrl.isNullOrEmpty()) {
         val gsReference = imgUrl.let { Firebase.storage.reference.child(it) }
@@ -106,13 +104,13 @@ fun bindImage(imgView: ImageView, imgUrl: String? ) {
                 .into(imgView)
         }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Logger.d(it.toString())
             }
     }
 }
 
 @BindingAdapter("circleimageUrl")
-fun bindCircleImage(imgView: ImageView, imgUrl: String? ) {
+fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
 
     if (!imgUrl.isNullOrEmpty()) {
         val gsReference = imgUrl.let { Firebase.storage.reference.child(it) }
@@ -125,16 +123,19 @@ fun bindCircleImage(imgView: ImageView, imgUrl: String? ) {
                 .into(imgView)
         }
             .addOnFailureListener {
-                Log.d(TAG, it.toString())
+                Logger.d(it.toString())
             }
     }
 }
 
-@BindingAdapter("mainViewModel","shopName")
-fun SwitchMaterial.bindSwitch(mainViewModel: MainViewModel, shopName:String){
 
-     isChecked = mainViewModel.dbFilterShopList.value?.contains(shopName) != true
-
+@BindingAdapter("mainViewModel", "shopName", "viewModel")
+fun SwitchMaterial.bindSwitch(
+    mainViewModel: MainViewModel,
+    shopName: String,
+    viewModel: SettingViewModel
+) {
+    isChecked = mainViewModel.dbFilterShopList.value?.contains(shopName) != true
 }
 
 

@@ -24,6 +24,9 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switch1"
+            mainViewModel="@{mainViewModel}"
+            shopName="@{shopName}"
+            viewModel="@{viewModel}"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginStart="4dp"
@@ -32,8 +35,6 @@
             android:onCheckedChanged="@{()->viewModel.filterShop(shopName,mainViewModel)}"
             android:paddingHorizontal="24dp"
             android:text="@{shopName}"
-            mainViewModel="@{mainViewModel}"
-            shopName="@{shopName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

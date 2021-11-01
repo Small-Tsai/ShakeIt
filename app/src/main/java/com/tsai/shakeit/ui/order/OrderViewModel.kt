@@ -1,21 +1,13 @@
 package com.tsai.shakeit.ui.order
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Order
-import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.data.succeeded
-import com.tsai.shakeit.ui.home.TAG
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.util.function.LongFunction
 
 class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
 

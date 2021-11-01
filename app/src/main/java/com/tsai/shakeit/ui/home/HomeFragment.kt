@@ -13,7 +13,6 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
@@ -25,17 +24,15 @@ import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
 import kotlin.properties.Delegates
-
-
-const val TAG = "tsai"
-
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -50,6 +47,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var lon by Delegates.notNull<Double>()
     private var locationPermissionGranted = false
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
+    private lateinit var mainViewModel: MainViewModel
+    private lateinit var selectedShop:Shop
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        if (mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE_NAV_HOME) {
+            mainViewModel.selectedFavorite.observe(viewLifecycleOwner, {
+               selectedShop = it
+            })
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -116,8 +125,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
 
-            val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
 
                 mMap.clear()
@@ -146,6 +153,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        if (this::selectedShop.isInitialized) {
+            setMapUI()
+
+            val position = LatLng(selectedShop.lat,selectedShop.lon)
+            mMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    position,
+                    20F
+                )
+            )
+        }
+
         askPermission()
         setBottomSheetBehavior()
         setMyLocationButtonPosition()
@@ -167,12 +187,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     // custom BottomSheetUI
     private fun setBottomSheetBehavior() {
 
-        val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-
+        // update total comment qty on bottomSheet
         mainViewModel.commentSize.observe(viewLifecycleOwner, {
             binding.commentSize.text = "($it)"
         })
 
+        // calculate average rating
         mainViewModel.ratingAvg.observe(viewLifecycleOwner, {
             if (it.isNaN()) {
                 binding.avgRating.text = "0"
@@ -185,6 +205,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
+        //marker onClick
         mMap.setOnMarkerClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
@@ -192,10 +213,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             return@setOnMarkerClickListener true
         }
 
+        //map onClick
         mMap.setOnMapClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
+        //map camera move listner
         mMap.setOnCameraMoveListener {
             if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomSheetBehavior.halfExpandedRatio = 0.14f
@@ -203,6 +226,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
+        //bottomSheet CallBack
         var x = 0
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
@@ -236,6 +260,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                             idSearchView.startAnimation(toTopGone)
                             walkFab.startAnimation(toTopGone)
                             editText.startAnimation(toTopGone)
+                            searchCv.startAnimation(toTopGone)
+                            filterBar.startAnimation(toTopGone)
+                            searchCv.visibility = View.GONE
+                            filterBar.visibility = View.GONE
                             idSearchView.visibility = View.GONE
                             walkFab.visibility = View.GONE
                             editText.visibility = View.GONE
@@ -251,6 +279,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         idSearchView.startAnimation(fromTop)
                         walkFab.startAnimation(fromTop)
                         editText.startAnimation(fromTop)
+                        searchCv.startAnimation(fromTop)
+                        filterBar.startAnimation(fromTop)
+                        searchCv.visibility = View.VISIBLE
+                        filterBar.visibility = View.VISIBLE
                         idSearchView.visibility = View.VISIBLE
                         walkFab.visibility = View.VISIBLE
                         editText.visibility = View.VISIBLE
@@ -289,13 +321,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 if (allGranted) {
                     locationPermissionGranted = true
                     getDeviceLocation()
-                    Toast.makeText(context, "所有權限已開啟", Toast.LENGTH_SHORT).show()
+//                    mToast("所有權限已打開")
                 } else {
-                    Toast.makeText(
-                        context,
-                        "已拒絕以下權限: $deniedList",
-                        Toast.LENGTH_LONG
-                    ).show()
+                   mToast("已拒絕以下權限: $deniedList")
                 }
             }
     }
@@ -304,7 +332,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private fun getDeviceLocation() {
         try {
-            if (locationPermissionGranted
+            if (locationPermissionGranted && !this::selectedShop.isInitialized
             ) {
                 val locationRequest = LocationRequest.create()
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -317,9 +345,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                             lat = locationResult.lastLocation.latitude
                             lon = locationResult.lastLocation.longitude
 
-                            mMap.uiSettings.isMyLocationButtonEnabled = true
-                            mMap.isMyLocationEnabled = true
-                            mMap.uiSettings.isZoomControlsEnabled = true
+                            setMapUI()
 
                             val currentPosition = LatLng(lat, lon)
                             mMap.moveCamera(
@@ -332,12 +358,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     },
                     null
                 )
-            } else {
-                askPermission()
             }
         } catch (e: SecurityException) {
             Log.e("Exception: %s", e.message, e)
         }
+    }
+
+    private fun setMapUI() {
+        mMap.uiSettings.isMyLocationButtonEnabled = true
+        mMap.isMyLocationEnabled = true
+        mMap.uiSettings.isZoomControlsEnabled = true
     }
 }
 

@@ -1,16 +1,14 @@
 package com.tsai.shakeit.ui.menu
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.tsai.shakeit.data.Menu
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.databinding.MenuProductRowBinding
 import com.tsai.shakeit.databinding.MenuTitleRowBinding
-import com.tsai.shakeit.ui.home.TAG
-import com.tsai.shakeit.data.Menu
 
 class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
 

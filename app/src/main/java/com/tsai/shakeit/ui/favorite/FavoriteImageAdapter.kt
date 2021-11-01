@@ -16,9 +16,9 @@ class FavoriteImageAdapter(val viewModel: FavoriteViewModel) :
         viewModel: FavoriteViewModel
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(img: Shop) {
-            binding.image = img.shop_Img
-            binding.shopBranch.text = img.branch
+        fun bind(shop: Shop) {
+            binding.viewModel = viewModel
+            binding.shop = shop
             binding.executePendingBindings()
         }
 
@@ -30,7 +30,7 @@ class FavoriteImageAdapter(val viewModel: FavoriteViewModel) :
         }
 
         override fun areContentsTheSame(oldItem: Shop, newItem: Shop): Boolean {
-                return oldItem == newItem
+            return oldItem == newItem
         }
 
     }

@@ -1,20 +1,18 @@
 package com.tsai.shakeit.ui.favorite
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.tsai.shakeit.databinding.FavoriteShopimgRowBinding
+import androidx.navigation.fragment.findNavController
+import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.databinding.FragmentFavoriteBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.home.TAG
-import com.tsai.shakeit.ui.order.OrderViewModel
+import com.tsai.shakeit.util.CurrentFragmentType
 
 class FavoriteFragment : Fragment() {
 
@@ -43,6 +41,13 @@ class FavoriteFragment : Fragment() {
 
         viewModel.shop.observe(viewLifecycleOwner, Observer {
             viewModel.buildFavoriteList(it)
+        })
+
+        viewModel.navToHome.observe(viewLifecycleOwner, Observer {
+            val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+            mainViewModel.currentFragmentType.value = CurrentFragmentType.FAVORITE_NAV_HOME
+            mainViewModel.selectedFavorite.value = it
+            findNavController().navigate(FavoriteFragmentDirections.navToHome())
         })
 
         binding.favoriteRev.adapter = adapter

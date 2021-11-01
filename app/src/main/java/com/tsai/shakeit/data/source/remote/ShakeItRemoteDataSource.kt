@@ -1,16 +1,13 @@
 package com.tsai.shakeit.data.source.remote
 
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.ktx.*
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItDataSource
-import com.tsai.shakeit.ui.home.TAG
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.User
 import kotlin.coroutines.resume
@@ -38,13 +35,12 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(shop)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.i(TAG, "Publish: $shop")
+                        Logger.d("Publish: $shop")
 
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error getting documents. ${it.message}"
                             )
                             continuation.resume(Result.Error(it))
@@ -73,12 +69,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(orderProduct)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.i(TAG, "orderProduct: $order")
+                        Logger.i("orderProduct: $order")
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error post documents. ${it.message}"
                             )
                             continuation.resume(Result.Error(it))
@@ -101,12 +96,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(product)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Log.i(TAG, "Product: $product")
+                        Logger.i("Product: $product")
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error post documents. ${it.message}"
                             )
                             continuation.resume(Result.Error(it))
@@ -134,8 +128,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error post comment. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -160,8 +153,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error delete documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -190,8 +182,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error delete documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -213,12 +204,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObject(Shop::class.java)
-                        Log.d(TAG, shopData.toString())
+                        Logger.d(shopData.toString())
                         continuation.resume(Result.Success(shopData!!))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -241,8 +231,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(shopData))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -268,8 +257,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(shopData))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error get documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -292,8 +280,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error update documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -318,8 +305,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(commentList))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "[${this::class.simpleName}] Error getComment documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -342,8 +328,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
-                            Log.w(
-                                TAG,
+                            Logger.w(
                                 "Error updateFilterShop documents. ${it.message}"
                             )
                             return@addOnCompleteListener
@@ -364,13 +349,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
                 var list = mutableListOf<String>()
 
-                Log.d(TAG, "Current data: ${snapshot?.data?.values}")
+                Logger.d("Current data: ${snapshot?.data?.values}")
 
                 snapshot?.let {
                     val data = snapshot.toObject(FilterShop::class.java)
-                  data?.filter_Shop?.forEach {
-                      list.add(it)
-                  }
+                    data?.filter_Shop?.forEach {
+                        list.add(it)
+                    }
                 }
                 liveData.value = list
             }
@@ -422,7 +407,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
                 liveData.value = list
             }
-        Log.d(TAG, "return")
         return liveData
     }
 

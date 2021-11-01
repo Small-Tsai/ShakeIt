@@ -1,15 +1,12 @@
 package com.tsai.shakeit.ui.favorite
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Favorite
-import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ui.home.TAG
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel() {
@@ -22,6 +19,10 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
     val shop: LiveData<List<Shop>>
         get() = _shop
 
+    private var _navToHome = MutableLiveData<Shop>()
+    val navToHome: LiveData<Shop>
+        get() = _navToHome
+
     init {
         getFavoriteData()
     }
@@ -30,6 +31,10 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
         viewModelScope.launch {
             _shop = repository.getFavorite()
         }
+    }
+
+    fun navToHome(shop:Shop){
+        _navToHome.value = shop
     }
 
     fun buildFavoriteList(shop:List<Shop>){

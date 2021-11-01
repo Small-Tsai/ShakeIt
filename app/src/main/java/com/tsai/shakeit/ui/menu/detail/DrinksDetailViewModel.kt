@@ -1,6 +1,5 @@
 package com.tsai.shakeit.ui.menu.detail
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +9,7 @@ import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ui.home.TAG
+import com.tsai.shakeit.util.Logger
 import kotlinx.coroutines.launch
 
 private const val ICE = "ice"
@@ -50,7 +49,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
             order_Name = "我的訂單",
             shop_Id = data.shopId,
 
-        )
+            )
 
         val mOrderProduct = _qty.value?.let {
             OrderProduct(
@@ -77,7 +76,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     init {
         _qty.value = 1
         filterList()
-        mContentList[OTHERS]= arrayListOf("")
+        mContentList[OTHERS] = arrayListOf("")
     }
 
     fun plus() {
@@ -119,7 +118,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
     private var capacityPrice = 0
     private var othersPrice = 0
 
-    fun doSelect(position: Int, content: String , price: Int) {
+    fun doSelect(position: Int, content: String, price: Int) {
 
         if (firstClick == 0) {
             selectedPositionList.add(position); firstClick += 1
@@ -142,7 +141,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
                 refactorListInOthersRange(position, content)
             }
         }
-        data.price = capacityPrice+othersPrice
+        data.price = capacityPrice + othersPrice
         _refresh.value = true
         _refresh.value = null
     }
@@ -161,7 +160,7 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
             } else {
                 mContentList[OTHERS]?.add(content)
             }
-            Log.d(TAG, mContentList.toString())
+            Logger.d(mContentList.toString())
         }
     }
 

@@ -3,6 +3,7 @@ package com.tsai.shakeit.util
 enum class CurrentFragmentType(val value: String) {
     HOME(""),
     MENU("菜單"),
+    FAVORITE_NAV_HOME(""),
     ORDER("訂單"),
     FAVORITE("收藏"),
     ORDER_DETAIL("訂單細節"),

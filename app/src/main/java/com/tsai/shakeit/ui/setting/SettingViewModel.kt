@@ -20,6 +20,8 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
 
     var filteredList = mutableListOf<String>()
 
+    val switchIsChecked = MutableLiveData<Boolean>()
+
     fun filterShop(shopName: String, mainViewModel: MainViewModel) {
         Logger.d(filteredList.toString())
         if (!filteredList.contains(shopName)) {

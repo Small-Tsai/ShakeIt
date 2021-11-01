@@ -44,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="20dp"
+                android:imeOptions="actionDone"
                 android:background="@drawable/square_button_black"
                 android:gravity="center"
                 android:inputType="number"
@@ -85,6 +86,7 @@
                     app:queryHint="Search Here" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/filter_bar"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="315dp"

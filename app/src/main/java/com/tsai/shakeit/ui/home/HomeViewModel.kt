@@ -1,15 +1,15 @@
 package com.tsai.shakeit.ui.home
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.view.animation.Transformation
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
-import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -63,15 +63,14 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         viewModelScope.launch {
             when (val result = repository.getAllShop()) {
                 is Result.Success -> _shopLiveData.value = result.data!!
-                is Result.Fail -> Log.d(TAG, "getShop Failed")
+                is Result.Fail -> Logger.d("getShop Failed")
             }
         }
         getMyFavorite()
     }
 
 
-
-    fun navToSetting(){
+    fun navToSetting() {
         _navToSetting.value = true
         _navToSetting.value = null
     }
@@ -120,7 +119,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     ).show()
                 }
                 is Result.Error -> {
-                    Log.d(TAG, "postFavorite Error")
+                    Logger.d("postFavorite Error")
                 }
             }
         }
@@ -128,7 +127,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
-        Log.d(TAG, "getSnippet $markerSnippet")
+        Logger.d("getSnippet $markerSnippet")
         _snippet.value = markerSnippet
         _selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
     }
@@ -156,6 +155,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     var i = 0
+
     @SuppressLint("UseCompatLoadingForDrawables")
     fun isRide() {
 

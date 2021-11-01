@@ -4,9 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-            name="image"
-            type="String" />
+            name="viewModel"
+            type="com.tsai.shakeit.ui.favorite.FavoriteViewModel" />
+
+        <variable
+            name="shop"
+            type="com.tsai.shakeit.data.Shop" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,32 +21,32 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/shapeableImageView"
-            imageUrl="@{image}"
+            imageUrl="@{shop.shop_Img}"
             android:layout_width="180dp"
             android:layout_height="140dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
+            android:onClick="@{()->viewModel.navToHome(shop)}"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedCorner"
-             />
+            app:shapeAppearanceOverlay="@style/roundedCorner" />
 
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/shop_branch"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:alpha="0.9"
-            android:elevation="5dp"
             android:layout_marginStart="8dp"
             android:layout_marginBottom="4dp"
+            android:alpha="0.9"
             android:backgroundTint="@color/white"
             android:clickable="false"
+            android:elevation="5dp"
             android:fontFamily="@font/roboto"
-            android:text="台北市政店"
+            android:text="@{shop.branch}"
             android:textColor="@color/black"
             android:textSize="12sp"
             app:cornerRadius="15dp"

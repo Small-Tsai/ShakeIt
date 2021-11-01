@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         findNavController(R.id.nav_host_fragment_activity_main).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
 //                R.id.navigation_home -> CurrentFragmentType.HOME
-                R.id.menuFragment -> CurrentFragmentType.MENU
+                R.id.menuFragment -> { CurrentFragmentType.MENU }
                 R.id.drinksDetailFragment ->  CurrentFragmentType.DRINKS_DETAIL
                 R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL
                 R.id.navigation_order -> CurrentFragmentType.ORDER

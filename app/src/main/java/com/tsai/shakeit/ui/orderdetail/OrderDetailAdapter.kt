@@ -26,10 +26,10 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
 
             if (itemCount - 1 == adapterPosition) {
                 binding.addItem.visibility = View.VISIBLE
-                binding.viewMenuSeparation.visibility = View.GONE
+
             }else{
                 binding.addItem.visibility = View.GONE
-                binding.viewMenuSeparation.visibility = View.VISIBLE
+
             }
 
         }

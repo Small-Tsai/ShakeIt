@@ -2,6 +2,7 @@ package com.tsai.shakeit.ui.home
 
 import android.Manifest.permission.*
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,6 +21,7 @@ import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
+import com.google.maps.android.ui.IconGenerator
 import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
@@ -132,10 +134,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 shopData.forEach { shop ->
                     if (!dbList.contains(shop.name)) {
                         val newPosition = LatLng(shop.lat, shop.lon)
-//                val iconGen = IconGenerator(binding.root.context)
+                        val iconGen = IconGenerator(binding.root.context)
+//                        iconGen.setBackground(resources.getDrawable(R.drawable.location))
                         mMap.addMarker(
                             MarkerOptions().position(newPosition).snippet(shop.shop_Id)
-//                        .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon(shop.name)))
+//                                .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon("${shop.name}  ${shop.branch}")))
                         )
                     }
                 }

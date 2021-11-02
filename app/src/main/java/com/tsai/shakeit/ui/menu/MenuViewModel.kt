@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 
 class MenuViewModel(
-    private val selectedShop: Shop,
+    val selectedShop: Shop,
     private val repository: ShakeItRepository,
 ) :
     ViewModel() {

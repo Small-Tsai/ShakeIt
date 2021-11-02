@@ -8,6 +8,7 @@ import com.google.firebase.Timestamp
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Product
+import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
 import kotlinx.coroutines.launch
@@ -18,7 +19,11 @@ private const val SUGAR = "sugar"
 private const val OTHERS = "others"
 
 
-class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRepository) :
+class DrinksDetailViewModel(
+    val data: Product,
+    private val repository: ShakeItRepository,
+    private val shop: Shop?
+) :
     ViewModel() {
 
     private val _product = MutableLiveData<List<DrinksDetail>>()
@@ -44,10 +49,10 @@ class DrinksDetailViewModel(val data: Product, private val repository: ShakeItRe
 
         val mOrder = Order(
             shop_Name = data.shop_Name,
-            branch = data.branch,
+            branch = shop!!.branch,
             date = Timestamp.now(),
             order_Name = "我的訂單",
-            shop_Id = data.shopId,
+            shop_Id = shop.shop_Id,
 
             )
 

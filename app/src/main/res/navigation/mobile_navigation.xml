@@ -40,6 +40,9 @@
         <argument
             android:name="product"
             app:argType="com.tsai.shakeit.data.Product" />
+        <argument
+            android:name="shop"
+            app:argType="com.tsai.shakeit.data.Shop" />
     </fragment>
 
     <fragment

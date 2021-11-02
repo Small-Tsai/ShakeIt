@@ -15,9 +15,14 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
 
     private val viewModel by viewModels<DrinksDetailViewModel> {
         getVmFactory(
+            product =
             DrinksDetailFragmentArgs.fromBundle(
                 requireArguments()
-            ).product
+            ).product,
+
+            shopData = DrinksDetailFragmentArgs.fromBundle(
+                requireArguments()
+            ).shop
         )
     }
 

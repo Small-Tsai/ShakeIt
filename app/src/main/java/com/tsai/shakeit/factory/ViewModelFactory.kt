@@ -40,10 +40,10 @@ class ViewModelFactory(
                     HomeViewModel(repository)
 
                 isAssignableFrom(DrinksDetailViewModel::class.java) ->
-                    product?.let { DrinksDetailViewModel(it, repository) }
+                    product?.let { DrinksDetailViewModel(it, repository, shop) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
-                    OrderDetailViewModel(order, repository,shopImg)
+                    OrderDetailViewModel(order, repository, shopImg)
 
                 isAssignableFrom(OrderViewModel::class.java) ->
                     OrderViewModel(repository)
@@ -55,7 +55,7 @@ class ViewModelFactory(
                     shop?.let { MenuViewModel(it, repository) }
 
                 isAssignableFrom(CommentViewModel::class.java) ->
-                    CommentViewModel(repository , shopId)
+                    CommentViewModel(repository, shopId)
 
                 isAssignableFrom(CommentDialogViewModel::class.java) ->
                     CommentDialogViewModel(repository, shopId)

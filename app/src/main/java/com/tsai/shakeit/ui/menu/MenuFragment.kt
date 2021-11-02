@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
@@ -43,7 +44,17 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.navToDetail.observe(viewLifecycleOwner, Observer {
-            it?.let { findNavController().navigate(DrinksDetailFragmentDirections.navToDetail(it)) }
+            it?.let {
+                findNavController().navigate(
+                    DrinksDetailFragmentDirections.navToDetail(
+                        it,
+                        Shop(
+                            shop_Id = viewModel.selectedShop.shop_Id,
+                            branch = viewModel.selectedShop.branch
+                        )
+                    )
+                )
+            }
         })
 
         viewModel.popback.observe(viewLifecycleOwner, Observer {
@@ -56,13 +67,12 @@ class MenuFragment : Fragment() {
 
         viewModel.shop.observe(viewLifecycleOwner, Observer {
             it?.let { binding.shopInfo = it }
-            Logger.d("$it")
         })
 
         viewModel.orderProduct.observe(viewLifecycleOwner, Observer { orderList ->
             if (!orderList.isNullOrEmpty()) {
                 viewModel.hasOrder()
-                viewModel.updateOrderTotalPrice(orderList.sumOf { it.price*it.qty })
+                viewModel.updateOrderTotalPrice(orderList.sumOf { it.price * it.qty })
             } else {
                 viewModel.noOrder()
             }
@@ -70,7 +80,7 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.branchProduct.observe(viewLifecycleOwner, Observer {
-           viewModel.filterMyList(it)
+            viewModel.filterMyList(it)
         })
 
         binding.recyclerView.adapter = adapter

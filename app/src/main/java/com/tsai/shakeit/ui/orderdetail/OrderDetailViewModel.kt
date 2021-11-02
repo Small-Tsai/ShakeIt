@@ -49,7 +49,8 @@ class OrderDetailViewModel(
                 Shop(
                     name = mOrder.shop_Name,
                     shop_Id = mOrder.shop_Id,
-                    shop_Img = shopImg
+                    shop_Img = shopImg,
+                    branch = mOrder.branch
                 )
             }
             _navToMenu.value = null

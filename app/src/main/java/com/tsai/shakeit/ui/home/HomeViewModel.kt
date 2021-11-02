@@ -205,4 +205,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         else binding?.rideFab?.visibility = View.GONE
     }
 
+    val nightMode = MutableLiveData<Boolean>()
+
 }

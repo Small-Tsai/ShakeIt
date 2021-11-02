@@ -52,7 +52,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+
         if (mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE_NAV_HOME) {
             mainViewModel.selectedFavorite.observe(viewLifecycleOwner, {
                 selectedShop = it
@@ -129,9 +131,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 mMap.clear()
                 shopData.forEach { shop ->
                     if (!dbList.contains(shop.name)) {
-                        Logger.d("dbList = $dbList")
                         val newPosition = LatLng(shop.lat, shop.lon)
-                        Logger.d("newposition = $newPosition")
 //                val iconGen = IconGenerator(binding.root.context)
                         mMap.addMarker(
                             MarkerOptions().position(newPosition).snippet(shop.shop_Id)

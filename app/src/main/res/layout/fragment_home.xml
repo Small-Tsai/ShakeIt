@@ -33,7 +33,7 @@
                 class="com.google.android.libraries.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:mapId="@string/map_id"
+                app:mapId="@{@string/dark_map_id}"
                 tools:context=".MapsActivity"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="-36dp" />

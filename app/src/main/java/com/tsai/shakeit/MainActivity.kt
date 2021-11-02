@@ -10,7 +10,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.libraries.places.api.Places
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.tsai.shakeit.BuildConfig.MAPS_API_KEY
 import com.tsai.shakeit.databinding.ActivityMainBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.CurrentFragmentType
@@ -56,6 +58,11 @@ class MainActivity : AppCompatActivity() {
             viewModel.updateFilterShopList(it)
         })
 
+        // Initialize the SDK
+        Places.initialize(applicationContext, MAPS_API_KEY)
+
+        // Create a new PlacesClient instance
+        val placesClient = Places.createClient(this)
 
 
 //        val appBarConfiguration = AppBarConfiguration(

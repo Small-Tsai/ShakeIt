@@ -37,7 +37,7 @@ class SettingFragment : Fragment() {
         val adapter = SettingAdapter(viewModel, mainViewModel)
 
         viewModel.shopList.observe(viewLifecycleOwner, {
-            adapter.submitList(it)
+            adapter.submitList(it.distinct())
         })
 
         mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, {

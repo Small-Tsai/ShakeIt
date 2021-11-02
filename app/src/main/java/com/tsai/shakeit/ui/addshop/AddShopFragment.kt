@@ -7,13 +7,16 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.AddShopFragmentBinding
@@ -21,8 +24,9 @@ import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 
-class AddShopFragment : Fragment() {
+private const val AUTOCOMPLETE_REQUEST_CODE = 2
 
+class AddShopFragment : Fragment() {
 
     private val viewModel by viewModels<AddShopViewModel> {
         getVmFactory()
@@ -54,8 +58,7 @@ class AddShopFragment : Fragment() {
         })
 
         viewModel.timeOpen.observe(viewLifecycleOwner, {
-            Logger.d("$it")
-            Logger.d("p1 = ${viewModel.adapterPostion.value}")
+
             viewModel.adapterPostion.value?.let { it1 ->
                 viewModel.timeClose.value?.let { it2 ->
                     viewModel.setTimeList(
@@ -67,7 +70,7 @@ class AddShopFragment : Fragment() {
             }
         })
 
-        viewModel.timeClose.observe(viewLifecycleOwner,{
+        viewModel.timeClose.observe(viewLifecycleOwner, {
             viewModel.adapterPostion.value?.let { it1 ->
                 viewModel.timeOpen.value?.let { it2 ->
                     viewModel.setTimeList(
@@ -79,12 +82,42 @@ class AddShopFragment : Fragment() {
             }
         })
 
+        binding.addressEdt.setOnClickListener { startAutoCompleteIntent() }
+
+
         return binding.root
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         when (requestCode) {
+
+            AUTOCOMPLETE_REQUEST_CODE -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        data?.let {
+                            val place = Autocomplete.getPlaceFromIntent(it)
+                            binding.addressEdt.setText(place.address)
+                            viewModel.lat = place.latLng.latitude
+                            viewModel.lon = place.latLng.longitude
+                            Logger.d("${place.latLng.latitude}")
+                            Logger.d("${place.latLng.longitude}")
+                            Logger.d("Place: ${place.address}, ${place.latLng}")
+                        }
+                    }
+                    AutocompleteActivity.RESULT_ERROR -> {
+                        Logger.d("autoComplete error")
+                        data?.let {
+                            val status = Autocomplete.getStatusFromIntent(data)
+                        }
+                    }
+                    Activity.RESULT_CANCELED -> {
+                        // The user canceled the operation.
+                    }
+                }
+                return
+            }
 
             fromShop -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
@@ -117,7 +150,10 @@ class AddShopFragment : Fragment() {
                     }
                 }
             }
+
         }
+
+
     }
 
     private fun getBitmapFromUri(uri: Uri) =
@@ -137,5 +173,21 @@ class AddShopFragment : Fragment() {
             startActivityForResult(intent, buttonName)
         }
     }
+
+
+    private fun startAutoCompleteIntent() {
+
+        // Set the fields to specify which types of place data to
+        // return after the user has made a selection.
+        val fields = listOf(Place.Field.ADDRESS, Place.Field.LAT_LNG)
+
+        // Start the autocomplete intent.
+        val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+            .build(ShakeItApplication.instance)
+
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+
+    }
+
 
 }

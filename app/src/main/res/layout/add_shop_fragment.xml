@@ -193,6 +193,7 @@
                         android:imeOptions="actionNext"
                         android:text="@={viewModel.address}"
                         android:inputType="text"
+                        android:focusableInTouchMode="false"
                         android:nextFocusForward="@id/tel_edt"
                         android:singleLine="true"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"

@@ -1,11 +1,17 @@
 package com.tsai.shakeit.ui.addshop
 
 import android.net.Uri
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -98,6 +104,8 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     var branch = ""
     var address = ""
     var tel = ""
+    var lat = 0.0
+    var lon = 0.0
 
     fun setTimeList(timeOpen: String, timeClose: String, position: Int) {
         when (position) {
@@ -123,8 +131,8 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         branch = branch,
                         address = address,
                         tel = tel,
-                        lat = 25.05087618067445,
-                        lon = 120.56683348362472,
+                        lat = lat,
+                        lon = lon,
                         shop_Id = "",
                         shop_Img = it,
                         time = timeList,
@@ -140,8 +148,8 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                     }
                 }
             }
-
         }
     }
+
 }
 

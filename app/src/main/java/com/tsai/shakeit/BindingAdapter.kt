@@ -1,5 +1,7 @@
 package com.tsai.shakeit.util
 
+import android.util.Log
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -14,6 +16,7 @@ import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
+import com.tsai.shakeit.ui.addshop.AddShopViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
 
@@ -95,17 +98,15 @@ fun TextView.bindQty(qty: Int) {
 fun bindImage(imgView: ImageView, imgUrl: String?) {
 
     if (!imgUrl.isNullOrEmpty()) {
-        val gsReference = imgUrl.let { Firebase.storage.reference.child(it) }
-        gsReference.downloadUrl.addOnSuccessListener { uri ->
+
+
             Glide.with(imgView.context)
-                .load(uri)
+                .load(imgUrl)
                 .placeholder(R.drawable.placedrink)
                 .error(R.drawable.placedrink)
                 .into(imgView)
-        }
-            .addOnFailureListener {
-                Logger.d(it.toString())
-            }
+
+
     }
 }
 
@@ -137,6 +138,8 @@ fun SwitchMaterial.bindSwitch(
 ) {
     isChecked = mainViewModel.dbFilterShopList.value?.contains(shopName) != true
 }
+
+
 
 
 

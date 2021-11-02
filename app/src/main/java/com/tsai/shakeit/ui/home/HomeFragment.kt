@@ -1,5 +1,6 @@
 package com.tsai.shakeit.ui.home
 
+import android.Manifest.permission.*
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -48,14 +48,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private var locationPermissionGranted = false
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var selectedShop:Shop
+    private lateinit var selectedShop: Shop
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
         if (mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE_NAV_HOME) {
             mainViewModel.selectedFavorite.observe(viewLifecycleOwner, {
-               selectedShop = it
+                selectedShop = it
             })
         }
     }
@@ -126,11 +126,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
 
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
-
                 mMap.clear()
                 shopData.forEach { shop ->
                     if (!dbList.contains(shop.name)) {
+                        Logger.d("dbList = $dbList")
                         val newPosition = LatLng(shop.lat, shop.lon)
+                        Logger.d("newposition = $newPosition")
 //                val iconGen = IconGenerator(binding.root.context)
                         mMap.addMarker(
                             MarkerOptions().position(newPosition).snippet(shop.shop_Id)
@@ -157,7 +158,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         if (this::selectedShop.isInitialized) {
             setMapUI()
 
-            val position = LatLng(selectedShop.lat,selectedShop.lon)
+            val position = LatLng(selectedShop.lat, selectedShop.lon)
             mMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     position,
@@ -297,9 +298,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         PermissionX.init(this)
             .permissions(
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.CALL_PHONE,
-                android.Manifest.permission.INTERNET
+                ACCESS_FINE_LOCATION,
+                CALL_PHONE,
+                INTERNET,
+                READ_EXTERNAL_STORAGE
+
             )
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(
@@ -323,7 +326,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     getDeviceLocation()
 //                    mToast("所有權限已打開")
                 } else {
-                   mToast("已拒絕以下權限: $deniedList")
+                    mToast("已拒絕以下權限: $deniedList")
                 }
             }
     }

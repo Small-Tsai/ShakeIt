@@ -1,7 +1,9 @@
 package com.tsai.shakeit.data.source
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.*
+import java.io.File
 
 interface ShakeItRepository {
 
@@ -28,6 +30,10 @@ interface ShakeItRepository {
     suspend fun getComment(shopId: String): Result<List<Comment>>
 
     suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
+
+    suspend fun postShopInfo(shop: Shop): Result<Boolean>
+
+    suspend fun postImage(image: Uri): Result<String>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 

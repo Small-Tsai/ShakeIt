@@ -1,13 +1,14 @@
 package com.tsai.shakeit.data.source.remote
 
-import android.widget.Toast
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItDataSource
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.User
 import kotlin.coroutines.resume
@@ -123,8 +124,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(comment)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(ShakeItApplication.instance, "發佈成功！", Toast.LENGTH_SHORT)
-                            .show()
+                        mToast("發佈成功！")
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
@@ -148,9 +148,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .delete()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(ShakeItApplication.instance, "已移除此收藏", Toast.LENGTH_SHORT)
-                            .show()
-
+                        mToast("已移除此收藏")
                     } else {
                         task.exception?.let {
                             Logger.w(
@@ -176,8 +174,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result?.documents?.forEach { it.reference.delete() }
-                        Toast.makeText(ShakeItApplication.instance, "已移除訂單", Toast.LENGTH_SHORT)
-                            .show()
+                        mToast("已移除訂單")
                         document.delete()
 
                     } else {
@@ -337,6 +334,59 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
                 }
         }
+
+    override suspend fun postShopInfo(shop: Shop): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val shopCollection = FirebaseFirestore.getInstance().collection(SHOP)
+            val document = shopCollection.document()
+
+            shop.shop_Id = document.id
+
+            document
+                .set(shop)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "Error updateFilterShop documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("getComment Failed"))
+                    }
+                }
+        }
+
+    override suspend fun postImage(image: Uri): Result<String>  =
+        suspendCoroutine { continuation ->
+
+            val storageRef = FirebaseStorage.getInstance().reference
+            val imageRef = storageRef.child("images/${image.lastPathSegment}"?:"")
+            Logger.d("上傳圖片中")
+            imageRef
+                .putFile(image)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+
+                        imageRef.downloadUrl.addOnSuccessListener {
+                            continuation.resume(Result.Success(it.toString()))
+                        }
+
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "Error updateFilterShop documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        Logger.d("上傳圖片失敗！")
+                        continuation.resume(Result.Fail("getComment Failed"))
+                    }
+                }
+    }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
 

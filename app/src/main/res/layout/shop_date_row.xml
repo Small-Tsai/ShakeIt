@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable
+            name="editText"
+            type="android.widget.EditText" />
+
+        <variable
+            name="viewModel"
+            type="com.tsai.shakeit.ui.addshop.AddShopViewModel" />
+
+        <variable
+            name="viewHolder"
+            type="com.tsai.shakeit.ui.addshop.AddShopAdapter.DateViewHolder" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,11 +40,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:focusableInTouchMode="false"
-            android:imeOptions="actionNext"
-            android:nextFocusForward="@id/close_time"
-            android:hint="開始營業時間"
             android:gravity="center"
+            android:text="@={viewModel.timeOpen}"
+            android:hint="開始營業時間"
+            android:imeOptions="actionNext"
             android:inputType="datetime"
+            android:nextFocusForward="@id/close_time"
             app:layout_constraintBottom_toBottomOf="@+id/textView10"
             app:layout_constraintStart_toEndOf="@+id/textView10"
             app:layout_constraintTop_toTopOf="@+id/textView10" />
@@ -45,8 +57,9 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:focusableInTouchMode="false"
-            android:hint="結束營業時間"
+            android:text="@={viewModel.timeClose}"
             android:gravity="center"
+            android:hint="結束營業時間"
             android:inputType="datetime"
             app:layout_constraintBottom_toBottomOf="@+id/open_time"
             app:layout_constraintEnd_toEndOf="parent"

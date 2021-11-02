@@ -1,5 +1,6 @@
 package com.tsai.shakeit.data.source
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.Comment
@@ -73,6 +74,14 @@ class DefaultShakeItRepository(
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> {
         return shakeItDataSource.updateFilteredShop(shopList)
+    }
+
+    override suspend fun postShopInfo(shop: Shop): Result<Boolean> {
+        return shakeItDataSource.postShopInfo(shop)
+    }
+
+    override suspend fun postImage(image: Uri): Result<String> {
+        return shakeItDataSource.postImage(image)
     }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {

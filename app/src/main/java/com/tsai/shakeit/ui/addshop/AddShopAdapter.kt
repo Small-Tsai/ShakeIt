@@ -11,7 +11,8 @@ import com.tsai.shakeit.databinding.ShopDateRowBinding
 import com.tsai.shakeit.ui.addshop.AddShopAdapter.DateViewHolder
 import java.util.*
 
-class AddShopAdapter : ListAdapter<String, DateViewHolder>(DiffCallback) {
+class AddShopAdapter(private val viewModel: AddShopViewModel) :
+    ListAdapter<String, DateViewHolder>(DiffCallback) {
 
 
     private companion object DiffCallback : DiffUtil.ItemCallback<String>() {
@@ -31,10 +32,16 @@ class AddShopAdapter : ListAdapter<String, DateViewHolder>(DiffCallback) {
 
     }
 
-    class DateViewHolder(private val binding: ShopDateRowBinding) :
+    class DateViewHolder(
+        private val binding: ShopDateRowBinding,
+        private val viewModel: AddShopViewModel
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(date: String) {
+
             binding.textView10.text = date
+            binding.viewModel = viewModel
+            binding.viewHolder = this
 
             // Get Current Time
             val c = Calendar.getInstance();
@@ -45,7 +52,9 @@ class AddShopAdapter : ListAdapter<String, DateViewHolder>(DiffCallback) {
                 // Launch Time Picker Dialog
                 TimePickerDialog(binding.root.context, { _, hour, minute ->
 
-                        binding.openTime.setText(String.format("%02d:%02d", hour, minute))
+                    viewModel.adapterPostion.value = adapterPosition
+
+                    binding.openTime.setText(String.format("%02d:%02d", hour, minute))
 
                 }, hour, minute, true).show()
             }
@@ -53,7 +62,11 @@ class AddShopAdapter : ListAdapter<String, DateViewHolder>(DiffCallback) {
             binding.closeTime.setOnClickListener {
                 // Launch Time Picker Dialog
                 TimePickerDialog(binding.root.context, { _, hour, minute ->
+
+                    viewModel.adapterPostion.value = adapterPosition
+
                     binding.closeTime.setText(String.format("%02d:%02d", hour, minute))
+
                 }, hour, minute, true).show()
             }
 
@@ -63,7 +76,8 @@ class AddShopAdapter : ListAdapter<String, DateViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
         return DateViewHolder(
-            ShopDateRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ShopDateRowBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            viewModel
         )
     }
 

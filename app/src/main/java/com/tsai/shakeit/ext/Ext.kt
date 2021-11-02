@@ -3,6 +3,8 @@ package com.tsai.shakeit.ext
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.ShakeItApplication
 import java.util.*
@@ -23,3 +25,7 @@ fun mToast(text: String, duration: String?=null) {
         "short" -> Toast.makeText(ShakeItApplication.instance, text, "0".toInt()).show()
     }
 }
+
+
+
+

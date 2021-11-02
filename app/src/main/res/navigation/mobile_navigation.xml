@@ -70,7 +70,7 @@
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.tsai.shakeit.ui.setting.SettingFragment"
-        android:label="SettingFragment" >
+        android:label="SettingFragment">
         <argument
             android:name="shopInfo"
             app:argType="com.tsai.shakeit.data.Shop[]" />
@@ -144,5 +144,8 @@
         android:id="@+id/loginFragment"
         android:name="com.tsai.shakeit.ui.login.LoginFragment"
         android:label="LoginFragment" />
+    <action
+        android:id="@+id/navToFavorite"
+        app:destination="@id/navigation_favorite" />
 
 </navigation>

@@ -82,6 +82,12 @@ class AddShopFragment : Fragment() {
             }
         })
 
+        viewModel.navToHome.observe(viewLifecycleOwner, {
+            it?.let {
+                findNavController().navigate(AddShopFragmentDirections.navToHome())
+            }
+        })
+
         binding.addressEdt.setOnClickListener { startAutoCompleteIntent() }
 
 

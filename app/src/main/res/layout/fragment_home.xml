@@ -43,21 +43,21 @@
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginTop="20dp"
-                android:imeOptions="actionDone"
                 android:background="@drawable/square_button_black"
                 android:gravity="center"
+                android:imeOptions="actionDone"
                 android:inputType="number"
                 android:text="10"
+                app:layout_constraintBottom_toBottomOf="@+id/walk_fab"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_cv" />
+                app:layout_constraintTop_toTopOf="@+id/walk_fab" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/walk_fab"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:backgroundTint="@color/white"
                 android:foreground="@drawable/walking_icon"
                 android:onClick="@{()-> viewModel.isWalk()}"
@@ -116,10 +116,8 @@
                 android:id="@+id/addShop_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginEnd="24dp"
                 android:backgroundTint="@color/white"
-                android:elevation="5dp"
                 android:fontFamily="@font/roboto"
                 android:gravity="center_vertical"
                 android:onClick="@{()->viewModel.navToAddShop()}"
@@ -129,9 +127,10 @@
                 app:icon="@drawable/store"
                 app:iconGravity="textStart"
                 app:iconPadding="3dp"
-                app:iconSize="26dp"
-                app:layout_constraintBottom_toBottomOf="@+id/map"
-                app:layout_constraintStart_toStartOf="@+id/map"
+                app:iconSize="27dp"
+                app:layout_constraintBottom_toBottomOf="@+id/walk_fab"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/walk_fab"
                 app:strokeWidth="1dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

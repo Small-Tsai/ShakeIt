@@ -148,6 +148,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.addShopFab.shrink()
             }, 1500)
+            binding.addShopFab.scaleY = 0.9f
+            binding.addShopFab.scaleX = 0.9f
         })
 
         binding.addShopFab.isExtended = false

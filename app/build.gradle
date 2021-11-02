@@ -47,12 +47,14 @@ android {
 
 dependencies {
 
-
     //permission
     implementation 'com.guolindev.permissionx:permissionx:1.6.0'
 
     // Utilities for Maps SDK for Android (requires Google Play Services)
     implementation 'com.google.maps.android:android-maps-utils:2.3.0'
+
+    //material bottom navigation
+    implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
 
     //google
     implementation 'com.google.android.gms:play-services-maps:17.0.1'

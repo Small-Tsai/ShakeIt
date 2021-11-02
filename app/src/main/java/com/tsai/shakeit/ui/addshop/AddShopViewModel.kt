@@ -38,6 +38,9 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
 
     val menuImageUri = MutableLiveData<Uri>()
 
+    private val _navToHome = MutableLiveData<Boolean?>()
+    val navToHome: LiveData<Boolean?>
+        get() = _navToHome
 
     init {
         _isDateOpen.value = false
@@ -138,11 +141,13 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         time = timeList,
                         menu_Img = menu
                     )
-                    when(val result = repository.postShopInfo(shop) ) {
-                        is Result.Success->{
+                    when (val result = repository.postShopInfo(shop)) {
+                        is Result.Success -> {
                             mToast("發佈 ${shop.name}$branch 商店資訊成功！")
+                            _navToHome.value = true
+                            _navToHome.value = false
                         }
-                        is Result.Fail->{
+                        is Result.Fail -> {
                             mToast("發佈 ${shop.name}$branch 商店資訊失敗！")
                         }
                     }

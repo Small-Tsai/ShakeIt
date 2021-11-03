@@ -7,13 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.databinding.FragmentOrderBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.orderdetail.OrderDetailFragmentArgs
-import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
-import java.util.logging.Logger
 
 class OrderFragment : Fragment() {
 

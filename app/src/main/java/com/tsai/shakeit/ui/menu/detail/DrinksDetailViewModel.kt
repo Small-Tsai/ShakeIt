@@ -11,6 +11,7 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
 private const val ICE = "ice"
@@ -53,6 +54,7 @@ class DrinksDetailViewModel(
             date = Timestamp.now(),
             order_Name = "我的訂單",
             shop_Id = shop.shop_Id,
+            user_Id = UserInfo.userId
 
             )
 
@@ -66,7 +68,7 @@ class DrinksDetailViewModel(
                 others = mContentList[OTHERS].toString()
                     .substring(1, mContentList[OTHERS].toString().length - 1),
                 price = data.price,
-                user_Name = "Small Tsai",
+                user_Name = UserInfo.userName,
                 product_Img = data.product_Img
             )
         }

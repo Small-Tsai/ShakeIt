@@ -40,8 +40,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postProduct(product)
     }
 
-    override suspend fun postComment(shopId: String, comment: Comment) : Result<Boolean>{
-        return shakeItDataSource.postComment(shopId,comment)
+    override suspend fun postComment(shopId: String, comment: Comment): Result<Boolean> {
+        return shakeItDataSource.postComment(shopId, comment)
     }
 
     override suspend fun deleteFavorite(shopId: String): Result<Boolean> {
@@ -82,6 +82,10 @@ class DefaultShakeItRepository(
 
     override suspend fun postImage(image: Uri): Result<String> {
         return shakeItDataSource.postImage(image)
+    }
+
+    override suspend fun postUserInfo(user: User): Result<Boolean> {
+        return shakeItDataSource.postUserInfo(user)
     }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {

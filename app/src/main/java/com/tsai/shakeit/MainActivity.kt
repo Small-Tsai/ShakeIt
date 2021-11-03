@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         setUpBottomNavigation(navView, navController)
 
-        viewModel.getFilterList()
+
         viewModel.shopFilterList.observe(this, Observer {
             viewModel.updateFilterShopList(it)
         })

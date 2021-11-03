@@ -9,12 +9,11 @@ import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.User
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.User.userId
-import com.tsai.shakeit.util.User.userImage
-import com.tsai.shakeit.util.User.userName
+import com.tsai.shakeit.util.UserInfo.userId
+import com.tsai.shakeit.util.UserInfo.userImage
+import com.tsai.shakeit.util.UserInfo.userName
 import kotlinx.coroutines.launch
 import com.google.firebase.Timestamp
-import java.util.*
 
 class CommentDialogViewModel(
     private val repository: ShakeItRepository,

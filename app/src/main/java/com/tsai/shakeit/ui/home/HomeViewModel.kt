@@ -127,7 +127,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
-        Logger.d("getSnippet $markerSnippet")
+//        Logger.d("getSnippet $markerSnippet")
         _snippet.value = markerSnippet
         _selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
     }

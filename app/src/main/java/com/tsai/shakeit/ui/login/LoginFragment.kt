@@ -20,8 +20,8 @@ import com.google.firebase.ktx.Firebase
 import com.tsai.shakeit.R
 import com.tsai.shakeit.databinding.LoginFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.order.OrderViewModel
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 
 private const val RC_SIGN_IN = 9001
 
@@ -74,6 +74,11 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+    private fun signIn() {
+        val signInIntent: Intent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -86,6 +91,7 @@ class LoginFragment : Fragment() {
                 val account = task.getResult(ApiException::class.java)!!
                 Logger.d("firebaseAuthWithGoogle:" + account.id)
                 Logger.d("photo:" + account.photoUrl)
+                Logger.d("name:" + account.displayName)
 
                 firebaseAuthWithGoogle(account.idToken!!)
 
@@ -120,12 +126,19 @@ class LoginFragment : Fragment() {
 
     private fun updateUI(user: FirebaseUser?) {
         user?.let {
+          Logger.d("userId =${user.uid}")
+
+            UserInfo.userId = user.uid
+            UserInfo.userName = user.displayName.toString()
+            UserInfo.userImage = user.photoUrl.toString()
+
+            viewModel.uploadUser()
+
+            Logger.d("${UserInfo.userId} + ${UserInfo.userName} + ${UserInfo.userImage}")
+
             findNavController().navigate(LoginFragmentDirections.navToHome())
         }
     }
 
-    private fun signIn() {
-        val signInIntent: Intent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
-    }
+
 }

@@ -2,7 +2,6 @@ package com.tsai.shakeit.ui.home
 
 import android.Manifest.permission.*
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -35,8 +34,8 @@ import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 import kotlin.properties.Delegates
-import kotlin.system.exitProcess
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -58,6 +57,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState)
 
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        mainViewModel.getFilterList()
 
         if (mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE_NAV_HOME) {
             mainViewModel.selectedFavorite.observe(viewLifecycleOwner, {
@@ -71,6 +71,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        Logger.d("user = ${UserInfo.userId}")
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
@@ -180,7 +182,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         if (this::selectedShop.isInitialized) {
@@ -283,7 +284,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 if (slideOffset > 0.4f) {
                     if (x == 0) {
-                        Logger.d("$x")
                         x = 1
                         binding.apply {
                             idSearchView.startAnimation(toTopGone)
@@ -302,7 +302,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
 
                 if (x == 1 && slideOffset < 0.4f) {
-                    Logger.d("$x")
                     x = 0
                     binding.apply {
                         idSearchView.startAnimation(fromTop)

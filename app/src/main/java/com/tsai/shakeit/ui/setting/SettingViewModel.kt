@@ -7,7 +7,6 @@ import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.User
 
 class SettingViewModel(private val repository: ShakeItRepository, private val list: Array<Shop>) :
     ViewModel() {

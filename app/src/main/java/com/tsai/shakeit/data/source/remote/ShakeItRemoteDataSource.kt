@@ -4,13 +4,14 @@ import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.User
+import com.tsai.shakeit.util.UserInfo
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -22,6 +23,7 @@ private const val ORDER_PRODUCT = "orderProduct"
 private const val PRODUCT = "product"
 private const val COMMENT = "Comment"
 private const val FILTER_SHOP = "filterShop"
+private const val USERS = "users"
 
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
@@ -316,7 +318,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         suspendCoroutine { continuation ->
 
             val filterShop = FirebaseFirestore.getInstance().collection(FILTER_SHOP)
-            val document = filterShop.document(User.userId)
+            val document = filterShop.document(UserInfo.userId)
 
             document
                 .set(shopList)
@@ -360,11 +362,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun postImage(image: Uri): Result<String>  =
+    override suspend fun postImage(image: Uri): Result<String> =
         suspendCoroutine { continuation ->
 
             val storageRef = FirebaseStorage.getInstance().reference
-            val imageRef = storageRef.child("images/${image.lastPathSegment}"?:"")
+            val imageRef = storageRef.child("images/${image.lastPathSegment}" ?: "")
             Logger.d("上傳圖片中")
             imageRef
                 .putFile(image)
@@ -386,12 +388,35 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Fail("getComment Failed"))
                     }
                 }
-    }
+        }
+
+    override suspend fun postUserInfo(user: User): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val users = FirebaseFirestore.getInstance().collection(USERS)
+            val document = users.document(user.user_Id)
+
+            document
+                .set(user, SetOptions.merge())
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "Error userInfo documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("postUser Failed"))
+                    }
+                }
+        }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
 
         val liveData = MutableLiveData<List<String>>()
-
+        Logger.d(userId)
         FirebaseFirestore.getInstance()
             .collection(FILTER_SHOP)
             .document(userId)

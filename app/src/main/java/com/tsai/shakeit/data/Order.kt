@@ -13,7 +13,7 @@ data class Order(
     val address: String = "",
     val order_Name: String = "",
     val shop_Name: String = "",
-    val user_Id: Long = 0,
+    val user_Id: String = "",
     var order_Id: String = "",
     val invitation: ArrayList<Long>? = arrayListOf(),
     val date: Timestamp? = null,

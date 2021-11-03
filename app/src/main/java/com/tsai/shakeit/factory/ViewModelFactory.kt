@@ -68,7 +68,7 @@ class ViewModelFactory(
                     SettingViewModel(repository, shopList)
 
                 isAssignableFrom(LoginViewModel::class.java) ->
-                    LoginViewModel()
+                    LoginViewModel(repository)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

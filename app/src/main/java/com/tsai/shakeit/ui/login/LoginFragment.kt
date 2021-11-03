@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.tsai.shakeit.R
 
 class LoginFragment : Fragment() {
@@ -24,6 +25,14 @@ class LoginFragment : Fragment() {
             findNavController().navigate(LoginFragmentDirections.navToHome())
         }, 2000L)
 
+//        // Configure Google Sign In
+//        val gso = GoogleSignInOptions
+//            .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken(getString(R.string.default_web_client_id))
+//            .requestEmail()
+//            .build()
+//
+//        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
 
     return inflater.inflate(R.layout.login_fragment, container, false)

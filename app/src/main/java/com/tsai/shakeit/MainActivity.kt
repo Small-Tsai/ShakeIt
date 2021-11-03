@@ -15,7 +15,6 @@ import com.tsai.shakeit.databinding.ActivityMainBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.favorite.FavoriteFragmentDirections
 import com.tsai.shakeit.ui.home.HomeFragmentDirections
-import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
@@ -38,36 +37,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-
         val navView = binding.bottomNavigation
 
-        navView.add(MeowBottomNavigation.Model(1, R.drawable.ic_home_black_24dp))
-        navView.add(MeowBottomNavigation.Model(2, R.drawable.ic_dashboard_black_24dp))
-        navView.add(MeowBottomNavigation.Model(3, R.drawable.ic_notifications_black_24dp))
-
-        navView.setOnClickMenuListener {
-            when (it.id) {
-                1 -> navController.navigate(HomeFragmentDirections.navToHome())
-                2 -> navController.navigate(FavoriteFragmentDirections.navToFavorite())
-                3 -> navController.navigate(OrderFragmentDirections.navToOrder())
-            }
-        }
+        setUpBottomNavigation(navView, navController)
 
         viewModel.getFilterList()
-
-        viewModel.dbFilterShopList.observe(this, {
-            Logger.d("it =$it")
-        })
-
-        viewModel.currentFragmentType.observe(
-            this,
-            Observer {
-                Logger.i("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                Logger.i("[${viewModel.currentFragmentType.value}]")
-                Logger.i("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-            }
-        )
-
         viewModel.shopFilterList.observe(this, Observer {
             viewModel.updateFilterShopList(it)
         })
@@ -78,23 +52,48 @@ class MainActivity : AppCompatActivity() {
         // Create a new PlacesClient instance
         val placesClient = Places.createClient(this)
 
-
-        setupNavController()
-//        navView.setupWithNavController(navController)
+        setupNavController(navView)
     }
 
-    private fun setupNavController() {
+    private fun setUpBottomNavigation(
+        navView: MeowBottomNavigation,
+        navController: NavController
+    ) {
+        navView.add(MeowBottomNavigation.Model(1, R.drawable.homeicon))
+        navView.add(MeowBottomNavigation.Model(2, R.drawable.heartb))
+        navView.add(MeowBottomNavigation.Model(3, R.drawable.shoppinglist))
+
+        navView.setOnClickMenuListener {
+            when (it.id) {
+                1 -> navController.navigate(HomeFragmentDirections.navToHome())
+                2 -> navController.navigate(FavoriteFragmentDirections.navToFavorite())
+                3 -> navController.navigate(OrderFragmentDirections.navToOrder())
+            }
+        }
+    }
+
+    private fun setupNavController(navView: MeowBottomNavigation) {
         findNavController(R.id.nav_host_fragment_activity_main).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
-//                R.id.navigation_home -> CurrentFragmentType.HOME
+                R.id.navigation_home -> {
+                    navView.show(1, true)
+                    return@addOnDestinationChangedListener
+                }
+
                 R.id.menuFragment -> {
                     CurrentFragmentType.MENU
                 }
                 R.id.addShopFragment -> CurrentFragmentType.ADD_SHOP
                 R.id.drinksDetailFragment -> CurrentFragmentType.DRINKS_DETAIL
                 R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL
-                R.id.navigation_order -> CurrentFragmentType.ORDER
-                R.id.navigation_favorite -> CurrentFragmentType.FAVORITE
+                R.id.navigation_order -> {
+                    navView.show(3, true)
+                    CurrentFragmentType.ORDER
+                }
+                R.id.navigation_favorite -> {
+                    navView.show(2, true)
+                    CurrentFragmentType.FAVORITE
+                }
                 else -> viewModel.currentFragmentType.value
             }
         }

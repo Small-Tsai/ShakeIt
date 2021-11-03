@@ -32,7 +32,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:background="@drawable/one_side_border"
-            android:onCheckedChanged="@{()->viewModel.filterShop(shopName,mainViewModel)}"
+            android:onClick="@{()->viewModel.doCheck(shopName)}"
             android:paddingHorizontal="24dp"
             android:text="@{shopName}"
             app:layout_constraintEnd_toEndOf="parent"

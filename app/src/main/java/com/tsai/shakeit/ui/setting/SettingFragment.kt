@@ -40,9 +40,33 @@ class SettingFragment : Fragment() {
             adapter.submitList(it.distinct())
         })
 
+        viewModel.doCheck.observe(viewLifecycleOwner, {
+            Logger.d("docheckAll = $it")
+
+            if (it.isNotEmpty()) {
+                viewModel.filterShop(it, mainViewModel)
+            } else if (viewModel.isAllChecked.value == true) {
+
+                Logger.d("${viewModel.isAllChecked.value}")
+                mainViewModel.shopFilterList.value = viewModel.shopList.value?.distinct()
+            } else {
+                mainViewModel.shopFilterList.value = mutableListOf()
+            }
+        })
+
+        binding.mainViewModel = mainViewModel
+
         mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, {
-            Logger.d("$it")
-           viewModel.filteredList = it as MutableList<String>
+            Logger.d("總共有${viewModel.shopList.value?.distinct()?.size}間商店")
+            Logger.d("隱藏商家--->$it")
+            viewModel.filteredList = it as MutableList<String>
+            Logger.d("filterList--->${viewModel.filteredList}")
+            viewModel.isAllChecked.value = viewModel.filteredList.isEmpty()
+            adapter.notifyDataSetChanged()
+        })
+
+        viewModel.isAllChecked.observe(viewLifecycleOwner, {
+            Logger.d("isAllchecked = $it")
         })
 
         binding.settingShopRev.adapter = adapter

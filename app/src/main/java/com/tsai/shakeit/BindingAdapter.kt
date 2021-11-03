@@ -99,12 +99,11 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
 
     if (!imgUrl.isNullOrEmpty()) {
 
-
-            Glide.with(imgView.context)
-                .load(imgUrl)
-                .placeholder(R.drawable.placedrink)
-                .error(R.drawable.placedrink)
-                .into(imgView)
+        Glide.with(imgView.context)
+            .load(imgUrl)
+            .placeholder(R.drawable.placedrink)
+            .error(R.drawable.placedrink)
+            .into(imgView)
 
 
     }
@@ -114,18 +113,12 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
 fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
 
     if (!imgUrl.isNullOrEmpty()) {
-        val gsReference = imgUrl.let { Firebase.storage.reference.child(it) }
-        gsReference.downloadUrl.addOnSuccessListener { uri ->
-            Glide.with(imgView.context)
-                .load(uri)
-                .placeholder(R.drawable.placedrink)
-                .error(R.drawable.placedrink)
-                .circleCrop()
-                .into(imgView)
-        }
-            .addOnFailureListener {
-                Logger.d(it.toString())
-            }
+        Glide.with(imgView.context)
+            .load(imgUrl)
+            .placeholder(R.drawable.placedrink)
+            .error(R.drawable.placedrink)
+            .circleCrop()
+            .into(imgView)
     }
 }
 

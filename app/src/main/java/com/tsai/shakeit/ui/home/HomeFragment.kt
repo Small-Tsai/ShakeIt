@@ -76,8 +76,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
 
-        Logger.d("user = ${UserInfo.userId}")
-
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -94,9 +92,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.isWalkOrRide.observe(viewLifecycleOwner, {
             when (it) {
-                true -> viewModel.onAddButtonClicked(it)
+                true -> viewModel.onWalkOrRideBtnClicked(it)
                 false -> {
-                    viewModel.onAddButtonClicked(it)
+                    viewModel.onWalkOrRideBtnClicked(it)
                     viewModel.isNull()
                 }
             }
@@ -138,6 +136,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { findNavController().navigate(HomeFragmentDirections.navToSetting(viewModel.shopLiveData.value!!.toTypedArray())) }
         })
 
+        //當獲得商店資料後執行
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
                 mMap.clear()
@@ -297,11 +296,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                             editText.startAnimation(toTopGone)
                             searchCv.startAnimation(toTopGone)
                             filterBar.startAnimation(toTopGone)
+                            addShopFab.startAnimation(toTopGone)
                             searchCv.visibility = View.GONE
                             filterBar.visibility = View.GONE
                             idSearchView.visibility = View.GONE
                             walkFab.visibility = View.GONE
                             editText.visibility = View.GONE
+                            addShopFab.visibility = View.GONE
                         }
 
                     }
@@ -315,11 +316,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         editText.startAnimation(fromTop)
                         searchCv.startAnimation(fromTop)
                         filterBar.startAnimation(fromTop)
+                        addShopFab.startAnimation(fromTop)
                         searchCv.visibility = View.VISIBLE
                         filterBar.visibility = View.VISIBLE
                         idSearchView.visibility = View.VISIBLE
                         walkFab.visibility = View.VISIBLE
                         editText.visibility = View.VISIBLE
+                        addShopFab.visibility = View.VISIBLE
                     }
                 }
             }

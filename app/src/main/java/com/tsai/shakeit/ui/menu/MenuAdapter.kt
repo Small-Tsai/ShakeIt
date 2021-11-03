@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.tsai.shakeit.data.Menu
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.databinding.MenuProductRowBinding
 import com.tsai.shakeit.databinding.MenuTitleRowBinding
@@ -76,4 +75,9 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
             else -> throw ClassCastException("Unknown viewType")
         }
     }
+}
+
+sealed class Menu{
+    data class Title (val type: String):Menu()
+    data class MenuProduct (val product: Product):Menu()
 }

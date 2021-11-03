@@ -15,6 +15,7 @@ import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.databinding.FragmentHomeBinding
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
@@ -63,22 +64,26 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         get() = _isfilterShopBtnClickable
 
     init {
-
         timeDisplay.value = false
         _isWalkOrRide.value = null
+        getShopData()
+        getMyFavorite()
+    }
 
+    //獲取店家資料
+    private fun getShopData() {
         viewModelScope.launch {
+
             _isfilterShopBtnClickable.value = false
+
             when (val result = repository.getAllShop()) {
                 is Result.Success -> {
                     _shopLiveData.value = result.data!!
                     _isfilterShopBtnClickable.value = true
                 }
-                is Result.Fail -> Logger.d("getShop Failed")
+                is Result.Fail -> mToast("獲取店家資料異常")
             }
         }
-
-        getMyFavorite()
     }
 
 
@@ -99,51 +104,37 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _isInserted.value = _Favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
+    //刪除收藏
     fun deleteFavorite(shopId: String) {
-
         viewModelScope.launch {
             when (val result = repository.deleteFavorite(shopId)) {
-                is Result.Success -> {
-                    checkHasFavorite()
-                }
+                is Result.Success -> checkHasFavorite()
             }
         }
     }
 
+    //上傳收藏
     fun postMyFavorite(favorite: Favorite) {
-
         viewModelScope.launch {
-            when (val result =
-                repository.postFavorite(favorite)) {
+            when (val result = repository.postFavorite(favorite)) {
                 is Result.Success -> {
                     checkHasFavorite()
-                    Toast.makeText(
-                        ShakeItApplication.instance,
-                        "已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    mToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
                 }
-                is Result.Fail -> {
-                    Toast.makeText(
-                        ShakeItApplication.instance,
-                        "加入收藏失敗",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                is Result.Error -> {
-                    Logger.d("postFavorite Error")
-                }
+                is Result.Fail -> mToast("加入收藏失敗")
+                is Result.Error -> Logger.d("postFavorite Error")
             }
         }
     }
 
+    //用Snippet獲得選取的店家
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
-//        Logger.d("getSnippet $markerSnippet")
         _snippet.value = markerSnippet
         selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
     }
 
+    //bottomSheet 營業時間顯示與否
     fun displayOrNot() {
         timeDisplay.value = timeDisplay.value == false
     }
@@ -167,35 +158,35 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     var i = 0
-
     @SuppressLint("UseCompatLoadingForDrawables")
     fun isRide() {
 
         if (isWalkOrRide.value == true && i > 0) {
             i = 0
-            binding?.let {
-                binding!!.walkFab.foreground =
-                    ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
+
+            binding?.walkFab?.let {
+                it.foreground = ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
             }
-            binding?.let {
-                binding!!.rideFab.foreground =
-                    ShakeItApplication.instance.getDrawable(R.drawable.ride)
+            binding?.rideFab?.let {
+                it.foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
             }
+
         } else {
             i += 1
-            binding?.let {
-                binding!!.walkFab.foreground =
-                    ShakeItApplication.instance.getDrawable(R.drawable.ride)
+
+            binding?.walkFab?.let {
+                it.foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
             }
-            binding?.let {
-                binding!!.rideFab.foreground =
-                    ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
+
+            binding?.rideFab?.let {
+                it.foreground = ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
             }
+
         }
         _isWalkOrRide.value = false
     }
 
-    fun onAddButtonClicked(b: Boolean) {
+    fun onWalkOrRideBtnClicked(b: Boolean) {
         setVisibility(b)
         setAnimation(b)
     }
@@ -216,6 +207,4 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         if (b) binding?.rideFab?.visibility = View.VISIBLE
         else binding?.rideFab?.visibility = View.GONE
     }
-
-
 }

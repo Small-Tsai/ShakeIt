@@ -38,8 +38,10 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //get filterShopList on FireBase
     var dbFilterShopList = MutableLiveData<List<String>>()
     fun getFilterList() {
-        Logger.d("getFilterList")
+        if (dbFilterShopList.value.isNullOrEmpty()){
+            Logger.d("dbFilterShopList")
             dbFilterShopList = repository.getFilteredShopList(UserInfo.userId)
+        }
     }
 
 }

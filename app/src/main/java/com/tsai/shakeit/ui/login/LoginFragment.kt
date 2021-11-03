@@ -89,13 +89,10 @@ class LoginFragment : Fragment() {
 
                 // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                Logger.d("firebaseAuthWithGoogle:" + account.id)
-                Logger.d("photo:" + account.photoUrl)
-                Logger.d("name:" + account.displayName)
-
                 firebaseAuthWithGoogle(account.idToken!!)
 
             } catch (e: ApiException) {
+
                 // Google Sign In failed, update UI appropriately
                 Logger.w("Google sign in failed $e")
             }
@@ -126,16 +123,10 @@ class LoginFragment : Fragment() {
 
     private fun updateUI(user: FirebaseUser?) {
         user?.let {
-          Logger.d("userId =${user.uid}")
-
             UserInfo.userId = user.uid
             UserInfo.userName = user.displayName.toString()
             UserInfo.userImage = user.photoUrl.toString()
-
             viewModel.uploadUser()
-
-            Logger.d("${UserInfo.userId} + ${UserInfo.userName} + ${UserInfo.userImage}")
-
             findNavController().navigate(LoginFragmentDirections.navToHome())
         }
     }

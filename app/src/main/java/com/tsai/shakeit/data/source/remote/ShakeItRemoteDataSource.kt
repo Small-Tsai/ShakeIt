@@ -72,7 +72,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(orderProduct)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Logger.i("orderProduct: $order")
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
@@ -203,7 +202,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObject(Shop::class.java)
-                        Logger.d(shopData.toString())
                         continuation.resume(Result.Success(shopData!!))
                     } else {
                         task.exception?.let {
@@ -422,9 +420,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             .document(userId)
             .addSnapshotListener { snapshot, e ->
 
-                var list = mutableListOf<String>()
-
-                Logger.d("Current data: ${snapshot?.data?.values}")
+                val list = mutableListOf<String>()
 
                 snapshot?.let {
                     val data = snapshot.toObject(FilterShop::class.java)
@@ -432,9 +428,9 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         list.add(it)
                     }
                 }
+
                 liveData.value = list
             }
-
         return liveData
     }
 
@@ -457,6 +453,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         list.add(order)
                     }
                 }
+
                 liveData.value = list
             }
         return liveData

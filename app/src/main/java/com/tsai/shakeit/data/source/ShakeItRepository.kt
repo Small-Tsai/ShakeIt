@@ -7,7 +7,15 @@ import com.tsai.shakeit.util.UserInfo
 
 interface ShakeItRepository {
 
-    suspend fun postFavorite(shop: Shop): Result<Boolean>
+    suspend fun deleteFavorite(shopId: String): Result<Boolean>
+
+    suspend fun deleteOrder(orderId: String): Result<Boolean>
+
+    suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean>
+
+    suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
+
+    suspend fun postFavorite(favorite: Favorite): Result<Boolean>
 
     suspend fun postOrderToFireBase(order: Order, orderProduct: OrderProduct): Result<Boolean>
 
@@ -15,9 +23,11 @@ interface ShakeItRepository {
 
     suspend fun postComment(shopId: String, comment: Comment): Result<Boolean>
 
-    suspend fun deleteFavorite(shopId: String): Result<Boolean>
+    suspend fun postShopInfo(shop: Shop): Result<Boolean>
 
-    suspend fun deleteOrder(orderId: String): Result<Boolean>
+    suspend fun postImage(image: Uri): Result<String>
+
+    suspend fun postUserInfo(user: User): Result<Boolean>
 
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
@@ -25,27 +35,17 @@ interface ShakeItRepository {
 
     suspend fun getProduct(shopId: String): Result<List<Product>>
 
-    suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean>
-
     suspend fun getComment(shopId: String): Result<List<Comment>>
-
-    suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
-
-    suspend fun postShopInfo(shop: Shop): Result<Boolean>
-
-    suspend fun postImage(image: Uri): Result<String>
-
-    suspend fun postUserInfo(user: User): Result<Boolean>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 
-    fun getFireBaseOrder(): MutableLiveData<List<Order>>
+    fun getFireBaseOrder(userId: String): MutableLiveData<List<Order>>
 
     fun getShopOrder(shopId: String): MutableLiveData<List<Order>>
 
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
-    fun getFavorite(): MutableLiveData<List<Shop>>
+    fun getFavorite(userId: String): MutableLiveData<List<Favorite>>
 
 
 }

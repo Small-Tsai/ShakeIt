@@ -28,17 +28,17 @@ private const val USERS = "users"
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
 
-    override suspend fun postFavorite(shop: Shop): Result<Boolean> =
+    override suspend fun postFavorite(favorite: Favorite): Result<Boolean> =
         suspendCoroutine { continuation ->
 
-            val favorite = FirebaseFirestore.getInstance().collection(FAVORITE)
-            val document = favorite.document(shop.shop_Id)
+            val favoriteCollection = FirebaseFirestore.getInstance().collection(FAVORITE)
+            val document = favoriteCollection.document(favorite.shop.shop_Id)
 
             document
-                .set(shop)
+                .set(favorite)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Logger.d("Publish: $shop")
+                        Logger.d("Publish: $favorite")
 
                         continuation.resume(Result.Success(true))
                     } else {
@@ -438,13 +438,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         return liveData
     }
 
-    override fun getFireBaseOrder(): MutableLiveData<List<Order>> {
+    override fun getFireBaseOrder(userId: String): MutableLiveData<List<Order>> {
 
         val liveData = MutableLiveData<List<Order>>()
 
         FirebaseFirestore.getInstance()
             .collection(ORDERS)
             .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
+            .whereEqualTo("user_Id", userId)
             .addSnapshotListener { snapshot, e ->
 
                 val list = mutableListOf<Order>()
@@ -508,20 +509,21 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         return liveData
     }
 
-    override fun getFavorite(): MutableLiveData<List<Shop>> {
+    override fun getFavorite(userId: String): MutableLiveData<List<Favorite>> {
 
-        val liveData = MutableLiveData<List<Shop>>()
+        val liveData = MutableLiveData<List<Favorite>>()
 
         FirebaseFirestore.getInstance()
             .collection(FAVORITE)
+            .whereEqualTo("user_Id", userId)
             .addSnapshotListener { snapshot, e ->
 
-                val list = mutableListOf<Shop>()
+                val list = mutableListOf<Favorite>()
 
                 if (snapshot != null) {
                     for (document in snapshot) {
 //                        Log.d(TAG, "Current data: ${document.data}")
-                        val shop = document.toObject(Shop::class.java)
+                        val shop = document.toObject(Favorite::class.java)
                         list.add(shop)
                     }
                 }

@@ -5,18 +5,18 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Shop
-import com.tsai.shakeit.databinding.*
+import com.tsai.shakeit.databinding.FavoriteShopimgRowBinding
+import com.tsai.shakeit.databinding.FavoriteShoptitleRowBinding
 
 class FavoriteAdapter(val viewModel: FavoriteViewModel) :
-    ListAdapter<Favorite, RecyclerView.ViewHolder>(DiffCallback) {
+    ListAdapter<FavoriteItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     inner class ShopImageViewHolder(private var binding: FavoriteShopimgRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(img: List<Shop>) {
+        fun bind(favorite: List<Shop>) {
             val adapter = FavoriteImageAdapter(viewModel)
-            adapter.submitList(img)
+            adapter.submitList(favorite)
             binding.favoriteShopImgRev.adapter = adapter
             binding.viewModel = viewModel
             binding.executePendingBindings()
@@ -31,12 +31,12 @@ class FavoriteAdapter(val viewModel: FavoriteViewModel) :
         }
     }
 
-    private companion object DiffCallback : DiffUtil.ItemCallback<Favorite>() {
-        override fun areItemsTheSame(oldItem: Favorite, newItem: Favorite): Boolean {
+    private companion object DiffCallback : DiffUtil.ItemCallback<FavoriteItem>() {
+        override fun areItemsTheSame(oldItem: FavoriteItem, newItem: FavoriteItem): Boolean {
             return oldItem === newItem
         }
 
-        override fun areContentsTheSame(oldItem: Favorite, newItem: Favorite): Boolean {
+        override fun areContentsTheSame(oldItem: FavoriteItem, newItem: FavoriteItem): Boolean {
             return oldItem == newItem
         }
 
@@ -63,19 +63,24 @@ class FavoriteAdapter(val viewModel: FavoriteViewModel) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ShopImageViewHolder -> {
-                holder.bind((getItem(position) as Favorite.ShopImg).img)
+                holder.bind((getItem(position) as FavoriteItem.ShopImg).img)
             }
             is TitleViewHolder -> {
-                holder.bind((getItem(position) as Favorite.ShopName).name)
+                holder.bind((getItem(position) as FavoriteItem.ShopName).name)
             }
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is Favorite.ShopImg -> ITEM_VIEW_TYPE_FAVORITE
-            is Favorite.ShopName -> ITEM_VIEW_TYPE_TITLE
+            is FavoriteItem.ShopImg -> ITEM_VIEW_TYPE_FAVORITE
+            is FavoriteItem.ShopName -> ITEM_VIEW_TYPE_TITLE
             else -> throw ClassCastException("Unknown viewType")
         }
     }
+}
+
+sealed class FavoriteItem {
+    data class ShopName(val name: String) : FavoriteItem()
+    data class ShopImg(val img: List<Shop>) : FavoriteItem()
 }

@@ -1,6 +1,12 @@
 package com.tsai.shakeit.data
 
-sealed class Favorite {
-    data class ShopName(val name: String) : Favorite()
-    data class ShopImg(val img: List<Shop>) : Favorite()
-}
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+@Parcelize
+data class Favorite(
+    val shop: Shop = Shop(),
+    val user_Id: String = ""
+) : Parcelable
+

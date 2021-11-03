@@ -26,6 +26,7 @@ import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
@@ -57,7 +58,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState)
 
         mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-        mainViewModel.getFilterList()
+
+        if (mainViewModel.dbFilterShopList.value.isNullOrEmpty()) {
+            mainViewModel.getFilterList()
+        }
 
         if (mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE_NAV_HOME) {
             mainViewModel.selectedFavorite.observe(viewLifecycleOwner, {
@@ -107,12 +111,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
 
         viewModel.Favorite.observe(viewLifecycleOwner, {
-            viewModel.mShopId?.let { it1 -> viewModel.checkHasFavorite(it1) }
+            viewModel.mShopId?.let { it1 -> viewModel.checkHasFavorite() }
         })
 
-        viewModel._selectedShop.observe(viewLifecycleOwner, { shop ->
+        viewModel.selectedShop.observe(viewLifecycleOwner, { shop ->
+            val favorite = Favorite(shop = shop, user_Id = UserInfo.userId)
+            binding.favorite = favorite
             binding.shop = shop
-            viewModel.checkHasFavorite(shop.shop_Id)
+            viewModel.checkHasFavorite()
 
             binding.apply {
 

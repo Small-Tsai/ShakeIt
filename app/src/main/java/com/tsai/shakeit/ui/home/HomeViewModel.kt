@@ -10,11 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
@@ -28,7 +30,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val isInserted: LiveData<Boolean>
         get() = _isInserted
 
-
     private val _isWalkOrRide = MutableLiveData<Boolean?>()
     val isWalkOrRide: LiveData<Boolean?>
         get() = _isWalkOrRide
@@ -37,8 +38,8 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val shopLiveData: LiveData<List<Shop>>
         get() = _shopLiveData
 
-    private var _Favorite = MutableLiveData<List<Shop>>()
-    val Favorite: LiveData<List<Shop>>
+    private var _Favorite = MutableLiveData<List<Favorite>>()
+    val Favorite: LiveData<List<Favorite>>
         get() = _Favorite
 
     private val _snippet = MutableLiveData<String?>()
@@ -55,17 +56,28 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     val timeDisplay = MutableLiveData<Boolean>()
 
-    val _selectedShop = MutableLiveData<Shop>()
+    val selectedShop = MutableLiveData<Shop>()
+
+    private val _isfilterShopBtnClickable = MutableLiveData<Boolean>()
+    val isfilterShopClickable: LiveData<Boolean>
+        get() = _isfilterShopBtnClickable
 
     init {
+
         timeDisplay.value = false
         _isWalkOrRide.value = null
+
         viewModelScope.launch {
+            _isfilterShopBtnClickable.value = false
             when (val result = repository.getAllShop()) {
-                is Result.Success -> _shopLiveData.value = result.data!!
+                is Result.Success -> {
+                    _shopLiveData.value = result.data!!
+                    _isfilterShopBtnClickable.value = true
+                }
                 is Result.Fail -> Logger.d("getShop Failed")
             }
         }
+
         getMyFavorite()
     }
 
@@ -76,15 +88,15 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     // use to check has favorite or not
-    fun getMyFavorite() {
+    private fun getMyFavorite() {
         viewModelScope.launch {
-            _Favorite = repository.getFavorite()
+            _Favorite = repository.getFavorite(UserInfo.userId)
         }
     }
 
     var mShopId: String? = null
-    fun checkHasFavorite(shopId: String) {
-        _isInserted.value = _Favorite.value?.map { it.shop_Id }?.contains(mShopId)
+    fun checkHasFavorite() {
+        _isInserted.value = _Favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
     fun deleteFavorite(shopId: String) {
@@ -92,22 +104,22 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         viewModelScope.launch {
             when (val result = repository.deleteFavorite(shopId)) {
                 is Result.Success -> {
-                    checkHasFavorite(shopId)
+                    checkHasFavorite()
                 }
             }
         }
     }
 
-    fun postMyFavorite(shop: Shop) {
+    fun postMyFavorite(favorite: Favorite) {
 
         viewModelScope.launch {
             when (val result =
-                repository.postFavorite(shop)) {
+                repository.postFavorite(favorite)) {
                 is Result.Success -> {
-                    checkHasFavorite(shop.shop_Id)
+                    checkHasFavorite()
                     Toast.makeText(
                         ShakeItApplication.instance,
-                        "已將 ${shop.name + shop.branch} 加入收藏",
+                        "已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -129,7 +141,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         mShopId = markerSnippet
 //        Logger.d("getSnippet $markerSnippet")
         _snippet.value = markerSnippet
-        _selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
+        selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
     }
 
     fun displayOrNot() {

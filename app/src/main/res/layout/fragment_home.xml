@@ -12,6 +12,10 @@
             type="com.tsai.shakeit.data.Shop" />
 
         <variable
+            name="favorite"
+            type="com.tsai.shakeit.data.Favorite" />
+
+        <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.home.HomeViewModel" />
 
@@ -90,10 +94,11 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="315dp"
-                    android:onClick="@{()-> viewModel.navToSetting()}"
                     android:layout_marginTop="14dp"
                     android:backgroundTint="@color/white"
+                    android:clickable="@{viewModel.isfilterShopClickable}"
                     android:foreground="@drawable/setting_lines"
+                    android:onClick="@{()-> viewModel.navToSetting()}"
                     app:layout_constraintEnd_toEndOf="@+id/idSearchView" />
 
 
@@ -293,7 +298,7 @@
                 android:background="@{viewModel.isInserted? @drawable/heart : @drawable/emptyheart }"
                 android:clickable="true"
                 android:focusable="true"
-                android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite(shop.shop_Id) : viewModel.postMyFavorite(shop)}"
+                android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite(shop.shop_Id) : viewModel.postMyFavorite(favorite)}"
                 app:layout_constraintBottom_toBottomOf="@+id/commentUserName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

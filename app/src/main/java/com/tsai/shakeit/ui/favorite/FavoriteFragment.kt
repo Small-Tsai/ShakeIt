@@ -35,11 +35,11 @@ class FavoriteFragment : Fragment() {
         val adapter = FavoriteAdapter(viewModel)
 
 
-        viewModel.favorite.observe(viewLifecycleOwner, Observer {
+        viewModel.favoriteItem.observe(viewLifecycleOwner, Observer {
             it?.let { adapter.submitList(it) }
         })
 
-        viewModel.shop.observe(viewLifecycleOwner, Observer {
+        viewModel.myFavorite.observe(viewLifecycleOwner, Observer {
             viewModel.buildFavoriteList(it)
         })
 

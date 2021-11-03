@@ -7,17 +7,18 @@ import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
-    private var _favorite = MutableLiveData<List<Favorite>>()
-    val favorite: LiveData<List<Favorite>>
-        get() = _favorite
+    private var _favoriteItem = MutableLiveData<List<FavoriteItem>>()
+    val favoriteItem: LiveData<List<FavoriteItem>>
+        get() = _favoriteItem
 
-    private var _shop = MutableLiveData<List<Shop>>()
-    val shop: LiveData<List<Shop>>
-        get() = _shop
+    private var _myFavorite = MutableLiveData<List<Favorite>>()
+    val myFavorite: LiveData<List<Favorite>>
+        get() = _myFavorite
 
     private var _navToHome = MutableLiveData<Shop>()
     val navToHome: LiveData<Shop>
@@ -29,28 +30,31 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
 
     private fun getFavoriteData() {
         viewModelScope.launch {
-            _shop = repository.getFavorite()
+            _myFavorite = repository.getFavorite(UserInfo.userId)
         }
     }
 
-    fun navToHome(shop:Shop){
+    fun navToHome(shop: Shop) {
         _navToHome.value = shop
     }
 
-    fun buildFavoriteList(shop:List<Shop>){
+    fun buildFavoriteList(favorite: List<Favorite>) {
 
-        val favoriteList = mutableListOf<Favorite>()
-        val titleList = shop.map { it.name }.distinct()
+        val favoriteList = mutableListOf<FavoriteItem>()
+        val titleList = favorite.map { it.shop.name }.distinct()
 
         titleList.let { title ->
             title.forEach { name ->
-                shop.let {
-                    favoriteList.add(Favorite.ShopName(name))
-                    favoriteList.add(Favorite.ShopImg(shop.filter { it.name == name }))
+                favorite.let {
+                    favoriteList.add(FavoriteItem.ShopName(name))
+                    favoriteList.add(FavoriteItem.ShopImg(favorite.filter { it.shop.name == name }
+                        .map { it.shop }))
+
+
                 }
             }
         }
-        _favorite.value = favoriteList
+        _favoriteItem.value = favoriteList
     }
 }
 

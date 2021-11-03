@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
 class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
@@ -42,20 +43,19 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-
-    fun doNavToOrderDetail(order: Order) {
-        _navToOrderDetail.value = order
-        _navToOrderDetail.value = null
-    }
-
     private fun getOrderData() {
-        _userOrderList = repository.getFireBaseOrder()
+        _userOrderList = repository.getFireBaseOrder(UserInfo.userId)
     }
 
     fun deleteOrder(orderId: String) {
         viewModelScope.launch {
             repository.deleteOrder(orderId)
         }
+    }
+
+    fun doNavToOrderDetail(order: Order) {
+        _navToOrderDetail.value = order
+        _navToOrderDetail.value = null
     }
 
     // orderId = shopId

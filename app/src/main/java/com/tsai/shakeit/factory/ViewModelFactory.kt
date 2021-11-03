@@ -12,6 +12,7 @@ import com.tsai.shakeit.ui.home.comment.CommentViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.HomeViewModel
+import com.tsai.shakeit.ui.login.LoginViewModel
 import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.order.OrderViewModel
 import com.tsai.shakeit.ui.order.sendcomment.CommentDialogViewModel
@@ -65,6 +66,9 @@ class ViewModelFactory(
 
                 isAssignableFrom(SettingViewModel::class.java) ->
                     SettingViewModel(repository, shopList)
+
+                isAssignableFrom(LoginViewModel::class.java) ->
+                    LoginViewModel()
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

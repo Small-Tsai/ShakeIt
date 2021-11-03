@@ -6,4 +6,6 @@
     <string name="map_id">e1f4a29f09ac6176</string>
     <string name="dark_map_id">af941dc06a6448e1</string>
     <string name="internet_not_connected">您尚未連接 Internet</string>
+    <string name="web_client_id">345224929102-uv7gc71rflsnkrb10h0lglbvfvl53dkv.apps.googleusercontent.com</string>
+
 </resources>

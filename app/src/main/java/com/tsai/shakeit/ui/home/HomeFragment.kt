@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.RelativeLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -35,6 +36,7 @@ import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
 import kotlin.properties.Delegates
+import kotlin.system.exitProcess
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -82,6 +84,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        setBackPressedBehavior()
 
         viewModel.isWalkOrRide.observe(viewLifecycleOwner, {
             when (it) {
@@ -128,7 +131,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
 
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
-
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
                 mMap.clear()
                 shopData.forEach { shop ->
@@ -143,13 +145,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     }
                 }
             })
-
-            binding.addShopFab.extend()
-            Handler(Looper.getMainLooper()).postDelayed({
-                binding.addShopFab.shrink()
-            }, 1500)
-            binding.addShopFab.scaleY = 0.9f
-            binding.addShopFab.scaleX = 0.9f
+            setAddShopBottomBehavior()
         })
 
         binding.addShopFab.isExtended = false
@@ -157,9 +153,36 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    //設定新增商店按鈕UI動畫
+    private fun setAddShopBottomBehavior() {
+        binding.addShopFab.extend()
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.addShopFab.shrink()
+        }, 1500)
+        binding.addShopFab.scaleY = 0.9f
+        binding.addShopFab.scaleX = 0.9f
+    }
+
+    //設定返回鍵行為
+    private fun setBackPressedBehavior() {
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                } else {
+                    requireActivity().finish()
+                }
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            callback
+        )
+    }
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
         if (this::selectedShop.isInitialized) {
             setMapUI()
 
@@ -171,12 +194,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 )
             )
         }
-
         askPermission()
         setBottomSheetBehavior()
         setMyLocationButtonPosition()
     }
 
+    //設定“我的位置”按鈕位置
     private fun setMyLocationButtonPosition() {
 
         val map = view?.findViewById<View>(R.id.map)
@@ -372,13 +395,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    //設定google map UI元件
     private fun setMapUI() {
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
     }
-}
 
+}
 
 
 

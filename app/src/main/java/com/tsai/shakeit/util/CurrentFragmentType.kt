@@ -1,6 +1,7 @@
 package com.tsai.shakeit.util
 
 enum class CurrentFragmentType(val value: String) {
+    LOGIN("會員登入"),
     HOME(""),
     ADD_SHOP("新增店家"),
     MENU("菜單"),

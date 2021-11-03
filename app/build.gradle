@@ -62,6 +62,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.libraries.maps:maps:3.1.0-beta'
     implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
+    implementation 'com.shobhitpuri.custombuttons:google-signin:1.1.0'
 
     // Maps SDK for Android KTX Library
     implementation 'com.google.maps.android:maps-ktx:3.2.0'

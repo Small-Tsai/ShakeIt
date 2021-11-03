@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:elevation="10dp"
-            android:visibility="@{(viewModel.currentFragmentType == CurrentFragmentType.MENU || viewModel.currentFragmentType == CurrentFragmentType.DRINKS_DETAIL) || viewModel.currentFragmentType == CurrentFragmentType.ORDER_DETAIL || viewModel.currentFragmentType == CurrentFragmentType.HOME_DIALOG || viewModel.currentFragmentType == CurrentFragmentType.ADD_SHOP ?  View.GONE : View.VISIBLE}"
+            android:visibility="@{(viewModel.currentFragmentType == CurrentFragmentType.LOGIN ||viewModel.currentFragmentType == CurrentFragmentType.MENU || viewModel.currentFragmentType == CurrentFragmentType.DRINKS_DETAIL) || viewModel.currentFragmentType == CurrentFragmentType.ORDER_DETAIL || viewModel.currentFragmentType == CurrentFragmentType.HOME_DIALOG || viewModel.currentFragmentType == CurrentFragmentType.ADD_SHOP ?  View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

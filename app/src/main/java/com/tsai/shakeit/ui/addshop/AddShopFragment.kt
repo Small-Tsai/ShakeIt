@@ -31,8 +31,8 @@ class AddShopFragment : Fragment() {
     private val viewModel by viewModels<AddShopViewModel> {
         getVmFactory()
     }
-    private lateinit var binding: AddShopFragmentBinding
 
+    private lateinit var binding: AddShopFragmentBinding
     private val fromShop = 0
     private val fromMenu = 1
 
@@ -89,10 +89,9 @@ class AddShopFragment : Fragment() {
         })
 
         binding.addressEdt.setOnClickListener { startAutoCompleteIntent() }
-
-
         return binding.root
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -101,25 +100,24 @@ class AddShopFragment : Fragment() {
 
             AUTOCOMPLETE_REQUEST_CODE -> {
                 when (resultCode) {
+
                     Activity.RESULT_OK -> {
                         data?.let {
                             val place = Autocomplete.getPlaceFromIntent(it)
                             binding.addressEdt.setText(place.address)
                             viewModel.lat = place.latLng.latitude
                             viewModel.lon = place.latLng.longitude
-                            Logger.d("${place.latLng.latitude}")
-                            Logger.d("${place.latLng.longitude}")
-                            Logger.d("Place: ${place.address}, ${place.latLng}")
                         }
                     }
+
                     AutocompleteActivity.RESULT_ERROR -> {
                         Logger.d("autoComplete error")
                         data?.let {
                             val status = Autocomplete.getStatusFromIntent(data)
                         }
                     }
+
                     Activity.RESULT_CANCELED -> {
-                        // The user canceled the operation.
                     }
                 }
                 return
@@ -135,7 +133,6 @@ class AddShopFragment : Fragment() {
 
                         binding.shopPhoto.foreground = ((BitmapDrawable(bitmap)))
 
-                        mToast("${uri.encodedPath}")
                         //傳Uri到viewModel
                         viewModel.shopImageUri.value = uri
                     }
@@ -158,8 +155,6 @@ class AddShopFragment : Fragment() {
             }
 
         }
-
-
     }
 
     private fun getBitmapFromUri(uri: Uri) =
@@ -192,8 +187,5 @@ class AddShopFragment : Fragment() {
             .build(ShakeItApplication.instance)
 
         startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-
     }
-
-
 }

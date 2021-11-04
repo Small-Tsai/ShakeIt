@@ -33,6 +33,7 @@ data class OrderProduct(
     val others: String = "",
     val product_Img: String = "",
     val price: Int = 0,
-    val user: User = User()
+    val user: User = User(),
+    var orderProduct_Id: String = ""
 
 ) : Parcelable

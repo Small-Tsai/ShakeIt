@@ -25,6 +25,7 @@
         <entry key="app/src/main/res/layout/menu_product_row.xml" value="0.18177083333333333" />
         <entry key="app/src/main/res/layout/order_detail_fragment.xml" value="0.2266970618034448" />
         <entry key="app/src/main/res/layout/order_detail_row.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/order_detail_row_btn.xml" value="0.4015625" />
         <entry key="app/src/main/res/layout/order_friends_row.xml" value="0.16983695652173914" />
         <entry key="app/src/main/res/layout/order_row.xml" value="0.2266970618034448" />
         <entry key="app/src/main/res/layout/setting_fragment.xml" value="0.375" />

@@ -80,7 +80,10 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 document.set(order)
             }
 
-            document.collection(ORDER_PRODUCT).document()
+            val orderProductDocument = document.collection(ORDER_PRODUCT).document()
+            orderProduct.orderProduct_Id = orderProductDocument.id
+
+            orderProductDocument
                 .set(orderProduct)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -97,7 +100,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
                 }
         }
-
 
     override suspend fun postProduct(product: Product): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -195,6 +197,49 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         task.exception?.let {
                             Logger.w(
                                 "[${this::class.simpleName}] Error delete documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("deleteOrder Failed"))
+                    }
+                }
+        }
+
+    override suspend fun deleteOrderProduct(
+        orderProductId: String,
+        shopId: String,
+        otherUserId: String
+    ): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val myShopId = shopId.substring(0, 10) + UserInfo.userId.substring(0, 10)
+            val otherShopId = shopId.substring(0, 10) + otherUserId.substring(0, 10)
+
+            val orderProduct = FirebaseFirestore.getInstance().collection(ORDERS)
+
+
+            var document =
+                orderProduct.document(myShopId).collection(ORDER_PRODUCT).document(orderProductId)
+
+            if (otherUserId != UserInfo.userId && otherUserId.isNotEmpty()) {
+                Logger.d("$otherShopId")
+                Logger.d("$orderProductId")
+                document =
+                    orderProduct
+                    .document(otherShopId)
+                    .collection(ORDER_PRODUCT)
+                    .document(orderProductId)
+            }
+
+            document
+                .delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        mToast("已移除商品")
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "[${this::class.simpleName}] Error delete product. ${it.message}"
                             )
                             return@addOnCompleteListener
                         }

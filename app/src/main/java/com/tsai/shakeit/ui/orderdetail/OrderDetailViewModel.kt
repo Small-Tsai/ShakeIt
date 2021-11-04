@@ -55,7 +55,14 @@ class OrderDetailViewModel(
             }
             _navToMenu.value = null
         }
+    }
 
+    fun removeOrderProduct(orderProductId: String) {
+        viewModelScope.launch {
+            mOrder?.let {
+                repository.deleteOrderProduct(orderProductId, it.shop_Id , it.user_Id)
+            }
+        }
     }
 
 }

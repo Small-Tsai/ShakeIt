@@ -73,7 +73,7 @@ class DrinksDetailViewModel(
                     user_Id = UserInfo.userId,
                     user_Image = UserInfo.userImage,
                     user_Name = UserInfo.userName
-                )
+                ),
             )
         }
 

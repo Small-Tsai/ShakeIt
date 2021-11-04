@@ -11,7 +11,17 @@ interface ShakeItRepository {
 
     suspend fun deleteOrder(orderId: String): Result<Boolean>
 
-    suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String, otherUserId: String): Result<Boolean>
+    suspend fun deleteOrderProduct(
+        orderProductId: String,
+        shodId: String,
+        otherUserId: String
+    ): Result<Boolean>
+
+    suspend fun updateOrderTotalPrice(
+        totalPrice: Int,
+        shopId: String,
+        otherUserId: String
+    ): Result<Boolean>
 
     suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
 

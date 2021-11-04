@@ -44,6 +44,7 @@
                 viewModel="@{viewModel}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content , price)}"
                 android:buttonTint="@color/black"
                 android:gravity="center_vertical"
                 android:text="大"

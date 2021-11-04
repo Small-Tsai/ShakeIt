@@ -11,6 +11,12 @@ interface ShakeItDataSource {
 
     suspend fun deleteOrder(orderId: String): Result<Boolean>
 
+    suspend fun deleteOrderProduct(
+        orderProductId: String,
+        shodId: String,
+        otherUserId: String
+    ): Result<Boolean>
+
     suspend fun updateOrderTotalPrice(
         totalPrice: Int,
         shopId: String,

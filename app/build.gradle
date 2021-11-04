@@ -53,6 +53,9 @@ dependencies {
     // Utilities for Maps SDK for Android (requires Google Play Services)
     implementation 'com.google.maps.android:android-maps-utils:2.3.0'
 
+    //swipe Layout
+    implementation 'com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1'
+
     //material bottom navigation
     implementation 'com.etebarian:meow-bottom-navigation:1.2.0'
 

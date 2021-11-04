@@ -2,6 +2,7 @@ package com.tsai.shakeit.data.source
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.Comment
 
@@ -15,6 +16,14 @@ class DefaultShakeItRepository(
 
     override suspend fun deleteOrder(orderId: String): Result<Boolean> {
         return shakeItDataSource.deleteOrder(orderId)
+    }
+
+    override suspend fun deleteOrderProduct(
+        orderProductId: String,
+        shodId: String,
+        otherUserId: String
+    ): Result<Boolean> {
+        return shakeItDataSource.deleteOrderProduct(orderProductId, shodId, otherUserId)
     }
 
     override suspend fun updateOrderTotalPrice(

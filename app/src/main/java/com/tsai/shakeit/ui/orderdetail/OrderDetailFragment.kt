@@ -6,14 +6,32 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
-import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
+
+    private val swipeHelper by lazy {
+        object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
+            0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            }
+        }
+    }
 
     private val viewModel by viewModels<OrderDetailViewModel> {
         getVmFactory(
@@ -36,17 +54,30 @@ class OrderDetailFragment : Fragment() {
     ): View {
 
         binding = OrderDetailFragmentBinding.inflate(inflater, container, false)
+        val itemTouchHelper = ItemTouchHelper(swipeHelper)
+        itemTouchHelper.attachToRecyclerView(binding.orderDetailRev)
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
         val adapter = OrderDetailAdapter(viewModel)
         val friendsAdapter = OrderFriendsAdapter(viewModel)
 
-        viewModel.order.observe(viewLifecycleOwner, Observer { it ->
-            it?.let { adapter.submitList(it) }
-            val user = it.map { it.user }.distinctBy { it.user_Id }
-            it?.let { friendsAdapter.submitList(user) }
-            binding.totalPrice = it.sumOf { it.price * it.qty }
+        viewModel.order.observe(viewLifecycleOwner, { OrderProductList ->
+            val user = OrderProductList.map { it.user }.distinctBy { it.user_Id }
+            OrderProductList?.let { list ->
+
+                val orderProduct = mutableListOf<OrderDetail>()
+
+                list.forEach {
+                    orderProduct.add(OrderDetail.MyOrderProduct(it))
+                }
+
+                orderProduct.add(OrderDetail.AddProductBtn(""))
+                adapter.submitList(orderProduct)
+                friendsAdapter.submitList(user)
+            }
+            binding.totalPrice = OrderProductList.sumOf { it.price * it.qty }
         })
 
         viewModel.navToMenu.observe(viewLifecycleOwner, {
@@ -57,9 +88,9 @@ class OrderDetailFragment : Fragment() {
             }
         })
 
+
         binding.orderDetailRev.adapter = adapter
         binding.friendsRev.adapter = friendsAdapter
         return binding.root
     }
-
 }

@@ -144,7 +144,7 @@
                     android:layout_marginEnd="16dp"
                     android:backgroundTint="@color/grey2"
                     android:fontFamily="@font/noto_sans"
-                    android:onClick="@{() -> viewModel.navToSendComment(order.order_Id)}"
+                    android:onClick="@{() -> viewModel.navToSendComment(order.shop_Id)}"
                     android:paddingStart="12dp"
                     android:paddingTop="3dp"
                     android:paddingEnd="12dp"

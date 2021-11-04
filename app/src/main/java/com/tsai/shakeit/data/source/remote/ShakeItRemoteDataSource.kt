@@ -1,6 +1,7 @@
 package com.tsai.shakeit.data.source.remote
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -56,17 +57,28 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
     override suspend fun postOrderToFireBase(
         order: Order,
-        orderProduct: OrderProduct
+        orderProduct: OrderProduct,
+        otherUserId: String
     ): Result<Boolean> =
         suspendCoroutine { continuation ->
 
+            val myId = order.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
+            var otherId = ""
+
             val orders = FirebaseFirestore.getInstance().collection(ORDERS)
-            val document = orders.document(order.shop_Id)
+            var document = orders.document(myId)
 
-            order.order_Id = order.shop_Id
-
-            document
-                .set(order)
+            //當選擇的訂單UserId 不是本地Id則 document 導向該訂單Id 並且只修改price與product
+            //else訂單Id = 本地Id 則直接set覆蓋
+            if (otherUserId.isNotEmpty() && otherUserId != UserInfo.userId) {
+                otherId = order.shop_Id.substring(0, 10) + otherUserId.substring(0, 10)
+                document = orders.document(otherId)
+                document
+                    .set(order, SetOptions.mergeFields("order_Price"))
+            } else {
+                order.order_Id = myId
+                document.set(order)
+            }
 
             document.collection(ORDER_PRODUCT).document()
                 .set(orderProduct)
@@ -85,6 +97,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
                 }
         }
+
 
     override suspend fun postProduct(product: Product): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -243,7 +256,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
 
-
             branchProduct
                 .whereEqualTo("shop_Name", shopName)
                 .get()
@@ -264,27 +276,55 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean> =
+    override suspend fun updateOrderTotalPrice(
+        totalPrice: Int,
+        shopId: String,
+        otherUserId: String
+    ): Result<Boolean> =
+
         suspendCoroutine { continuation ->
-
+            val myId = shopId.substring(0, 10) + UserInfo.userId.substring(0, 10)
+            var otherId = ""
             val order = FirebaseFirestore.getInstance().collection(ORDERS)
-            val document = order.document(shopId)
+            var document = order.document(myId)
 
-            document
-                .update("order_Price", totalPrice)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        continuation.resume(Result.Success(true))
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error update documents. ${it.message}"
-                            )
-                            return@addOnCompleteListener
+            //當選擇的訂單UserId 不是本地Id則 document 導向該訂單Id 並且只修改price與product
+            //else訂單Id = 本地Id 則直接set覆蓋
+            if (otherUserId.isNotEmpty() && otherUserId != UserInfo.userId) {
+                otherId = shopId.substring(0, 10) + otherUserId.substring(0, 10)
+                document = order.document(otherId)
+                document.update("order_Price", totalPrice)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            continuation.resume(Result.Success(true))
+                        } else {
+                            task.exception?.let {
+                                Logger.w(
+                                    "[${this::class.simpleName}] Error update documents. ${it.message}"
+                                )
+                                return@addOnCompleteListener
+                            }
+                            continuation.resume(Result.Fail("update Failed"))
                         }
-                        continuation.resume(Result.Fail("update Failed"))
                     }
-                }
+
+            } else {
+                document
+                    .update("order_Price", totalPrice)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            continuation.resume(Result.Success(true))
+                        } else {
+                            task.exception?.let {
+                                Logger.w(
+                                    "[${this::class.simpleName}] Error update documents. ${it.message}"
+                                )
+                                return@addOnCompleteListener
+                            }
+                            continuation.resume(Result.Fail("update Failed"))
+                        }
+                    }
+            }
         }
 
     override suspend fun getComment(shopId: String): Result<List<Comment>> =
@@ -441,14 +481,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         FirebaseFirestore.getInstance()
             .collection(ORDERS)
             .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
-            .whereEqualTo("user_Id", userId)
+            .whereArrayContains("invitation", userId)
             .addSnapshotListener { snapshot, e ->
 
                 val list = mutableListOf<Order>()
 
                 if (snapshot != null) {
                     for (document in snapshot) {
-//                        Log.d(TAG, "Current data: ${document.data}")
+//                        Logger.d("Current data: ${document.data}")
                         val order = document.toObject(Order::class.java)
                         list.add(order)
                     }

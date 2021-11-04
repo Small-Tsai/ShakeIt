@@ -28,10 +28,10 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val shopId: LiveData<String>
         get() = _shopId
 
+
     init {
         getOrderData()
     }
-
 
     fun getShopImage(shopId: String) {
         viewModelScope.launch {
@@ -58,9 +58,9 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _navToOrderDetail.value = null
     }
 
-    // orderId = shopId
-    fun navToSendComment(orderId: String) {
-        _shopId.value = orderId
+
+    fun navToSendComment(shopId: String) {
+        _shopId.value = shopId
     }
 }
 

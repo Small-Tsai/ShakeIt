@@ -31,6 +31,9 @@
         <argument
             android:name="shopData"
             app:argType="com.tsai.shakeit.data.Shop" />
+        <argument
+            android:name="userId"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -43,6 +46,9 @@
         <argument
             android:name="shop"
             app:argType="com.tsai.shakeit.data.Shop" />
+        <argument
+            android:name="userId"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -92,10 +98,10 @@
     <action
         android:id="@+id/navTo_Menu"
         app:destination="@id/menuFragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_enter_anim"
-        app:popExitAnim="@anim/nav_default_exit_anim" />
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@android:anim/slide_out_right"
+        app:popEnterAnim="@android:anim/slide_in_left"
+        app:popExitAnim="@android:anim/slide_out_right" />
     <action
         android:id="@+id/navToDetail"
         app:destination="@id/drinksDetailFragment"
@@ -105,10 +111,10 @@
     <action
         android:id="@+id/navToOrder"
         app:destination="@id/navigation_order"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@android:anim/fade_in"
+        app:popExitAnim="@android:anim/fade_out" />
 
     <action
         android:id="@+id/navToOrderDetail"
@@ -119,10 +125,10 @@
     <action
         android:id="@+id/navToHome"
         app:destination="@id/navigation_home"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@android:anim/fade_in"
+        app:popExitAnim="@android:anim/fade_out"
         app:popUpTo="@id/navigation_home"
         app:popUpToInclusive="true" />
 
@@ -139,13 +145,21 @@
 
     <action
         android:id="@+id/navToSetting"
-        app:destination="@id/settingFragment" />
+        app:destination="@id/settingFragment"
+        app:enterAnim="@android:anim/slide_in_left"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_right"
+        app:popExitAnim="@android:anim/fade_out" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.tsai.shakeit.ui.login.LoginFragment"
         android:label="LoginFragment" />
     <action
         android:id="@+id/navToFavorite"
-        app:destination="@id/navigation_favorite" />
+        app:destination="@id/navigation_favorite"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@android:anim/fade_in"
+        app:popExitAnim="@android:anim/fade_out" />
 
 </navigation>

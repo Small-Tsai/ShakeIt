@@ -9,12 +9,14 @@ import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
 
 class MenuViewModel(
     val selectedShop: Shop,
     private val repository: ShakeItRepository,
+    val otherUserId: String?,
 ) :
     ViewModel() {
 
@@ -58,10 +60,12 @@ class MenuViewModel(
 
     fun updateOrderTotalPrice(totalPrice: Int) {
         viewModelScope.launch {
-            when (val result = repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id)) {
+            otherUserId?.let {
+                when (val result =
+                    repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id, it)) {
 //                is Result.Success -> Log.d(TAG,"update total price")
+                }
             }
-
         }
     }
 
@@ -88,15 +92,28 @@ class MenuViewModel(
 //        shopAddress = "台北市信義區忠孝東路五段17之2號"
 //    )
 
-//    fun postProduct() {
+    //    fun postProduct() {
 //        viewModelScope.launch {
 //            repository.postProduct(data)
 //        }
 //    }
+    private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
+    private var otherId = ""
 
     init {
         getProduct()
-        _orderProduct = repository.getFireBaseOrderProduct(selectedShop.shop_Id)
+        getOrderProduct()
+    }
+
+    private fun getOrderProduct() {
+        if (otherUserId != UserInfo.userId && otherUserId != "") {
+
+            otherId = selectedShop.shop_Id.substring(0, 10) + otherUserId?.substring(0, 10)
+
+            _orderProduct = repository.getFireBaseOrderProduct(otherId)
+        } else {
+            _orderProduct = repository.getFireBaseOrderProduct(myId)
+        }
     }
 
     private val _branchProduct = MutableLiveData<List<Product>>()

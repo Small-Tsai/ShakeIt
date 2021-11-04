@@ -5,11 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
-import com.tsai.shakeit.data.Order
-import com.tsai.shakeit.data.OrderProduct
-import com.tsai.shakeit.data.Product
-import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
@@ -23,7 +21,8 @@ private const val OTHERS = "others"
 class DrinksDetailViewModel(
     val data: Product,
     private val repository: ShakeItRepository,
-    private val shop: Shop?
+    private val shop: Shop?,
+    private val otherUserId: String?
 ) :
     ViewModel() {
 
@@ -54,9 +53,10 @@ class DrinksDetailViewModel(
             date = Timestamp.now(),
             order_Name = "我的訂單",
             shop_Id = shop.shop_Id,
-            user_Id = UserInfo.userId
+            user_Id = UserInfo.userId,
+            invitation = arrayListOf(UserInfo.userId)
 
-            )
+        )
 
         val mOrderProduct = _qty.value?.let {
             OrderProduct(
@@ -68,19 +68,26 @@ class DrinksDetailViewModel(
                 others = mContentList[OTHERS].toString()
                     .substring(1, mContentList[OTHERS].toString().length - 1),
                 price = data.price,
-                user_Name = UserInfo.userName,
-                product_Img = data.product_Img
+                product_Img = data.product_Img,
+                user = User(
+                    user_Id = UserInfo.userId,
+                    user_Image = UserInfo.userImage,
+                    user_Name = UserInfo.userName
+                )
             )
         }
 
         viewModelScope.launch {
-            mOrderProduct?.let {
-                repository.postOrderToFireBase(mOrder, mOrderProduct)
+            mOrderProduct?.let { mOrderProduct ->
+                otherUserId?.let { otherUserId ->
+                    repository.postOrderToFireBase(mOrder, mOrderProduct, otherUserId)
+                }
             }
         }
     }
 
     init {
+        mToast("$otherUserId")
         _qty.value = 1
         filterList()
         mContentList[OTHERS] = arrayListOf("")

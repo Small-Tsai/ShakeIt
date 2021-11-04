@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
+import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
 
@@ -43,14 +44,16 @@ class OrderDetailFragment : Fragment() {
 
         viewModel.order.observe(viewLifecycleOwner, Observer { it ->
             it?.let { adapter.submitList(it) }
-            val nameList = it.map { order -> order.user_Name }.distinct()
-            it?.let { friendsAdapter.submitList(nameList) }
+            val user = it.map { it.user }.distinctBy { it.user_Id }
+            it?.let { friendsAdapter.submitList(user) }
             binding.totalPrice = it.sumOf { it.price * it.qty }
         })
 
-        viewModel.navToMenu.observe(viewLifecycleOwner,{
+        viewModel.navToMenu.observe(viewLifecycleOwner, {
             it?.let {
-                findNavController().navigate(MenuFragmentDirections.navToMenu(it))
+                viewModel.mOrder?.user_Id?.let { userId ->
+                    findNavController().navigate(MenuFragmentDirections.navToMenu(it, userId))
+                }
             }
         })
 

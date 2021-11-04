@@ -39,10 +39,19 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
         }
     }
 
-    val doCheck=MutableLiveData<String>()
+    val doCheck = MutableLiveData<String>()
 
-    fun doCheck(shopName: String){
+    fun doCheck(shopName: String) {
         doCheck.value = shopName
+    }
+
+    private val _popBack = MutableLiveData<Boolean?>()
+    val popBack: LiveData<Boolean?>
+        get() = _popBack
+
+    fun popBack() {
+        _popBack.value = true
+        _popBack.value = null
     }
 
 }

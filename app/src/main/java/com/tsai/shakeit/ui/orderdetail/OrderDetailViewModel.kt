@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 
 class OrderDetailViewModel(
-    private val mOrder: Order?,
+    val mOrder: Order?,
     private val repository: ShakeItRepository,
     private val shopImg: String?
 ) :
@@ -34,7 +34,7 @@ class OrderDetailViewModel(
     private fun getOrderProduct() {
         mOrder?.let {
             viewModelScope.launch {
-                _order = repository.getFireBaseOrderProduct(mOrder.order_Id)
+                _order = repository.getFireBaseOrderProduct(it.order_Id)
             }
         }
     }

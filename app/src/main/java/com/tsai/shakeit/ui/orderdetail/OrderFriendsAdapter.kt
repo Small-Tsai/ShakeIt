@@ -6,12 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.OrderProduct
+import com.tsai.shakeit.data.User
 import com.tsai.shakeit.databinding.OrderFriendsRowBinding
 import com.tsai.shakeit.ui.orderdetail.OrderDetailAdapter.*
 import com.tsai.shakeit.ui.orderdetail.OrderFriendsAdapter.*
+import com.tsai.shakeit.util.UserInfo
 
 class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
-    ListAdapter<String, OrderFriendsViewHolder>(DiffCallback) {
+    ListAdapter<User, OrderFriendsViewHolder>(DiffCallback) {
 
 
     class OrderFriendsViewHolder(
@@ -19,19 +21,20 @@ class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
         viewModel: OrderDetailViewModel
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(name: String) {
-            binding.userName.text = name
+        fun bind(user: User) {
+            binding.userImg = user.user_Image
+            binding.userName.text = user.user_Name
             binding.executePendingBindings()
         }
     }
 
-    private companion object DiffCallback : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem === newItem
+    private companion object DiffCallback : DiffUtil.ItemCallback<User>() {
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.user_Id == newItem.user_Id
         }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
+            return oldItem.user_Id == newItem.user_Id
         }
 
     }
@@ -47,5 +50,4 @@ class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
     override fun onBindViewHolder(holder: OrderFriendsViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-
 }

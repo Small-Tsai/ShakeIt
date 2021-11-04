@@ -17,8 +17,12 @@ class DefaultShakeItRepository(
         return shakeItDataSource.deleteOrder(orderId)
     }
 
-    override suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean> {
-        return shakeItDataSource.updateOrderTotalPrice(totalPrice, shopId)
+    override suspend fun updateOrderTotalPrice(
+        totalPrice: Int,
+        shopId: String,
+        otherUserId: String,
+    ): Result<Boolean> {
+        return shakeItDataSource.updateOrderTotalPrice(totalPrice, shopId, otherUserId)
     }
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> {
@@ -31,9 +35,10 @@ class DefaultShakeItRepository(
 
     override suspend fun postOrderToFireBase(
         order: Order,
-        orderProduct: OrderProduct
+        orderProduct: OrderProduct,
+        otherUserId: String
     ): Result<Boolean> {
-        return shakeItDataSource.postOrderToFireBase(order, orderProduct)
+        return shakeItDataSource.postOrderToFireBase(order, orderProduct, otherUserId)
     }
 
     override suspend fun postProduct(product: Product): Result<Boolean> {

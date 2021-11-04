@@ -22,7 +22,11 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
 
             shopData = DrinksDetailFragmentArgs.fromBundle(
                 requireArguments()
-            ).shop
+            ).shop,
+
+            userId = DrinksDetailFragmentArgs.fromBundle(
+                requireArguments()
+            ).userId
         )
     }
 

@@ -29,6 +29,7 @@ class ViewModelFactory(
     private val shopId: String? = "",
     private val shopList: Array<Shop> = arrayOf(),
     private val shopImg: String? = null,
+    private val userId: String? = null
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -41,7 +42,7 @@ class ViewModelFactory(
                     HomeViewModel(repository)
 
                 isAssignableFrom(DrinksDetailViewModel::class.java) ->
-                    product?.let { DrinksDetailViewModel(it, repository, shop) }
+                    product?.let { DrinksDetailViewModel(it, repository, shop, userId) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
                     OrderDetailViewModel(order, repository, shopImg)
@@ -53,7 +54,7 @@ class ViewModelFactory(
                     FavoriteViewModel(repository)
 
                 isAssignableFrom(MenuViewModel::class.java) ->
-                    shop?.let { MenuViewModel(it, repository) }
+                    shop?.let { MenuViewModel(it, repository, userId) }
 
                 isAssignableFrom(CommentViewModel::class.java) ->
                     CommentViewModel(repository, shopId)

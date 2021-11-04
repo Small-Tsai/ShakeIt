@@ -39,7 +39,6 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     var dbFilterShopList = MutableLiveData<List<String>>()
     fun getFilterList() {
         if (dbFilterShopList.value.isNullOrEmpty()){
-            Logger.d("dbFilterShopList")
             dbFilterShopList = repository.getFilteredShopList(UserInfo.userId)
         }
     }

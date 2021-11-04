@@ -23,6 +23,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content , price)}"
         android:layout_height="wrap_content">
 
         <RadioGroup
@@ -45,7 +46,6 @@
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/black"
                 android:gravity="center_vertical"
-                android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content , price)}"
                 android:text="大"
                 android:textSize="14dp" />
 

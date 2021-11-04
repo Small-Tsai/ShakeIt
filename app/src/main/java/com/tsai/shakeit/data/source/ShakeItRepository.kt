@@ -11,13 +11,17 @@ interface ShakeItRepository {
 
     suspend fun deleteOrder(orderId: String): Result<Boolean>
 
-    suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String): Result<Boolean>
+    suspend fun updateOrderTotalPrice(totalPrice: Int, shopId: String, otherUserId: String): Result<Boolean>
 
     suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
 
     suspend fun postFavorite(favorite: Favorite): Result<Boolean>
 
-    suspend fun postOrderToFireBase(order: Order, orderProduct: OrderProduct): Result<Boolean>
+    suspend fun postOrderToFireBase(
+        order: Order,
+        orderProduct: OrderProduct,
+        otherUserId: String
+    ): Result<Boolean>
 
     suspend fun postProduct(product: Product): Result<Boolean>
 

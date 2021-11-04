@@ -15,7 +15,7 @@ data class Order(
     val shop_Name: String = "",
     val user_Id: String = "",
     var order_Id: String = "",
-    val invitation: ArrayList<Long>? = arrayListOf(),
+    val invitation: ArrayList<String>? = arrayListOf(),
     val date: Timestamp? = null,
     val orderProduct: List<OrderProduct> = listOf(),
     val order_Price: Int = 0,
@@ -31,7 +31,8 @@ data class OrderProduct(
     val qty: Int = 0,
     val sugar: String = "",
     val others: String = "",
-    val user_Name: String = "",
     val product_Img: String = "",
-    val price: Int = 0
+    val price: Int = 0,
+    val user: User = User()
+
 ) : Parcelable

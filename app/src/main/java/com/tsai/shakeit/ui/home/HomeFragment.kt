@@ -103,7 +103,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.hasNavToMenu.observe(viewLifecycleOwner, {
             it?.let {
                 findNavController().navigate(
-                    MenuFragmentDirections.navToMenu(it)
+                    MenuFragmentDirections.navToMenu(it,"")
                 )
             }
         })

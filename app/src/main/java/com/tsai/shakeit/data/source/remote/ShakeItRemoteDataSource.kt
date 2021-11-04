@@ -226,9 +226,9 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 Logger.d("$orderProductId")
                 document =
                     orderProduct
-                    .document(otherShopId)
-                    .collection(ORDER_PRODUCT)
-                    .document(orderProductId)
+                        .document(otherShopId)
+                        .collection(ORDER_PRODUCT)
+                        .document(orderProductId)
             }
 
             document
@@ -328,6 +328,9 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
     ): Result<Boolean> =
 
         suspendCoroutine { continuation ->
+
+            Logger.d("$totalPrice")
+
             val myId = shopId.substring(0, 10) + UserInfo.userId.substring(0, 10)
             var otherId = ""
             val order = FirebaseFirestore.getInstance().collection(ORDERS)
@@ -354,6 +357,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
 
             } else {
+                Logger.d("total = $totalPrice")
                 document
                     .update("order_Price", totalPrice)
                     .addOnCompleteListener { task ->

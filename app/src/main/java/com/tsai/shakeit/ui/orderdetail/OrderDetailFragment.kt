@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
+import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
 
@@ -64,20 +66,22 @@ class OrderDetailFragment : Fragment() {
         val friendsAdapter = OrderFriendsAdapter(viewModel)
 
         viewModel.order.observe(viewLifecycleOwner, { OrderProductList ->
-            val user = OrderProductList.map { it.user }.distinctBy { it.user_Id }
-            OrderProductList?.let { list ->
 
+            val user = OrderProductList.map { it.user }.distinctBy { it.user_Id }
+
+            OrderProductList?.let { list ->
                 val orderProduct = mutableListOf<OrderDetail>()
 
-                list.forEach {
-                    orderProduct.add(OrderDetail.MyOrderProduct(it))
-                }
+                list.forEach { orderProduct.add(OrderDetail.MyOrderProduct(it)) }
 
                 orderProduct.add(OrderDetail.AddProductBtn(""))
                 adapter.submitList(orderProduct)
                 friendsAdapter.submitList(user)
             }
-            binding.totalPrice = OrderProductList.sumOf { it.price * it.qty }
+
+            val totalPrice = OrderProductList.sumOf { it.price * it.qty }
+            viewModel.updateTotalPrice(totalPrice)
+            binding.totalPrice = totalPrice
         })
 
         viewModel.navToMenu.observe(viewLifecycleOwner, {
@@ -87,7 +91,6 @@ class OrderDetailFragment : Fragment() {
                 }
             }
         })
-
 
         binding.orderDetailRev.adapter = adapter
         binding.friendsRev.adapter = friendsAdapter

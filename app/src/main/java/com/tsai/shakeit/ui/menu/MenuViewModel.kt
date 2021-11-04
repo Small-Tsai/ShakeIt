@@ -97,6 +97,7 @@ class MenuViewModel(
 //            repository.postProduct(data)
 //        }
 //    }
+
     private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
     private var otherId = ""
 
@@ -107,9 +108,7 @@ class MenuViewModel(
 
     private fun getOrderProduct() {
         if (otherUserId != UserInfo.userId && otherUserId != "") {
-
             otherId = selectedShop.shop_Id.substring(0, 10) + otherUserId?.substring(0, 10)
-
             _orderProduct = repository.getFireBaseOrderProduct(otherId)
         } else {
             _orderProduct = repository.getFireBaseOrderProduct(myId)

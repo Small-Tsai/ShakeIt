@@ -10,6 +10,8 @@ import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.databinding.OrderDetailRowBinding
 import com.tsai.shakeit.databinding.OrderDetailRowBtnBinding
+import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.util.Logger
 
 class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
     ListAdapter<OrderDetail, RecyclerView.ViewHolder>(DiffCallback) {
@@ -18,7 +20,7 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
 
     class OrderProductViewHolder(
         private val binding: OrderDetailRowBinding,
-        private val viewModel: OrderDetailViewModel
+        private val viewModel: OrderDetailViewModel,
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -31,10 +33,15 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
             binding.executePendingBindings()
 
             binding.swipeDeleteBtn.setOnClickListener {
-                viewModel.removeOrderProduct(orderProductId = orderProduct.orderProduct_Id)
+
+                viewModel.notifyOrderChange()
+
+                viewModel.removeOrderProduct(
+                    orderProductId = orderProduct.orderProduct_Id,
+                )
+
                 swipeRevealLayout.close(true)
             }
-
         }
     }
 

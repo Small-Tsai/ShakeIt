@@ -60,9 +60,21 @@ class OrderDetailViewModel(
     fun removeOrderProduct(orderProductId: String) {
         viewModelScope.launch {
             mOrder?.let {
-                repository.deleteOrderProduct(orderProductId, it.shop_Id , it.user_Id)
+                repository.deleteOrderProduct(orderProductId, it.shop_Id, it.user_Id)
             }
         }
+    }
+
+    fun updateTotalPrice(totalPrice: Int) {
+        mOrder?.let {
+            viewModelScope.launch {
+                repository.updateOrderTotalPrice(totalPrice, it.shop_Id, it.user_Id)
+            }
+        }
+    }
+
+    fun notifyOrderChange(){
+        _order.value = _order.value
     }
 
 }

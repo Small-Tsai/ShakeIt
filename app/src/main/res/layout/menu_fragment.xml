@@ -22,42 +22,22 @@
         tools:context=".ui.menu.MenuFragment">
 
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/invite_fab"
+            fabAnimation="@{true}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
-            android:alpha="5"
             android:backgroundTint="@color/white"
-            android:clickable="true"
-            app:cardCornerRadius="10dp"
+            android:fontFamily="@font/roboto"
+            android:singleLine="true"
+            android:text="邀請好友"
+            app:cornerRadius="10sp"
+            app:icon="@drawable/share_icon"
+            app:iconTint="@null"
             app:layout_constraintEnd_toEndOf="@+id/addOrder_img"
-            app:layout_constraintTop_toTopOf="@+id/addOrder_img">
-
-
-            <TextView
-                android:layout_width="110dp"
-                android:layout_height="30dp"
-                android:fontFamily="@font/noto_sans"
-                android:gravity="end|center"
-                android:paddingTop="2dp"
-                android:paddingEnd="10dp"
-                android:text="邀請好友"
-                android:textSize="14dp"
-                tools:layout_editor_absoluteX="86dp"
-                tools:layout_editor_absoluteY="254dp" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="11dp"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/circle"
-                android:padding="2dp"
-                android:src="@drawable/share_icon" />
-
-
-        </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="@+id/addOrder_img" />
 
         <ImageView
             android:id="@+id/addOrder_img"
@@ -81,10 +61,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/menu_title"
             branch="@{shopInfo.branch}"
             shopName="@{shopInfo.name}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:elevation="5dp"
             android:fontFamily="@font/noto_sans"
             android:text="loading..."
@@ -95,6 +77,24 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addNewProduct_btn"
+            android:layout_width="70sp"
+            android:layout_height="35sp"
+            android:backgroundTint="@color/transparent"
+            android:gravity="center"
+            android:padding="0dp"
+            android:text="新增商品"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            app:cornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="@+id/menu_title"
+            app:layout_constraintStart_toStartOf="@+id/menu_title"
+            app:layout_constraintTop_toBottomOf="@+id/menu_title"
+            app:rippleColor="@color/white"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp" />
 
 
         <androidx.recyclerview.widget.RecyclerView

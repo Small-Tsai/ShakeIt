@@ -88,8 +88,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        setBackPressedBehavior()
-
         viewModel.isWalkOrRide.observe(viewLifecycleOwner, {
             when (it) {
                 true -> viewModel.onWalkOrRideBtnClicked(it)
@@ -152,22 +150,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     }
                 }
             })
-            setAddShopBottomBehavior()
         })
 
+        setBackPressedBehavior()
         binding.addShopFab.isExtended = false
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
         return binding.root
-    }
-
-    //設定新增商店按鈕UI動畫
-    private fun setAddShopBottomBehavior() {
-        binding.addShopFab.extend()
-        Handler(Looper.getMainLooper()).postDelayed({
-            binding.addShopFab.shrink()
-        }, 1500)
-        binding.addShopFab.scaleY = 0.9f
-        binding.addShopFab.scaleX = 0.9f
     }
 
     //設定返回鍵行為

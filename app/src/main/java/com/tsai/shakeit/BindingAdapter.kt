@@ -1,24 +1,31 @@
 package com.tsai.shakeit.util
 
+import android.os.Looper
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.core.view.marginTop
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
 import com.tsai.shakeit.ui.addshop.AddShopViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
+import kotlinx.coroutines.delay
+import java.util.logging.Handler
 
 @BindingAdapter("shopName", "branch")
 fun TextView.bindShopName(name: String?, branch: String?) {
@@ -115,8 +122,8 @@ fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
     if (!imgUrl.isNullOrEmpty()) {
         Glide.with(imgView.context)
             .load(imgUrl)
-            .placeholder(R.drawable.placedrink)
-            .error(R.drawable.placedrink)
+            .placeholder(R.drawable.personicon)
+            .error(R.drawable.personicon)
             .circleCrop()
             .into(imgView)
     }
@@ -130,6 +137,41 @@ fun SwitchMaterial.bindSwitch(
     viewModel: SettingViewModel
 ) {
     isChecked = mainViewModel.dbFilterShopList.value?.contains(shopName) != true
+}
+
+@BindingAdapter("fabAnimation")
+fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
+    elevation = 10f
+    iconSize= 90
+    textSize= 18f
+    scaleX = 0.65f
+    scaleY = 0.65f
+    isExtended = false
+    val handler = android.os.Handler(Looper.getMainLooper())
+    handler.postDelayed({
+        extend()
+        handler.postDelayed({
+            shrink()
+        },1000)
+    }, 1500)
+}
+
+@BindingAdapter("fabAnimationBig")
+fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
+    isExtended = false
+    elevation = 10f
+    textSize= 18f
+    scaleX = 0.8f
+    scaleY = 0.8f
+    iconSize =90
+    val handler = android.os.Handler(Looper.getMainLooper())
+    handler.postDelayed({
+        extend()
+        handler.postDelayed({
+            shrink()
+            iconSize =90
+        },1000)
+    }, 1500)
 }
 
 

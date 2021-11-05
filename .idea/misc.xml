@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable-v24/menu_icon.xml" value="0.12708333333333333" />
         <entry key="app/src/main/res/drawable-v24/ride.xml" value="0.12708333333333333" />
+        <entry key="app/src/main/res/drawable/corner_radius.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.25462962962962965" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/add_shop_fragment.xml" value="0.2621951219512195" />
@@ -21,9 +22,9 @@
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/fragment_order.xml" value="0.1947821681864235" />
         <entry key="app/src/main/res/layout/login_fragment.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/menu_fragment.xml" value="0.18177083333333333" />
+        <entry key="app/src/main/res/layout/menu_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/menu_product_row.xml" value="0.18177083333333333" />
-        <entry key="app/src/main/res/layout/order_detail_fragment.xml" value="0.2266970618034448" />
+        <entry key="app/src/main/res/layout/order_detail_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/order_detail_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/order_detail_row_btn.xml" value="0.4015625" />
         <entry key="app/src/main/res/layout/order_friends_row.xml" value="0.16983695652173914" />

@@ -60,6 +60,4 @@ interface ShakeItRepository {
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
     fun getFavorite(userId: String): MutableLiveData<List<Favorite>>
-
-
 }

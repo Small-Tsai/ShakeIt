@@ -15,4 +15,5 @@
     <color name="translucent_40">#66000000</color>
     <color name="translucent_80">#cccccccc</color>
     <color name="transparent">#00000000</color>
+    <color name="noColor"></color>
 </resources>

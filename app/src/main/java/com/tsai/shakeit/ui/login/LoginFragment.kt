@@ -53,7 +53,6 @@ class LoginFragment : Fragment() {
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-
     }
 
     override fun onCreateView(
@@ -130,6 +129,4 @@ class LoginFragment : Fragment() {
             findNavController().navigate(LoginFragmentDirections.navToHome())
         }
     }
-
-
 }

@@ -20,6 +20,19 @@
         <item name="android:textSize">20dp</item>
     </style>
 
+    <style name="pageContentTitle">
+        <item name="android:shadowRadius">0.5</item>
+<!--        <item name="android:background">@color/grey2</item>-->
+        <item name="android:shadowColor">#1E1818</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:paddingStart">16dp</item>
+<!--        <item name="android:layout_marginTop">16dp</item>-->
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <style name="roundedCorner" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>

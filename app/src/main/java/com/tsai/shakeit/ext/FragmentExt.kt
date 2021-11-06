@@ -7,11 +7,6 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.factory.ViewModelFactory
 
-/**
- * Created by Wayne Chen in Jul. 2019.
- *
- * Extension functions for Fragment.
- */
 
 fun Fragment.getVmFactory(
     product: Product? = null,

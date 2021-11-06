@@ -58,7 +58,6 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _navToOrderDetail.value = null
     }
 
-
     fun navToSendComment(shopId: String) {
         _shopId.value = shopId
     }

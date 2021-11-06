@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
@@ -87,7 +86,6 @@ class DrinksDetailViewModel(
     }
 
     init {
-        mToast("$otherUserId")
         _qty.value = 1
         filterList()
         mContentList[OTHERS] = arrayListOf("")
@@ -106,9 +104,9 @@ class DrinksDetailViewModel(
         detailList.add(DrinksDetail.DetailTitle("容量"))
         data.capacity.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         detailList.add(DrinksDetail.DetailTitle("冰量"))
-        data.ice.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it to 0))) }
+        data.ice.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         detailList.add(DrinksDetail.DetailTitle("甜度"))
-        data.sugar.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it to 0))) }
+        data.sugar.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         detailList.add(DrinksDetail.DetailTitle("加料"))
         data.others.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         _product.value = detailList

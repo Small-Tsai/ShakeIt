@@ -10,8 +10,6 @@ import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.databinding.OrderDetailRowBinding
 import com.tsai.shakeit.databinding.OrderDetailRowBtnBinding
-import com.tsai.shakeit.ext.mToast
-import com.tsai.shakeit.util.Logger
 
 class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
     ListAdapter<OrderDetail, RecyclerView.ViewHolder>(DiffCallback) {

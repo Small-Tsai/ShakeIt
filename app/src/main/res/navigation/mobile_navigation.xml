@@ -82,6 +82,11 @@
             app:argType="com.tsai.shakeit.data.Shop[]" />
     </fragment>
 
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.tsai.shakeit.ui.login.LoginFragment"
+        android:label="LoginFragment" />
+
     <dialog
         android:id="@+id/commentDialog"
         android:name="com.tsai.shakeit.ui.order.sendcomment.CommentDialog"
@@ -90,6 +95,16 @@
             android:name="shopId"
             app:argType="string" />
     </dialog>
+
+    <fragment
+        android:id="@+id/addMenuItemFragment"
+        android:name="com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemFragment"
+        android:label="add_menu_item_fragment"
+        tools:layout="@layout/add_menu_item_fragment" >
+        <argument
+            android:name="shop"
+            app:argType="com.tsai.shakeit.data.Shop" />
+    </fragment>
 
     <action
         android:id="@+id/navToComment"
@@ -150,10 +165,7 @@
         app:exitAnim="@anim/slide_out_left"
         app:popEnterAnim="@anim/slide_in_right"
         app:popExitAnim="@android:anim/fade_out" />
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.tsai.shakeit.ui.login.LoginFragment"
-        android:label="LoginFragment" />
+
     <action
         android:id="@+id/navToFavorite"
         app:destination="@id/navigation_favorite"
@@ -161,5 +173,9 @@
         app:exitAnim="@android:anim/fade_out"
         app:popEnterAnim="@android:anim/fade_in"
         app:popExitAnim="@android:anim/fade_out" />
+    <action
+        android:id="@+id/navToAddItem"
+        app:destination="@id/addMenuItemFragment" />
+
 
 </navigation>

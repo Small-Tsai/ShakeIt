@@ -25,22 +25,17 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
 
     fun filterShop(shopName: String, mainViewModel: MainViewModel) {
 
-        Logger.d("isAllChecked = ${isAllChecked.value}")
-
         if (!filteredList.contains(shopName)) {
-            Logger.d("addShop")
             filteredList.add(shopName)
             mainViewModel.shopFilterList.value = filteredList
 
         } else {
-            Logger.d("removeShop")
             filteredList.remove(shopName)
             mainViewModel.shopFilterList.value = filteredList
         }
     }
 
     val doCheck = MutableLiveData<String>()
-
     fun doCheck(shopName: String) {
         doCheck.value = shopName
     }
@@ -53,5 +48,4 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
         _popBack.value = true
         _popBack.value = null
     }
-
 }

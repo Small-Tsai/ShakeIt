@@ -174,5 +174,14 @@ class MenuViewModel(
         _popBack.value = true
         _popBack.value = null
     }
+
+    private val _navToAddItem = MutableLiveData<Boolean?>()
+    val navToAddItem: LiveData<Boolean?>
+        get() = _navToAddItem
+
+    fun navToAddMenuItem() {
+        _navToAddItem.value = true
+        _navToAddItem.value = null
+    }
 }
 

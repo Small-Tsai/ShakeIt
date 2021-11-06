@@ -8,6 +8,8 @@ import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.view.marginTop
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
@@ -22,6 +24,7 @@ import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
 import com.tsai.shakeit.ui.addshop.AddShopViewModel
+import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
 import kotlinx.coroutines.delay
@@ -142,8 +145,8 @@ fun SwitchMaterial.bindSwitch(
 @BindingAdapter("fabAnimation")
 fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
     elevation = 10f
-    iconSize= 90
-    textSize= 18f
+    iconSize = 90
+    textSize = 18f
     scaleX = 0.65f
     scaleY = 0.65f
     isExtended = false
@@ -152,7 +155,7 @@ fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
         extend()
         handler.postDelayed({
             shrink()
-        },1000)
+        }, 1000)
     }, 1500)
 }
 
@@ -160,20 +163,28 @@ fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
 fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
     isExtended = false
     elevation = 10f
-    textSize= 18f
+    textSize = 18f
     scaleX = 0.8f
     scaleY = 0.8f
-    iconSize =90
     val handler = android.os.Handler(Looper.getMainLooper())
     handler.postDelayed({
         extend()
         handler.postDelayed({
             shrink()
-            iconSize =90
-        },1000)
+        }, 1000)
     }, 1500)
 }
 
+@BindingAdapter("getCurrentPosition","viewModel")
+fun EditText.bindPosition(position: Int, viewModel: AddMenuItemViewModel) {
+
+    setOnFocusChangeListener { view, b ->
+        if (b == true) {
+            viewModel.recordCurrentSelectedPostion(position)
+        }
+    }
+
+}
 
 
 

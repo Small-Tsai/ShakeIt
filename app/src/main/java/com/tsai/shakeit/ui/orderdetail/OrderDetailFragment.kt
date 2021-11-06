@@ -11,9 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
-import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
 

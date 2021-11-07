@@ -30,11 +30,11 @@ class OrderFragment : Fragment() {
 
         val adapter = OrderAdapter(viewModel)
 
-        viewModel.userOrderList.observe(viewLifecycleOwner, Observer {
+        viewModel.userOrderList.observe(viewLifecycleOwner,  {
             adapter.submitList(it)
         })
 
-        viewModel.navToOrderDetail.observe(viewLifecycleOwner, Observer {
+        viewModel.navToOrderDetail.observe(viewLifecycleOwner,  {
             it?.let { order ->
                 viewModel.shopImg.value?.let { shopImg ->
                     findNavController().navigate(
@@ -47,12 +47,12 @@ class OrderFragment : Fragment() {
             }
         })
 
-        viewModel.shopImg.observe(viewLifecycleOwner, Observer {
+        viewModel.shopImg.observe(viewLifecycleOwner,  {
             it?.let { adapter.submitImg(it) }
             adapter.notifyDataSetChanged()
         })
 
-        viewModel.shopId.observe(viewLifecycleOwner, Observer {
+        viewModel.shopId.observe(viewLifecycleOwner,  {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToSendComment(it)) }
         })
 

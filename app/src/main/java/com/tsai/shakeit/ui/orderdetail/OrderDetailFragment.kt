@@ -1,5 +1,7 @@
 package com.tsai.shakeit.ui.orderdetail
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +16,8 @@ import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 
 class OrderDetailFragment : Fragment() {
+
+    private lateinit var telUri: Uri
 
     private val swipeHelper by lazy {
         object : ItemTouchHelper.SimpleCallback(
@@ -89,6 +93,14 @@ class OrderDetailFragment : Fragment() {
                 }
             }
         })
+
+        viewModel.shop.observe(viewLifecycleOwner, { shop ->
+            binding.orderTelBtn.setOnClickListener {
+                telUri = Uri.parse("tel:${shop.tel}");
+                startActivity(Intent(Intent.ACTION_DIAL, telUri))
+            }
+        })
+
 
         binding.orderDetailRev.adapter = adapter
         binding.friendsRev.adapter = friendsAdapter

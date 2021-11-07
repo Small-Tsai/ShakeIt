@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
+import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
@@ -27,8 +28,13 @@ class OrderDetailViewModel(
     val totalPrice: LiveData<Int>
         get() = _totalPrice
 
+    private val _shop = MutableLiveData<Shop>()
+    val shop: LiveData<Shop>
+        get() = _shop
+
     init {
         getOrderProduct()
+        getShopData()
     }
 
     private fun getOrderProduct() {
@@ -39,19 +45,33 @@ class OrderDetailViewModel(
         }
     }
 
+    private fun getShopData() {
+        viewModelScope.launch {
+            mOrder?.let {
+                when (val result = repository.getShopInfo(it.shop_Id)) {
+                    is Result.Success -> {
+                        _shop.value = result.data!!
+                    }
+                }
+            }
+        }
+    }
+
     private val _navToMenu = MutableLiveData<Shop?>()
     val navToMenu: LiveData<Shop?>
         get() = _navToMenu
 
     fun navToMenu() {
-        mOrder?.let {
-            _navToMenu.value = shopImg?.let { shopImg ->
-                Shop(
-                    name = mOrder.shop_Name,
-                    shop_Id = mOrder.shop_Id,
-                    shop_Img = shopImg,
-                    branch = mOrder.branch
-                )
+        mOrder?.let { order ->
+            shop.value?.let { shop ->
+                _navToMenu.value = shopImg?.let { shopImg ->
+                    Shop(
+                        name = order.shop_Name,
+                        shop_Id = order.shop_Id,
+                        shop_Img = shop.shop_Img,
+                        branch = order.branch
+                    )
+                }
             }
             _navToMenu.value = null
         }
@@ -73,7 +93,7 @@ class OrderDetailViewModel(
         }
     }
 
-    fun notifyOrderChange(){
+    fun notifyOrderChange() {
         _order.value = _order.value
     }
 

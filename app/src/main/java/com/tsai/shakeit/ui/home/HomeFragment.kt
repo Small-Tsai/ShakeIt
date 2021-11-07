@@ -2,6 +2,8 @@ package com.tsai.shakeit.ui.home
 
 import android.Manifest.permission.*
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -43,7 +45,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private val viewModel by viewModels<HomeViewModel> {
         getVmFactory()
     }
-
+    private lateinit var telUri:Uri
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mMap: GoogleMap
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
@@ -115,6 +117,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             binding.favorite = favorite
             binding.shop = shop
             viewModel.checkHasFavorite()
+
+            binding.telBtn.setOnClickListener {
+                telUri= Uri.parse("tel:${shop.tel}");
+                startActivity(Intent(Intent.ACTION_DIAL,telUri))
+            }
 
             binding.apply {
 

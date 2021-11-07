@@ -307,7 +307,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObjects(Product::class.java)
-//                        Log.d(TAG, shopData.toString())
                         continuation.resume(Result.Success(shopData))
                     } else {
                         task.exception?.let {

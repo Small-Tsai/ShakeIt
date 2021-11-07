@@ -43,7 +43,9 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView32"
             app:layout_constraintStart_toEndOf="@+id/textView32"
-            app:layout_constraintTop_toTopOf="@+id/textView32" />
+            app:layout_constraintTop_toTopOf="@+id/textView32"
+            android:inputType="text"
+            android:autofillHints="" />
 
         <TextView
             android:id="@+id/textView33"
@@ -69,11 +71,13 @@
             android:maxLength="3"
             android:paddingHorizontal="20dp"
             android:singleLine="true"
+            android:hint="0"
             android:text="@={viewModel.price}"
             app:layout_constraintBottom_toBottomOf="@+id/textView33"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView33"
-            app:layout_constraintTop_toTopOf="@+id/textView33" />
+            app:layout_constraintTop_toTopOf="@+id/textView33"
+            android:autofillHints="0" />
 
         <ImageView
             android:id="@+id/imageButton2"

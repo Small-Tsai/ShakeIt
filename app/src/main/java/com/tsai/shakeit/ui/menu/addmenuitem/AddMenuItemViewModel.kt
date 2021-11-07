@@ -14,6 +14,8 @@ import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.HashMap
 
 class AddMenuItemViewModel(
     private val repository: ShakeItRepository,
@@ -75,53 +77,22 @@ class AddMenuItemViewModel(
             addMenuList.add(AddMenuItem.Detail(hashMapOf()))
             addMenuList.add(AddMenuItem.Button(0))
             addMenuList.add(AddMenuItem.Title("冰量選項"))
-            addMenuList.add(AddMenuItem.Detail(hashMapOf()))
+//            addMenuList.add(AddMenuItem.Detail(hashMapOf()))
             addMenuList.add(AddMenuItem.Button(1))
             addMenuList.add(AddMenuItem.Title("甜度選項"))
-            addMenuList.add(AddMenuItem.Detail(hashMapOf()))
+//            addMenuList.add(AddMenuItem.Detail(hashMapOf()))
             addMenuList.add(AddMenuItem.Button(2))
             addMenuList.add(AddMenuItem.Title("加料選項"))
-            addMenuList.add(AddMenuItem.Detail(hashMapOf()))
+//            addMenuList.add(AddMenuItem.Detail(hashMapOf()))
             addMenuList.add(AddMenuItem.Button(3))
             _addMenuItemList.value = addMenuList
             firstTime = 1
         }
     }
 
-    fun onClick(type: Int, positon: Int) {
-        when (type) {
-            0 -> {
-                addMenuList.add(1, AddMenuItem.Detail(hashMapOf()))
-//                Logger.d("$addMenuList")
-                capaEndPosition += 1
-            }
-            1 -> {
-                addMenuList.add(4 + capaEndPosition, AddMenuItem.Detail(hashMapOf()))
-                iceEndPosition += 1
-                Logger.d("iceEnd = $iceEndPosition")
-            }
-            2 -> {
-                addMenuList.add(
-                    7 + iceEndPosition + capaEndPosition,
-                    AddMenuItem.Detail(hashMapOf())
-                )
-                sugarEndPosition += 1
-                Logger.d("sugarEnd = $sugarEndPosition")
-            }
-            3 -> {
-                addMenuList.add(
-                    10 + sugarEndPosition + iceEndPosition + capaEndPosition,
-                    AddMenuItem.Detail(hashMapOf())
-                )
-                otherEndPosition += 1
-            }
-        }
-
-        _addMenuItemList.value = addMenuList
-    }
-
     var currentSelectedPostion = -1
     fun recordCurrentSelectedPostion(positon: Int) {
+        Logger.d("$positon")
         currentSelectedPostion = positon
     }
 
@@ -142,12 +113,16 @@ class AddMenuItemViewModel(
 
         if (currentSelectedPostion <= capaMax) {
             userCapaContentList[currentSelectedPostion] = contnet
+            Logger.d("caContent =$userCapaContentList")
         } else if (currentSelectedPostion in (capaMax + 1)..iceMax) {
             userIceContentList[currentSelectedPostion] = contnet
+            Logger.d("iceContent =$userIceContentList")
         } else if (currentSelectedPostion <= sugarMax && currentSelectedPostion > 1 + iceMax) {
             userSugarContentList[currentSelectedPostion] = contnet
+            Logger.d("sugarContent =$userSugarContentList")
         } else {
             userOtherContentList[currentSelectedPostion] = contnet
+            Logger.d("otherContent =$userOtherContentList")
         }
     }
 
@@ -158,6 +133,7 @@ class AddMenuItemViewModel(
         capaMax = 1 + capaEndPosition
         iceMax = 4 + iceEndPosition + capaEndPosition
         sugarMax = 7 + iceEndPosition + capaEndPosition + sugarEndPosition
+
 
         if (currentSelectedPostion <= capaMax) {
             userCapaPriceList[currentSelectedPostion] = price
@@ -199,7 +175,7 @@ class AddMenuItemViewModel(
 //        Logger.d("6= $userOtherPriceList")
 
         viewModelScope.launch {
-            postImgUriToFireBase()
+//            postImgUriToFireBase()
 
             userCapaContentList.keys.forEach {
                 _capacityList.value?.set(
@@ -240,8 +216,42 @@ class AddMenuItemViewModel(
                 type = type,
                 product_Img = _productFireBaseImageUri.value.toString()
             )
+
             Logger.d("product = $product")
-            repository.postProduct(product)
+//            repository.postProduct(product)
         }
+    }
+
+    fun onClick(type: Int, positon: Int) {
+        when (type) {
+            0 -> {
+                addMenuList.add(1, AddMenuItem.Detail(hashMapOf()))
+                capaEndPosition += 1
+            }
+            1 -> {
+                addMenuList.add(
+                    4 + capaEndPosition,
+                    AddMenuItem.Detail(hashMapOf())
+                )
+                iceEndPosition += 1
+                Logger.d("iceEnd = $iceEndPosition")
+            }
+            2 -> {
+                addMenuList.add(
+                    6 + iceEndPosition + capaEndPosition,
+                    AddMenuItem.Detail(hashMapOf())
+                )
+                sugarEndPosition += 1
+                Logger.d("sugarEnd = $sugarEndPosition")
+            }
+            3 -> {
+                addMenuList.add(
+                    8 + sugarEndPosition + iceEndPosition + capaEndPosition,
+                    AddMenuItem.Detail(hashMapOf())
+                )
+                otherEndPosition += 1
+            }
+        }
+        _addMenuItemList.value = addMenuList
     }
 }

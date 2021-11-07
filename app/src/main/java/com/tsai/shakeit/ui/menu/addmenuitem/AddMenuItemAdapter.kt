@@ -1,14 +1,17 @@
 package com.tsai.shakeit.ui.menu.addmenuitem
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.AddMenuItemBtnBinding
 import com.tsai.shakeit.databinding.AddMenuItemRowBinding
 import com.tsai.shakeit.databinding.AddMenuItemTitleBinding
+import com.tsai.shakeit.util.Logger
 
 class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
     ListAdapter<AddMenuItem, RecyclerView.ViewHolder>(DiffCallback) {
@@ -35,6 +38,9 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
             binding.position = adapterPosition
             binding.viewModel = viewModel
             viewModel.binding = binding
+            binding.textView32.text = adapterPosition.toString()
+            viewModel.currentSelectedPostion = absoluteAdapterPosition
+            viewModel.price.value=""
             binding.executePendingBindings()
         }
     }
@@ -71,12 +77,14 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
+            ITEM_VIEW_TYPE_TITLE -> {
+                AddItemTitleViewHolder(
+                    AddMenuItemTitleBinding.inflate(
+                        LayoutInflater.from(parent.context), parent, false
+                    ), viewModel
+                )
+            }
 
-            ITEM_VIEW_TYPE_TITLE -> AddItemTitleViewHolder(
-                AddMenuItemTitleBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                ), viewModel
-            )
 
             ITEM_VIEW_TYPE_CONTENT -> AddItemViewHolder(
                 AddMenuItemRowBinding.inflate(

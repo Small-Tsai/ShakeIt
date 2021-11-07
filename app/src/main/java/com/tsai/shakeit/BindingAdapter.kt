@@ -1,34 +1,23 @@
 package com.tsai.shakeit.util
 
 import android.os.Looper
-import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.core.view.marginTop
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
-import com.tsai.shakeit.ui.addshop.AddShopViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
-import kotlinx.coroutines.delay
-import java.util.logging.Handler
 
 @BindingAdapter("shopName", "branch")
 fun TextView.bindShopName(name: String?, branch: String?) {
@@ -113,6 +102,7 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .load(imgUrl)
             .placeholder(R.drawable.placedrink)
             .error(R.drawable.placedrink)
+//            .centerCrop()
             .into(imgView)
 
 
@@ -175,16 +165,16 @@ fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
     }, 1500)
 }
 
-@BindingAdapter("getCurrentPosition","viewModel")
+@BindingAdapter("getCurrentPosition", "viewModel")
 fun EditText.bindPosition(position: Int, viewModel: AddMenuItemViewModel) {
-
+    setText("")
     setOnFocusChangeListener { view, b ->
         if (b == true) {
             viewModel.recordCurrentSelectedPostion(position)
         }
     }
-
 }
+
 
 
 

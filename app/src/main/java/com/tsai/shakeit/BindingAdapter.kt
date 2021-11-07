@@ -102,12 +102,11 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .load(imgUrl)
             .placeholder(R.drawable.placedrink)
             .error(R.drawable.placedrink)
-//            .centerCrop()
             .into(imgView)
-
-
     }
 }
+
+
 
 @BindingAdapter("circleimageUrl")
 fun bindCircleImage(imgView: ImageView, imgUrl: String?) {

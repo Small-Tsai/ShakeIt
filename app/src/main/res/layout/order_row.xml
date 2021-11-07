@@ -9,9 +9,6 @@
             name="order"
             type="com.tsai.shakeit.data.Order" />
 
-        <variable
-            name="shopImg"
-            type="String" />
 
         <variable
             name="viewModel"
@@ -76,7 +73,7 @@
 
                     <ImageView
                         android:id="@+id/order_img"
-                        imageUrl="@{shopImg}"
+                        imageUrl="@{order.shop_Img}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"

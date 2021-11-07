@@ -6,26 +6,20 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Order
+import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.OrderRowBinding
 import com.tsai.shakeit.ui.order.OrderAdapter.*
 
 class OrderAdapter(val viewModel: OrderViewModel) :
     ListAdapter<Order, OrderViewHolder>(DiffCallback) {
 
-    private var shopImg:String? = null
-    fun submitImg(image: String) {
-        shopImg = image
-    }
+    private var shop: Shop? = null
 
     inner class OrderViewHolder(private var binding: OrderRowBinding, viewModel: OrderViewModel) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(order: Order, shopImg: String?) {
+        fun bind(order: Order, shopImg: Shop?) {
             binding.order = order
             binding.viewModel = viewModel
-            if (shopImg.isNullOrEmpty()) {
-                viewModel.getShopImage(order.shop_Id)
-            }
-            binding.shopImg = shopImg
             binding.executePendingBindings()
         }
 
@@ -51,6 +45,6 @@ class OrderAdapter(val viewModel: OrderViewModel) :
     }
 
     override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
-        holder.bind(getItem(position) , shopImg)
+        holder.bind(getItem(position), shop)
     }
 }

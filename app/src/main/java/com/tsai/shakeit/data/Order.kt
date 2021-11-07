@@ -21,6 +21,7 @@ data class Order(
     val order_Price: Int = 0,
     val branch: String = "",
     val shop_Id: String = "",
+    val shop_Img: String = ""
 ) : Parcelable
 
 @Parcelize

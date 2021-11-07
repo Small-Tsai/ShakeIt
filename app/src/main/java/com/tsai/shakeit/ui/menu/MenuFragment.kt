@@ -57,7 +57,8 @@ class MenuFragment : Fragment() {
                             it,
                             Shop(
                                 shop_Id = viewModel.selectedShop.shop_Id,
-                                branch = viewModel.selectedShop.branch
+                                branch = viewModel.selectedShop.branch,
+                                shop_Img = viewModel.selectedShop.shop_Img
                             ),
                             userId = otherUserId
                         )

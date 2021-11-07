@@ -53,7 +53,8 @@ class DrinksDetailViewModel(
             order_Name = "我的訂單",
             shop_Id = shop.shop_Id,
             user_Id = UserInfo.userId,
-            invitation = arrayListOf(UserInfo.userId)
+            invitation = arrayListOf(UserInfo.userId),
+            shop_Img = shop.shop_Img
 
         )
 

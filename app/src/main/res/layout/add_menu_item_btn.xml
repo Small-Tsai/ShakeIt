@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/one_side_border">
+        >
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/menu_addItem"

@@ -165,12 +165,12 @@ fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
     }, 1500)
 }
 
-@BindingAdapter("getCurrentPosition", "viewModel")
-fun EditText.bindPosition(position: Int, viewModel: AddMenuItemViewModel) {
-    setText("")
+@BindingAdapter("getCurrentType", "viewModel","gerCurrentPosition")
+fun EditText.bindPosition(type: Int, viewModel: AddMenuItemViewModel,position: Int) {
     setOnFocusChangeListener { view, b ->
-        if (b == true) {
-            viewModel.recordCurrentSelectedPostion(position)
+        if (b) {
+            viewModel.recordCurrentSelectedType(type)
+            viewModel.recordCurrentSelectedPosition(position)
         }
     }
 }

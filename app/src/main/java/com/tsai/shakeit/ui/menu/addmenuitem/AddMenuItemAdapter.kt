@@ -1,17 +1,13 @@
 package com.tsai.shakeit.ui.menu.addmenuitem
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.AddMenuItemBtnBinding
 import com.tsai.shakeit.databinding.AddMenuItemRowBinding
 import com.tsai.shakeit.databinding.AddMenuItemTitleBinding
-import com.tsai.shakeit.util.Logger
 
 class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
     ListAdapter<AddMenuItem, RecyclerView.ViewHolder>(DiffCallback) {
@@ -34,13 +30,14 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
         private val viewModel: AddMenuItemViewModel
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(content: HashMap<String, Int>) {
+        fun bind(content: HashMap<String, Int>, type: Int) {
             binding.position = adapterPosition
             binding.viewModel = viewModel
+            binding.type = type
             viewModel.binding = binding
             binding.textView32.text = adapterPosition.toString()
-            viewModel.currentSelectedPostion = absoluteAdapterPosition
-            viewModel.price.value=""
+            viewModel.content.value = ""
+            viewModel.price.value = ""
             binding.executePendingBindings()
         }
     }
@@ -111,12 +108,13 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
             is AddItemViewHolder -> {
                 holder.bind(
-                    (getItem(position) as AddMenuItem.Detail).content
+                    (getItem(position) as AddMenuItem.Detail).content,
+                    (getItem(position) as AddMenuItem.Detail).type
                 )
             }
 
             is AddItemBtnViewHolder -> {
-                holder.bind((getItem(position) as AddMenuItem.Button).text)
+                holder.bind((getItem(position) as AddMenuItem.Button).type)
             }
         }
 
@@ -134,6 +132,6 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
 sealed class AddMenuItem {
     data class Title(val title: String) : AddMenuItem()
-    data class Detail(val content: HashMap<String, Int>) : AddMenuItem()
-    data class Button(val text: Int) : AddMenuItem()
+    data class Detail(val content: HashMap<String, Int>, val type: Int) : AddMenuItem()
+    data class Button(val type: Int) : AddMenuItem()
 }

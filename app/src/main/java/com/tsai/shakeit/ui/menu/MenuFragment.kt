@@ -74,11 +74,11 @@ class MenuFragment : Fragment() {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToOrder()) }
         })
 
-        viewModel.shop.observe(viewLifecycleOwner,  {
+        viewModel.shop.observe(viewLifecycleOwner, {
             it?.let { binding.shopInfo = it }
         })
 
-        viewModel.orderProduct.observe(viewLifecycleOwner,  { orderList ->
+        viewModel.orderProduct.observe(viewLifecycleOwner, { orderList ->
             if (!orderList.isNullOrEmpty()) {
                 viewModel.hasOrder()
                 viewModel.updateOrderTotalPrice(orderList.sumOf { it.price * it.qty })
@@ -88,11 +88,11 @@ class MenuFragment : Fragment() {
             binding.textView9.text = orderList.size.toString()
         })
 
-        viewModel.branchProduct.observe(viewLifecycleOwner,  {
+        viewModel.branchProduct.observe(viewLifecycleOwner, {
             viewModel.filterMyList(it)
         })
 
-        viewModel.navToAddItem.observe(viewLifecycleOwner,{
+        viewModel.navToAddItem.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigate(MenuFragmentDirections.navToAddItem(viewModel.selectedShop)) }
         })
 

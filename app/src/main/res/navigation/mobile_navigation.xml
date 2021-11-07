@@ -104,6 +104,9 @@
         <argument
             android:name="shop"
             app:argType="com.tsai.shakeit.data.Shop" />
+        <action
+            android:id="@+id/action_addMenuItemFragment_to_menuFragment"
+            app:popUpTo="@id/menuFragment" />
     </fragment>
 
     <action
@@ -175,7 +178,9 @@
         app:popExitAnim="@android:anim/fade_out" />
     <action
         android:id="@+id/navToAddItem"
-        app:destination="@id/addMenuItemFragment" />
+        app:destination="@id/addMenuItemFragment"
+        app:enterAnim="@anim/bottom_to_top"
+        app:popExitAnim="@anim/top_to_bottom" />
 
 
 </navigation>

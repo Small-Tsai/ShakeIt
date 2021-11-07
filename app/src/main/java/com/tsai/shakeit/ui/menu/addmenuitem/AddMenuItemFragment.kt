@@ -9,10 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.databinding.AddMenuItemFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.util.Logger
 
 
 class AddMenuItemFragment : Fragment() {
@@ -34,15 +37,29 @@ class AddMenuItemFragment : Fragment() {
     ): View {
         binding = AddMenuItemFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        viewModel.initSelectItem()
 
-
-        val addMenuItemAdapter = AddMenuItemAdapter(viewModel)
+        val addCapacityAdapter = AddMenuItemAdapter(viewModel)
+        val addIceAdapter = AddMenuItemAdapter(viewModel)
+        val addSugarAdapter = AddMenuItemAdapter(viewModel)
+        val addOtherAdapter = AddMenuItemAdapter(viewModel)
 
         binding.productPhotoBtn.setOnClickChoosePhoto(fromProduct)
 
-        viewModel.addMenuItemList.observe(viewLifecycleOwner, {
-//            Logger.d("$it")
-            addMenuItemAdapter.submitList(it.toMutableList())
+        viewModel.addCapacityListLiveData.observe(viewLifecycleOwner, {
+            addCapacityAdapter.submitList(it.toMutableList())
+        })
+
+        viewModel.addIceListLiveData.observe(viewLifecycleOwner, {
+            addIceAdapter.submitList(it.toMutableList())
+        })
+
+        viewModel.addSugarListLiveData.observe(viewLifecycleOwner, {
+            addSugarAdapter.submitList(it.toMutableList())
+        })
+
+        viewModel.addOtherListLiveData.observe(viewLifecycleOwner, {
+            addOtherAdapter.submitList(it.toMutableList())
         })
 
         viewModel.content.observe(viewLifecycleOwner, {
@@ -50,11 +67,18 @@ class AddMenuItemFragment : Fragment() {
         })
 
         viewModel.price.observe(viewLifecycleOwner, {
-//            Logger.d("price = $it")
             viewModel.setListPrice(it)
         })
 
-        binding.productTitleRev.adapter = addMenuItemAdapter
+        viewModel.popBack.observe(viewLifecycleOwner,{
+            it?.let { findNavController().navigateUp() }
+        })
+
+        binding.productCapaRev.adapter = addCapacityAdapter
+        binding.productIceRev.adapter = addIceAdapter
+        binding.productSugarRev.adapter = addSugarAdapter
+        binding.productOtherRev.adapter = addOtherAdapter
+
         return binding.root
     }
 

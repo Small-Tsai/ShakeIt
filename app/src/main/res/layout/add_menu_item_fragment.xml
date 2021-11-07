@@ -12,6 +12,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/addItem_constraint"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey2">
@@ -31,7 +32,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollView2"
             android:layout_width="match_parent"
@@ -43,6 +43,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/scrollView2_constraint"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white"
@@ -55,6 +56,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
+                    android:onClick="@{()->viewModel.popBack()}"
                     android:background="@drawable/dropdown"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -214,18 +216,54 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/product_title_rev"
+                    android:id="@+id/product_capa_rev"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/productDes_input_layout"
                     tools:itemCount="2"
                     tools:listitem="@layout/add_menu_item_row" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/product_ice_rev"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/product_capa_rev"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/add_menu_item_row" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/product_sugar_rev"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/product_ice_rev"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/add_menu_item_row" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/product_other_rev"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="32dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="@+id/scrollView2_constraint"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/product_sugar_rev"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/add_menu_item_row" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

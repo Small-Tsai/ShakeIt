@@ -97,6 +97,10 @@ class MainActivity : AppCompatActivity() {
                     CurrentFragmentType.FAVORITE
                 }
 
+                R.id.orderHistoryFragment ->{
+                    CurrentFragmentType.ORDER_HISTORY
+                }
+
                 else -> viewModel.currentFragmentType.value
             }
         }

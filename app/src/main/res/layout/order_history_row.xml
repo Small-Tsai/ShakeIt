@@ -9,14 +9,13 @@
             name="order"
             type="com.tsai.shakeit.data.Order" />
 
-
         <variable
             name="viewModel"
-            type="com.tsai.shakeit.ui.order.OrderViewModel" />
+            type="com.tsai.shakeit.ui.order.orderhistory.OrderHistoryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/outside_constraint"
+        android:id="@+id/history_constraint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -35,9 +34,8 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="140dp"
                 android:background="@color/white"
                 android:elevation="5dp"
                 android:paddingBottom="10dp"
@@ -48,19 +46,19 @@
                 tools:context=".ui.order.OrderFragment">
 
                 <TextView
-                    android:id="@+id/order_title"
+                    android:id="@+id/history_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:text="@{order.order_Name}"
-                    android:textColor="@color/black"
+                    android:textColor="@color/gery"
                     android:textSize="16dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView2"
+                    android:id="@+id/history_cardView"
                     android:layout_width="85dp"
                     android:layout_height="90dp"
                     android:layout_marginStart="16dp"
@@ -69,10 +67,10 @@
                     android:src="@drawable/kebuke"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/order_title">
+                    app:layout_constraintTop_toBottomOf="@+id/history_title">
 
                     <ImageView
-                        android:id="@+id/order_img"
+                        android:id="@+id/history_img"
                         imageUrl="@{order.shop_Img}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -81,9 +79,8 @@
 
                 </androidx.cardview.widget.CardView>
 
-
                 <TextView
-                    android:id="@+id/order_shop"
+                    android:id="@+id/history_shop"
                     branch="@{order.branch}"
                     shopName="@{order.shop_Name}"
                     android:layout_width="wrap_content"
@@ -91,90 +88,40 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/roboto"
-                    android:textColor="@color/black"
+                    android:textColor="@color/gery"
                     android:textSize="15dp"
-                    app:layout_constraintStart_toEndOf="@+id/cardView2"
-                    app:layout_constraintTop_toTopOf="@+id/cardView2" />
-
+                    app:layout_constraintStart_toEndOf="@+id/history_cardView"
+                    app:layout_constraintTop_toTopOf="@+id/history_cardView" />
 
                 <TextView
-                    android:id="@+id/order_date"
+                    android:id="@+id/history_date"
                     timeToDisplayFormat="@{order.date}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:fontFamily="@font/roboto"
+                    android:textColor="@color/gery"
                     android:textSize="13dp"
-                    app:layout_constraintStart_toEndOf="@+id/cardView2"
-                    app:layout_constraintTop_toBottomOf="@+id/order_shop" />
+                    app:layout_constraintStart_toEndOf="@+id/history_cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/history_shop" />
 
                 <TextView
-                    android:id="@+id/order_price"
-                    style="@style/black_shadow"
+                    android:id="@+id/history_price"
                     priceText="@{order.order_Price}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    android:textColor="@color/gery"
                     android:fontFamily="@font/roboto"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardView2"
-                    app:layout_constraintStart_toEndOf="@+id/cardView2"
-                    app:layout_constraintTop_toBottomOf="@+id/order_date" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/complete_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="16dp"
-                    android:backgroundTint="@color/grey2"
-                    android:fontFamily="@font/noto_sans"
-                    android:onClick="@{() -> viewModel.navToSendComment(order)}"
-                    android:paddingStart="12dp"
-                    android:paddingTop="3dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="3dp"
-                    android:text="完成訂單"
-                    android:textColor="@color/black"
-                    android:textSize="14dp"
-                    app:cornerRadius="10dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardView2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/order_price" />
-
-
-                <ImageView
-                    android:id="@+id/share_btn"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/circle"
-                    android:padding="2dp"
-                    android:src="@drawable/share_icon"
-                    android:visibility="invisible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="@+id/history_cardView"
+                    app:layout_constraintStart_toEndOf="@+id/history_cardView"
+                    app:layout_constraintTop_toBottomOf="@+id/history_date" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/delete_btn"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/whitecircle"
-            android:fontFamily="@font/roboto"
-            android:onClick="@{() ->viewModel.deleteOrder(order.order_Id)}"
-            android:text="x"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/outside_constraint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

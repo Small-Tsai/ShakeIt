@@ -43,6 +43,8 @@ interface ShakeItRepository {
 
     suspend fun postUserInfo(user: User): Result<Boolean>
 
+    suspend fun postHistoryOrder(order: Order, orderProduct: List<OrderProduct>): Result<Boolean>
+
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
     suspend fun getAllShop(): Result<List<Shop>>
@@ -50,6 +52,12 @@ interface ShakeItRepository {
     suspend fun getProduct(shopId: String): Result<List<Product>>
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
+
+    suspend fun getOrderProduct(orderId: String): Result<List<OrderProduct>>
+
+    suspend fun getOrderHistory(userId: String): Result<List<Order>>
+
+    suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 
@@ -60,4 +68,5 @@ interface ShakeItRepository {
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
     fun getFavorite(userId: String): MutableLiveData<List<Favorite>>
+
 }

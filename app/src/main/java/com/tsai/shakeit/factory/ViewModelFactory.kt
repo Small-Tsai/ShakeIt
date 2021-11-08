@@ -8,14 +8,15 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ui.addshop.AddShopViewModel
-import com.tsai.shakeit.ui.home.comment.CommentViewModel
-import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.favorite.FavoriteViewModel
 import com.tsai.shakeit.ui.home.HomeViewModel
+import com.tsai.shakeit.ui.home.comment.CommentViewModel
 import com.tsai.shakeit.ui.login.LoginViewModel
 import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
+import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.order.OrderViewModel
+import com.tsai.shakeit.ui.order.orderhistory.OrderHistoryViewModel
 import com.tsai.shakeit.ui.order.sendcomment.CommentDialogViewModel
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
@@ -31,7 +32,8 @@ class ViewModelFactory(
     private val shopList: Array<Shop> = arrayOf(),
     private val shopImg: String? = null,
     private val userId: String? = null,
-    private val orderSize: Int? = null
+    private val orderSize: Int? = null,
+    private val type: String? = null
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -47,7 +49,7 @@ class ViewModelFactory(
                     product?.let { DrinksDetailViewModel(it, repository, shop, userId, orderSize) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
-                    OrderDetailViewModel(order, repository, shopImg)
+                    OrderDetailViewModel(order, repository, shopImg, type)
 
                 isAssignableFrom(OrderViewModel::class.java) ->
                     OrderViewModel(repository)
@@ -75,6 +77,9 @@ class ViewModelFactory(
 
                 isAssignableFrom(AddMenuItemViewModel::class.java) ->
                     AddMenuItemViewModel(repository, shop)
+
+                isAssignableFrom(OrderHistoryViewModel::class.java) ->
+                    OrderHistoryViewModel(repository)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

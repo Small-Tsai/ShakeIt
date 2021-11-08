@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable-v24/comment_dialog_bg.xml" value="0.41770833333333335" />
+        <entry key="app/src/main/res/drawable-v24/corner_radius2.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable-v24/menu_icon.xml" value="0.12708333333333333" />
+        <entry key="app/src/main/res/drawable-v24/order_selector.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable-v24/ride.xml" value="0.12708333333333333" />
         <entry key="app/src/main/res/drawable/corner_radius.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.41770833333333335" />
@@ -18,7 +21,8 @@
         <entry key="app/src/main/res/layout/comment.xml" value="0.18297101449275363" />
         <entry key="app/src/main/res/layout/comment_dialog_fragment.xml" value="0.16983695652173914" />
         <entry key="app/src/main/res/layout/comment_fragment.xml" value="0.16983695652173914" />
-        <entry key="app/src/main/res/layout/drinks_detail_fragment.xml" value="0.10092592592592593" />
+        <entry key="app/src/main/res/layout/dialog_order_name.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/drinks_detail_fragment.xml" value="0.3574074074074074" />
         <entry key="app/src/main/res/layout/drinks_select_row.xml" value="0.22" />
         <entry key="app/src/main/res/layout/drinks_select_title.xml" value="0.3858695652173913" />
         <entry key="app/src/main/res/layout/favorite_image_item.xml" value="0.14361702127659576" />
@@ -26,7 +30,8 @@
         <entry key="app/src/main/res/layout/fragment_favorite.xml" value="0.14361702127659576" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.1503623188405797" />
-        <entry key="app/src/main/res/layout/fragment_order.xml" value="0.1947821681864235" />
+        <entry key="app/src/main/res/layout/fragment_order.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_order_name_dialog.xml" value="0.18489583333333334" />
         <entry key="app/src/main/res/layout/login_fragment.xml" value="0.33" />
         <entry key="app/src/main/res/layout/menu_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/menu_product_row.xml" value="0.18177083333333333" />
@@ -34,7 +39,10 @@
         <entry key="app/src/main/res/layout/order_detail_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/order_detail_row_btn.xml" value="0.4015625" />
         <entry key="app/src/main/res/layout/order_friends_row.xml" value="0.16983695652173914" />
+        <entry key="app/src/main/res/layout/order_history_fragment.xml" value="0.3875" />
+        <entry key="app/src/main/res/layout/order_history_row.xml" value="0.335" />
         <entry key="app/src/main/res/layout/order_row.xml" value="0.2266970618034448" />
+        <entry key="app/src/main/res/layout/order_selector.xml" value="0.4015625" />
         <entry key="app/src/main/res/layout/setting_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/setting_item_row.xml" value="0.375" />
         <entry key="app/src/main/res/layout/shop_date_row.xml" value="0.11930091185410334" />

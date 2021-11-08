@@ -64,6 +64,9 @@
         <argument
             android:name="shopImg"
             app:argType="string" />
+        <argument
+            android:name="type"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -103,7 +106,7 @@
         android:id="@+id/addMenuItemFragment"
         android:name="com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemFragment"
         android:label="add_menu_item_fragment"
-        tools:layout="@layout/add_menu_item_fragment" >
+        tools:layout="@layout/add_menu_item_fragment">
         <argument
             android:name="shop"
             app:argType="com.tsai.shakeit.data.Shop" />
@@ -184,6 +187,17 @@
         app:destination="@id/addMenuItemFragment"
         app:enterAnim="@anim/bottom_to_top"
         app:popExitAnim="@anim/top_to_bottom" />
+    <fragment
+        android:id="@+id/orderHistoryFragment"
+        android:name="com.tsai.shakeit.ui.order.orderhistory.OrderHistoryFragment"
+        android:label="OrderHistoryFragment" />
+    <action
+        android:id="@+id/navToOrderHistory"
+        app:destination="@id/orderHistoryFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popEnterAnim="@android:anim/fade_in"
+        app:popExitAnim="@android:anim/fade_out" />
 
 
 </navigation>

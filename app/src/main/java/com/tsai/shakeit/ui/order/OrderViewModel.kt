@@ -5,11 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Order
+import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
-import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
@@ -21,8 +25,12 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToOrderDetail: LiveData<Order?>
         get() = _navToOrderDetail
 
-    private val _shopId = MutableLiveData<String>()
-    val shopId: LiveData<String>
+    private val _navToOrderHistory = MutableLiveData<Boolean?>()
+    val navToOrderHistory: LiveData<Boolean?>
+        get() = _navToOrderHistory
+
+    private val _shopId = MutableLiveData<String?>()
+    val shopId: LiveData<String?>
         get() = _shopId
 
     init {
@@ -34,6 +42,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     fun deleteOrder(orderId: String) {
+        Logger.d("deleteOrder")
         viewModelScope.launch {
             repository.deleteOrder(orderId)
         }
@@ -44,8 +53,36 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _navToOrderDetail.value = null
     }
 
-    fun navToSendComment(shopId: String) {
-        _shopId.value = shopId
+    private var _orderProduct = MutableLiveData<List<OrderProduct>>()
+    val orderProduct: LiveData<List<OrderProduct>>
+        get() = _orderProduct
+
+    fun navToSendComment(order: Order) {
+
+        viewModelScope.launch {
+
+            when(val result = repository.getOrderProduct(order.order_Id)){
+                is Result.Success->{
+                    _orderProduct.value = result.data!!
+                }
+            }
+
+            _orderProduct.value?.let {
+                deleteOrder(order.order_Id)
+                Logger.d("${order.order_Id}")
+                when (val result = repository.postHistoryOrder(order, it)) {
+                    is Result.Success -> {
+                        _shopId.value = order.shop_Id
+                        _shopId.value = null
+                    }
+                }
+            }
+        }
+    }
+
+    fun navToOrderHistory() {
+        _navToOrderHistory.value = true
+        _navToOrderHistory.value = null
     }
 }
 

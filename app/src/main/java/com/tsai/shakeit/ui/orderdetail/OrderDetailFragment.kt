@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
+import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
 
@@ -46,7 +47,11 @@ class OrderDetailFragment : Fragment() {
             shopImg =
             OrderDetailFragmentArgs.fromBundle(
                 requireArguments()
-            ).shopImg
+            ).shopImg,
+            type =
+            OrderDetailFragmentArgs.fromBundle(
+                requireArguments()
+            ).type
         )
     }
 
@@ -58,6 +63,7 @@ class OrderDetailFragment : Fragment() {
     ): View {
 
         binding = OrderDetailFragmentBinding.inflate(inflater, container, false)
+
         val itemTouchHelper = ItemTouchHelper(swipeHelper)
         itemTouchHelper.attachToRecyclerView(binding.orderDetailRev)
 
@@ -68,7 +74,7 @@ class OrderDetailFragment : Fragment() {
         val friendsAdapter = OrderFriendsAdapter(viewModel)
 
         viewModel.order.observe(viewLifecycleOwner, { OrderProductList ->
-
+            Logger.d("$OrderProductList")
             val user = OrderProductList.map { it.user }.distinctBy { it.user_Id }
 
             OrderProductList?.let { list ->

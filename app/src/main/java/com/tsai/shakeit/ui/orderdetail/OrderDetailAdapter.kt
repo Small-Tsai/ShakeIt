@@ -1,6 +1,7 @@
 package com.tsai.shakeit.ui.orderdetail
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -28,16 +29,18 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
 
             binding.orderProduct = orderProduct
             binding.viewModel = viewModel
+
+            if (viewModel.type == "history"){
+                binding.swipeDeleteBtn.visibility = View.GONE
+            }
+
             binding.executePendingBindings()
 
             binding.swipeDeleteBtn.setOnClickListener {
-
                 viewModel.notifyOrderChange()
-
                 viewModel.removeOrderProduct(
                     orderProductId = orderProduct.orderProduct_Id,
                 )
-
                 swipeRevealLayout.close(true)
             }
         }
@@ -51,6 +54,9 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
 
         fun bind(name: String) {
             binding.viewModel = viewModel
+            if (viewModel.type =="history"){
+                binding.addItem.visibility = View.GONE
+            }
             binding.executePendingBindings()
         }
     }

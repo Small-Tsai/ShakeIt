@@ -70,6 +70,13 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postUserInfo(user)
     }
 
+    override suspend fun postHistoryOrder(
+        order: Order,
+        orderProduct: List<OrderProduct>
+    ): Result<Boolean> {
+        return shakeItDataSource.postHistoryOrder(order,orderProduct)
+    }
+
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
         return shakeItDataSource.getFilteredShopList(userId)
     }
@@ -104,6 +111,18 @@ class DefaultShakeItRepository(
 
     override suspend fun getComment(shopId: String): Result<List<Comment>> {
         return shakeItDataSource.getComment(shopId)
+    }
+
+    override suspend fun getOrderProduct(orderId: String): Result<List<OrderProduct>> {
+       return shakeItDataSource.getOrderProduct(orderId)
+    }
+
+    override suspend fun getOrderHistory(userId: String): Result<List<Order>> {
+       return shakeItDataSource.getOrderHistory(userId)
+    }
+
+    override suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>> {
+       return shakeItDataSource.getHistoryOrderProduct(orderId)
     }
 
 

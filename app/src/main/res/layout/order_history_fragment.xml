@@ -4,22 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
-            type="com.tsai.shakeit.ui.order.OrderViewModel" />
+            type="com.tsai.shakeit.ui.order.orderhistory.OrderHistoryViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="32dp"
         android:background="@color/grey2">
 
         <TextView
-            android:id="@+id/order_top_title"
+            android:id="@+id/history_top_title"
             style="@style/pageTitle"
             android:layout_marginEnd="16dp"
-            android:text="你的訂單"
+            android:text="歷史訂單"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,10 +34,10 @@
             android:background="@color/gery"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/order_top_title" />
+            app:layout_constraintTop_toBottomOf="@+id/history_top_title" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/order_rev"
+            android:id="@+id/history_rev"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
@@ -54,12 +54,14 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:fontFamily="@font/roboto"
-            android:onClick="@{()->viewModel.navToOrderHistory()}"
-            android:text="歷史訂單 >"
+            android:onClick="@{()->viewModel.navToOrder()}"
+            android:text="你的訂單 >"
             android:textColor="@drawable/order_selector"
-            app:layout_constraintBottom_toBottomOf="@+id/order_top_title"
-            app:layout_constraintEnd_toEndOf="@+id/order_top_title"
-            app:layout_constraintTop_toTopOf="@+id/order_top_title" />
+            app:layout_constraintBottom_toBottomOf="@+id/history_top_title"
+            app:layout_constraintEnd_toEndOf="@+id/history_top_title"
+            app:layout_constraintTop_toTopOf="@+id/history_top_title" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

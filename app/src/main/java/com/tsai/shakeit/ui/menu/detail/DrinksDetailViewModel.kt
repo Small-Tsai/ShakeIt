@@ -1,12 +1,16 @@
 package com.tsai.shakeit.ui.menu.detail
 
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.tsai.shakeit.R
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
@@ -45,48 +49,111 @@ class DrinksDetailViewModel(
     var selectedPositionList = mutableListOf<Int>()
     var mContentList: MutableMap<String, ArrayList<String>> = mutableMapOf()
 
+    val isCapacitySelected = MutableLiveData<Boolean>().apply { value = true }
+    val isIceSelected = MutableLiveData<Boolean>().apply { value = true }
+    val isSugarSelected = MutableLiveData<Boolean>().apply { value = true }
+    var unSelectText = MutableLiveData<String>()
+
+    private val _showDialog = MutableLiveData<Boolean?>()
+    val showDialog: LiveData<Boolean?>
+        get() = _showDialog
+
+    var title = MutableLiveData<String>().apply {
+        value = "我的訂單"
+    }
+
+    fun showDialog() {
+        if (orderSize == 0) {
+            _showDialog.value = true
+            _showDialog.value = null
+        } else {
+            addNewDocToFireBase()
+        }
+    }
+
+    fun closeDialog() {
+        _showDialog.value = false
+    }
+
     fun addNewDocToFireBase() {
 
         val mOrder = Order(
             shop_Name = data.shop_Name,
             branch = shop!!.branch,
             date = Timestamp.now(),
-            order_Name = "我的訂單",
+            order_Name = title.value!!,
             shop_Id = shop.shop_Id,
             user_Id = UserInfo.userId,
             invitation = arrayListOf(UserInfo.userId),
             shop_Img = shop.shop_Img
         )
 
-        val mOrderProduct = _qty.value?.let {
-            OrderProduct(
-                name = data.name,
-                ice = mContentList[ICE]!!.first(),
-                capacity = mContentList[CAPACITY]!!.first(),
-                qty = it,
-                sugar = mContentList[SUGAR]!!.first(),
-                others = mContentList[OTHERS].toString()
-                    .substring(1, mContentList[OTHERS].toString().length - 1),
-                price = data.price,
-                product_Img = data.product_Img,
-                user = User(
-                    user_Id = UserInfo.userId,
-                    user_Image = UserInfo.userImage,
-                    user_Name = UserInfo.userName
-                ),
-            )
+        val mOrderProduct = _qty.value?.let { qty ->
+            mContentList[ICE]?.let { ice ->
+                mContentList[CAPACITY]?.let { capacity ->
+                    mContentList[OTHERS]?.let { others ->
+                        mContentList[SUGAR]?.let { sugar ->
+                            OrderProduct(
+                                name = data.name,
+                                ice = ice.first(),
+                                capacity = capacity.first(),
+                                qty = qty,
+                                sugar = sugar.first(),
+                                others = others.toString()
+                                    .substring(1, mContentList[OTHERS].toString().length - 1),
+                                price = data.price,
+                                product_Img = data.product_Img,
+                                user = User(
+                                    user_Id = UserInfo.userId,
+                                    user_Image = UserInfo.userImage,
+                                    user_Name = UserInfo.userName
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         viewModelScope.launch {
+
+            if (mContentList[ICE].isNullOrEmpty()) {
+                mToast("尚未選擇冰量")
+                isIceSelected.value = false
+                unSelectText.value = "尚未選擇冰量"
+            } else {
+                isIceSelected.value = true
+            }
+            if (mContentList[CAPACITY].isNullOrEmpty()) {
+                mToast("尚未選擇容量")
+                isCapacitySelected.value = false
+                unSelectText.value = "尚未選擇容量"
+            } else {
+                isCapacitySelected.value = true
+            }
+            if (mContentList[SUGAR].isNullOrEmpty()) {
+                mToast("尚未選擇甜度")
+                isSugarSelected.value = false
+                unSelectText.value = "尚未選擇甜度"
+            } else {
+                isSugarSelected.value = true
+            }
+
             mOrderProduct?.let { mOrderProduct ->
                 otherUserId?.let { otherUserId ->
                     orderSize?.let { orderSize ->
-                        repository.postOrderToFireBase(
+                        when (val result = repository.postOrderToFireBase(
                             mOrder,
                             mOrderProduct,
                             otherUserId,
                             orderSize
-                        )
+                        )) {
+                            is Result.Success -> {
+                                closeDialog()
+                                popBack()
+                                mToast("加入訂單成功")
+                            }
+                        }
                     }
                 }
             }
@@ -125,7 +192,7 @@ class DrinksDetailViewModel(
         _popBack.value = null
     }
 
-    var resultSize = 0
+    private var resultSize = 0
     private val capacitySize = data.capacity.size
     private val iceSize = data.ice.size
     private val sugarSize = data.sugar.size
@@ -139,7 +206,6 @@ class DrinksDetailViewModel(
     private var othersPrice = 0
 
     fun doSelect(position: Int, content: String, price: Int) {
-
         if (firstClick == 0) {
             selectedPositionList.add(position); firstClick += 1
         }
@@ -166,11 +232,9 @@ class DrinksDetailViewModel(
     }
 
     private fun refactorListInOthersRange(i: Int, content: String) {
-
         if (selectedPositionList.contains(i)) {
             mContentList[OTHERS]?.remove(content)
             selectedPositionList.remove(i)
-//            Log.d(TAG, mContentList.toString())
         } else {
             selectedPositionList.add(i)
 
@@ -179,7 +243,6 @@ class DrinksDetailViewModel(
             } else {
                 mContentList[OTHERS]?.add(content)
             }
-            Logger.d(mContentList.toString())
         }
     }
 
@@ -199,7 +262,6 @@ class DrinksDetailViewModel(
             rangeCapacityToIce -> mContentList[ICE] = arrayListOf(content)
             rangeIceToSugar -> mContentList[SUGAR] = arrayListOf(content)
         }
-//        Log.d(TAG, mContentList.toString())
     }
 
     private fun selectRange(lastSize: Int, nextSize: Int): IntRange {

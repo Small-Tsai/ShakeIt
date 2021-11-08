@@ -50,7 +50,6 @@ class CommentDialog : AppCompatDialogFragment() {
         binding.viewModel = viewModel
 
         viewModel.popBack.observe(viewLifecycleOwner, Observer {
-            Logger.d("popback")
             it?.let { findNavController().navigateUp() }
         })
 

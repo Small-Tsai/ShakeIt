@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.databinding.FragmentOrderBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.util.Logger
 
 class OrderFragment : Fragment() {
 
@@ -27,6 +28,7 @@ class OrderFragment : Fragment() {
 
         binding = FragmentOrderBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
 
         val adapter = OrderAdapter(viewModel)
 
@@ -39,7 +41,8 @@ class OrderFragment : Fragment() {
                 findNavController().navigate(
                     OrderFragmentDirections.navToOrderDetail(
                         order,
-                        order.shop_Img
+                        order.shop_Img,
+                        "current"
                     )
                 )
             }
@@ -47,6 +50,14 @@ class OrderFragment : Fragment() {
 
         viewModel.shopId.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToSendComment(it)) }
+        })
+
+        viewModel.navToOrderHistory.observe(viewLifecycleOwner,{
+            it?.let { findNavController().navigate(OrderFragmentDirections.navToOrderHistory()) }
+        })
+
+        viewModel.orderProduct.observe(viewLifecycleOwner,{
+            Logger.d("$it")
         })
 
         binding.orderRev.adapter = adapter

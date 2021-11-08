@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 class OrderDetailViewModel(
     val mOrder: Order?,
     private val repository: ShakeItRepository,
-    private val shopImg: String?
+    private val shopImg: String?,
+    val type: String?
 ) :
     ViewModel() {
 
@@ -33,8 +34,25 @@ class OrderDetailViewModel(
         get() = _shop
 
     init {
-        getOrderProduct()
+        if (type =="history"){
+            Logger.d("orderId = ${mOrder?.order_Id}")
+            getHistoryProduct()
+        }else{
+            getOrderProduct()
+        }
         getShopData()
+    }
+
+    private fun getHistoryProduct(){
+        mOrder?.let {
+            viewModelScope.launch {
+               when(val result = repository.getHistoryOrderProduct(it.order_Id)){
+                   is Result.Success->{
+                       _order.value = result.data!!
+                   }
+               }
+            }
+        }
     }
 
     private fun getOrderProduct() {

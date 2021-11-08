@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel" />
@@ -34,11 +36,11 @@
 
                 <ImageView
                     android:id="@+id/addOrder_img"
+                    imageUrl="@{viewModel.data.product_Img}"
                     android:layout_width="match_parent"
                     android:layout_height="174dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_placeholder"
-                    imageUrl="@{viewModel.data.product_Img}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -48,10 +50,10 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="16dp"
-                    android:scaleType="centerCrop"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/icon_back"
                     android:onClick="@{() ->viewModel.popBack()}"
+                    android:scaleType="centerCrop"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -144,8 +146,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="32dp"
                     android:layout_marginBottom="8dp"
+                    android:onClick="@{() -> viewModel.showDialog()}"
                     android:text="加入訂單"
-                    android:onClick="@{ () -> viewModel.addNewDocToFireBase()}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/add"
@@ -172,6 +174,18 @@
                     app:layout_constraintBottom_toBottomOf="@+id/minus"
                     app:layout_constraintStart_toEndOf="@+id/minus"
                     app:layout_constraintTop_toTopOf="@+id/add" />
+
+                <TextView
+                    android:id="@+id/textView34"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:text="@{viewModel.unSelectText}"
+                    android:textColor="@color/quantum_googred"
+                    android:textSize="12sp"
+                    android:visibility="@{viewModel.isIceSelected &amp; viewModel.isCapacitySelected &amp; viewModel.isSugarSelected ? View.INVISIBLE : View.VISIBLE}"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

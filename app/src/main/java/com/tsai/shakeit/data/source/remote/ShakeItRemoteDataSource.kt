@@ -13,6 +13,7 @@ import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
+import okhttp3.internal.wait
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -25,6 +26,7 @@ private const val PRODUCT = "product"
 private const val COMMENT = "Comment"
 private const val FILTER_SHOP = "filterShop"
 private const val USERS = "users"
+private const val ORDER_HISTORY = "orderHistory"
 
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
@@ -77,7 +79,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 document
                     .set(order, SetOptions.mergeFields("order_Price"))
             } else {
-                if (orderSize == 0){
+                if (orderSize == 0) {
                     order.order_Id = myId
                     document.set(order)
                 }
@@ -195,7 +197,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         task.result?.documents?.forEach { it.reference.delete() }
                         mToast("已移除訂單")
                         document.delete()
-
+                        continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
                             Logger.w(
@@ -400,6 +402,110 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
+    override suspend fun postHistoryOrder(
+        order: Order,
+        orderProduct: List<OrderProduct>
+    ): Result<Boolean> = suspendCoroutine { continuation ->
+
+        val orderHistory = FirebaseFirestore.getInstance().collection(ORDER_HISTORY)
+        val document = orderHistory.document()
+
+        order.order_Id = document.id
+        document.set(order)
+
+        val last = orderProduct.last()
+        orderProduct.forEach {
+            val orderProductDocument = document.collection(ORDER_PRODUCT).document()
+            it.orderProduct_Id = orderProductDocument.id
+            orderProductDocument
+                .set(it)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        if (it == last) {
+                            continuation.resume(Result.Success(true))
+                        }
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "[${this::class.simpleName}] Error post documents. ${it.message}"
+                            )
+                            continuation.resume(Result.Error(it))
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("post orderProduct Failed"))
+                    }
+                }
+        }
+    }
+
+    override suspend fun getOrderProduct(orderId: String): Result<List<OrderProduct>> =
+        suspendCoroutine { continuation ->
+
+            val orderProduct = FirebaseFirestore.getInstance().collection(ORDERS)
+            val document = orderProduct.document(orderId).collection(ORDER_PRODUCT)
+
+            val list = mutableListOf<OrderProduct>()
+
+            document
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+
+                        for (doc in task.result!!) {
+                            Logger.d(doc.id + " => " + doc.data)
+                            val product = doc.toObject(OrderProduct::class.java)
+                            list.add(product)
+                        }
+                        continuation.resume(Result.Success(list))
+                    }
+                }
+        }
+
+    override suspend fun getOrderHistory(userId: String): Result<List<Order>> =
+        suspendCoroutine { continuation ->
+
+            val orderHistory = FirebaseFirestore.getInstance().collection(ORDER_HISTORY)
+
+            val list = mutableListOf<Order>()
+
+            orderHistory
+                .whereEqualTo("user_Id", userId)
+                .limit(10)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        for (doc in task.result!!) {
+                            val order = doc.toObject(Order::class.java)
+                            list.add(order)
+                        }
+                        continuation.resume(Result.Success(list))
+                    }
+                }
+        }
+
+    override suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>> =
+        suspendCoroutine { continuation ->
+
+            val orderProduct = FirebaseFirestore.getInstance().collection(ORDER_HISTORY)
+            val document = orderProduct.document(orderId).collection(ORDER_PRODUCT)
+
+            val list = mutableListOf<OrderProduct>()
+
+            document
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+
+                        for (doc in task.result!!) {
+                            Logger.d(doc.id + " => " + doc.data)
+                            val product = doc.toObject(OrderProduct::class.java)
+                            list.add(product)
+                        }
+                        continuation.resume(Result.Success(list))
+                    }
+                }
+        }
+
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =
         suspendCoroutine { continuation ->
 
@@ -574,6 +680,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
     override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {
 
+
         val liveData = MutableLiveData<List<OrderProduct>>()
 
         FirebaseFirestore.getInstance()
@@ -588,6 +695,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 //                    Log.d(TAG, document.data.toString())
                     val orderProduct = document.toObject(OrderProduct::class.java)
                     list.add(orderProduct)
+
                 }
                 liveData.value = list
             }

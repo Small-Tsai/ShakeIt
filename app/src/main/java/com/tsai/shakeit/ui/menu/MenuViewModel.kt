@@ -69,35 +69,6 @@ class MenuViewModel(
         }
     }
 
-//    val data = Product(
-//        "熟成紅茶",
-//        "好香",
-//        hashMapOf(
-//            "大" to 35,
-//            "中" to 30,
-//        ),
-//        arrayListOf("全糖", "半糖", "微糖", "無糖"),
-//        arrayListOf("正常冰", "少冰", "微冰", "去冰"),
-//        35,
-//        hashMapOf(
-//            "白玉珍珠" to 10,
-//            "百香蒟蒻凍" to 20,
-//            "水玉" to 10,
-//            "桂玉" to 10
-//        ),
-//        selectedShop.shop_Id,
-//        REDTEA,
-//        shop_Name = "可不可熟成紅茶",
-//        branch = "台北市政店",
-//        shopAddress = "台北市信義區忠孝東路五段17之2號"
-//    )
-
-    //    fun postProduct() {
-//        viewModelScope.launch {
-//            repository.postProduct(data)
-//        }
-//    }
-
     private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
     private var otherId = ""
 

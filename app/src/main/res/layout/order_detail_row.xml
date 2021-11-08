@@ -19,23 +19,23 @@
         android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:mode="same_level"
-        app:dragEdge="right">
+        app:dragEdge="right"
+        app:mode="same_level">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/swipeDelete_btn"
-            android:layout_width="70dp"
-            android:layout_height="match_parent"
-            android:backgroundTint="#DC6565"
-            android:gravity="center"
-            android:text="刪除"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@android:color/white" />
+            <Button
+                android:id="@+id/swipeDelete_btn"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:backgroundTint="#DC6565"
+                android:gravity="center"
+                android:text="刪除"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

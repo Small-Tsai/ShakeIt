@@ -49,6 +49,9 @@
         <argument
             android:name="userId"
             app:argType="string" />
+        <argument
+            android:name="orderSize"
+            app:argType="integer" />
     </fragment>
 
     <fragment

@@ -30,7 +30,8 @@ class ViewModelFactory(
     private val shopId: String? = "",
     private val shopList: Array<Shop> = arrayOf(),
     private val shopImg: String? = null,
-    private val userId: String? = null
+    private val userId: String? = null,
+    private val orderSize: Int? = null
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>) =
@@ -43,7 +44,7 @@ class ViewModelFactory(
                     HomeViewModel(repository)
 
                 isAssignableFrom(DrinksDetailViewModel::class.java) ->
-                    product?.let { DrinksDetailViewModel(it, repository, shop, userId) }
+                    product?.let { DrinksDetailViewModel(it, repository, shop, userId, orderSize) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
                     OrderDetailViewModel(order, repository, shopImg)
@@ -73,7 +74,7 @@ class ViewModelFactory(
                     LoginViewModel(repository)
 
                 isAssignableFrom(AddMenuItemViewModel::class.java) ->
-                    AddMenuItemViewModel(repository,shop)
+                    AddMenuItemViewModel(repository, shop)
 
                 else ->
                     throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

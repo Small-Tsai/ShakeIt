@@ -2,7 +2,6 @@ package com.tsai.shakeit.data.source
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.Comment
 
@@ -45,9 +44,10 @@ class DefaultShakeItRepository(
     override suspend fun postOrderToFireBase(
         order: Order,
         orderProduct: OrderProduct,
-        otherUserId: String
+        otherUserId: String,
+        orderSize: Int,
     ): Result<Boolean> {
-        return shakeItDataSource.postOrderToFireBase(order, orderProduct, otherUserId)
+        return shakeItDataSource.postOrderToFireBase(order, orderProduct, otherUserId, orderSize)
     }
 
     override suspend fun postProduct(product: Product): Result<Boolean> {

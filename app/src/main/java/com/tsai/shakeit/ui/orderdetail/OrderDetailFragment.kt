@@ -101,7 +101,6 @@ class OrderDetailFragment : Fragment() {
             }
         })
 
-
         binding.orderDetailRev.adapter = adapter
         binding.friendsRev.adapter = friendsAdapter
         return binding.root

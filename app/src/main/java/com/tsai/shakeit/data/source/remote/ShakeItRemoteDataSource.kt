@@ -58,7 +58,8 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
     override suspend fun postOrderToFireBase(
         order: Order,
         orderProduct: OrderProduct,
-        otherUserId: String
+        otherUserId: String,
+        orderSize: Int
     ): Result<Boolean> =
         suspendCoroutine { continuation ->
 
@@ -76,8 +77,10 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 document
                     .set(order, SetOptions.mergeFields("order_Price"))
             } else {
-                order.order_Id = myId
-                document.set(order)
+                if (orderSize == 0){
+                    order.order_Id = myId
+                    document.set(order)
+                }
             }
 
             val orderProductDocument = document.collection(ORDER_PRODUCT).document()
@@ -222,8 +225,8 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 orderProduct.document(myShopId).collection(ORDER_PRODUCT).document(orderProductId)
 
             if (otherUserId != UserInfo.userId && otherUserId.isNotEmpty()) {
-                Logger.d("$otherShopId")
-                Logger.d("$orderProductId")
+                Logger.d(otherShopId)
+                Logger.d(orderProductId)
                 document =
                     orderProduct
                         .document(otherShopId)
@@ -449,7 +452,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         suspendCoroutine { continuation ->
 
             val storageRef = FirebaseStorage.getInstance().reference
-            val imageRef = storageRef.child("images/${image.lastPathSegment}" ?: "")
+            val imageRef = storageRef.child("images/${image.lastPathSegment}")
             Logger.d("上傳圖片中")
             imageRef
                 .putFile(image)

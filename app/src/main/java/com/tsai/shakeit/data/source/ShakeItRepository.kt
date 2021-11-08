@@ -3,7 +3,6 @@ package com.tsai.shakeit.data.source
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.*
-import com.tsai.shakeit.util.UserInfo
 
 interface ShakeItRepository {
 
@@ -30,7 +29,8 @@ interface ShakeItRepository {
     suspend fun postOrderToFireBase(
         order: Order,
         orderProduct: OrderProduct,
-        otherUserId: String
+        otherUserId: String,
+        orderSize: Int
     ): Result<Boolean>
 
     suspend fun postProduct(product: Product): Result<Boolean>

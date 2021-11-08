@@ -45,30 +45,33 @@ class MenuFragment : Fragment() {
 
         val adapter = MenuAdapter(viewModel)
 
-        viewModel.productList.observe(viewLifecycleOwner, Observer {
+        viewModel.productList.observe(viewLifecycleOwner, {
             adapter.submitList(it)
         })
 
-        viewModel.navToDetail.observe(viewLifecycleOwner, Observer {
+        viewModel.navToDetail.observe(viewLifecycleOwner, {
             it?.let {
                 viewModel.otherUserId?.let { otherUserId ->
-                    findNavController().navigate(
-                        DrinksDetailFragmentDirections.navToDetail(
-                            it,
-                            Shop(
-                                shop_Id = viewModel.selectedShop.shop_Id,
-                                branch = viewModel.selectedShop.branch,
-                                shop_Img = viewModel.selectedShop.shop_Img
-                            ),
-                            userId = otherUserId
+                    viewModel.orderProduct.value?.let { orderProduct ->
+                        findNavController().navigate(
+                            DrinksDetailFragmentDirections.navToDetail(
+                                it,
+                                Shop(
+                                    shop_Id = viewModel.selectedShop.shop_Id,
+                                    branch = viewModel.selectedShop.branch,
+                                    shop_Img = viewModel.selectedShop.shop_Img
+                                ),
+                                userId = otherUserId,
+                                orderSize = orderProduct.size
+                            )
                         )
-                    )
+                    }
                 }
             }
         })
 
         viewModel.popback.observe(viewLifecycleOwner, Observer {
-            it?.let { findNavController().navigate(MenuFragmentDirections.navToHome()) }
+            it?.let { findNavController().navigateUp() }
         })
 
         viewModel.navToOrder.observe(viewLifecycleOwner, Observer {

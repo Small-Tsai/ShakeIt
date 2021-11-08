@@ -30,7 +30,8 @@ interface ShakeItDataSource {
     suspend fun postOrderToFireBase(
         order: Order,
         orderProduct: OrderProduct,
-        otherUserId: String
+        otherUserId: String,
+        orderSize: Int
     ): Result<Boolean>
 
     suspend fun postProduct(product: Product): Result<Boolean>

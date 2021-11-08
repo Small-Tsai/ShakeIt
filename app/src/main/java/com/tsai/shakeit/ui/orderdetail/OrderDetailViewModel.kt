@@ -96,5 +96,4 @@ class OrderDetailViewModel(
     fun notifyOrderChange() {
         _order.value = _order.value
     }
-
 }

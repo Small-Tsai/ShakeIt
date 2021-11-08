@@ -21,7 +21,8 @@ class DrinksDetailViewModel(
     val data: Product,
     private val repository: ShakeItRepository,
     private val shop: Shop?,
-    private val otherUserId: String?
+    private val otherUserId: String?,
+    private val orderSize: Int?
 ) :
     ViewModel() {
 
@@ -55,7 +56,6 @@ class DrinksDetailViewModel(
             user_Id = UserInfo.userId,
             invitation = arrayListOf(UserInfo.userId),
             shop_Img = shop.shop_Img
-
         )
 
         val mOrderProduct = _qty.value?.let {
@@ -80,7 +80,14 @@ class DrinksDetailViewModel(
         viewModelScope.launch {
             mOrderProduct?.let { mOrderProduct ->
                 otherUserId?.let { otherUserId ->
-                    repository.postOrderToFireBase(mOrder, mOrderProduct, otherUserId)
+                    orderSize?.let { orderSize ->
+                        repository.postOrderToFireBase(
+                            mOrder,
+                            mOrderProduct,
+                            otherUserId,
+                            orderSize
+                        )
+                    }
                 }
             }
         }
@@ -141,7 +148,6 @@ class DrinksDetailViewModel(
             in rangeCapacity -> {
                 refactorPositionList(position, selectedPositionList, rangeCapacity, content)
                 capacityPrice = price
-
             }
             in rangeCapacityToIce -> {
                 refactorPositionList(position, selectedPositionList, rangeCapacityToIce, content)

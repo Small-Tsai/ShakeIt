@@ -26,7 +26,11 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
 
             userId = DrinksDetailFragmentArgs.fromBundle(
                 requireArguments()
-            ).userId
+            ).userId,
+
+            orderSize = DrinksDetailFragmentArgs.fromBundle(
+                requireArguments()
+            ).orderSize
         )
     }
 

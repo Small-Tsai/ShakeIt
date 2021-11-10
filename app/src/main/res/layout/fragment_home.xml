@@ -7,6 +7,12 @@
 
         <import type="android.view.View" />
 
+        <import type="com.tsai.shakeit.util.CurrentFragmentType" />
+
+        <variable
+            name="mainViewModel"
+            type="com.tsai.shakeit.MainViewModel" />
+
         <variable
             name="shop"
             type="com.tsai.shakeit.data.Shop" />
@@ -49,9 +55,10 @@
                 android:layout_marginStart="48dp"
                 android:background="@drawable/square_button_black"
                 android:gravity="center"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionSearch"
                 android:inputType="number"
-                android:text="10"
+                android:text="@={viewModel.userSettingTime}"
+                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/walk_fab"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/walk_fab" />
@@ -63,8 +70,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/white"
-                android:foreground="@drawable/walking_icon"
+                trafficMode="@{viewModel.mode}"
+                reverse="@{false}"
                 android:onClick="@{()-> viewModel.isWalk()}"
+                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/search_cv" />
 
@@ -75,6 +84,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
+                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:cardCornerRadius="30dp"
                 app:cardElevation="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -99,6 +109,7 @@
                     android:clickable="@{viewModel.isfilterShopClickable}"
                     android:foreground="@drawable/setting_lines"
                     android:onClick="@{()-> viewModel.navToSetting()}"
+                    android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                     app:layout_constraintEnd_toEndOf="@+id/idSearchView" />
 
 
@@ -112,6 +123,8 @@
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@color/white"
                 android:foreground="@drawable/ride"
+                reverse="@{true}"
+                trafficMode="@{viewModel.mode}"
                 android:onClick="@{() -> viewModel.isRide()}"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -128,6 +141,7 @@
                 android:gravity="center_vertical"
                 android:onClick="@{()->viewModel.navToAddShop()}"
                 android:text="新增商家"
+                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:icon="@drawable/store"
                 app:iconGravity="textStart"
                 app:iconPadding="3dp"
@@ -206,6 +220,7 @@
                 android:layout_marginEnd="120dp"
                 android:background="@drawable/nav_selector"
                 android:elevation="5dp"
+                android:onClick="@{()->viewModel.moveCameraToCurrentLocation()}"
                 android:rotation="35"
                 android:src="@drawable/ic_baseline_navigation_24"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -379,13 +394,13 @@
 
             <ImageView
                 android:id="@+id/imageView"
+                mode="@{viewModel.mode}"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/commentSize"
                 app:layout_constraintStart_toEndOf="@+id/commentSize"
-                app:layout_constraintTop_toTopOf="@+id/commentSize"
-                mode="@{viewModel.mode}" />
+                app:layout_constraintTop_toTopOf="@+id/commentSize" />
 
             <TextView
                 android:id="@+id/textView12"

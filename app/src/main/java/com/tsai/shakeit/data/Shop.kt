@@ -2,6 +2,8 @@ package com.tsai.shakeit.data
 
 import android.os.Parcelable
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.GeoPoint
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -18,4 +20,6 @@ data class Shop(
     val branch: String = "",
     val menu_Img: String = "",
 ) : Parcelable {
+    @IgnoredOnParcel
+    val geoPoint = GeoPoint(lat, lon)
 }

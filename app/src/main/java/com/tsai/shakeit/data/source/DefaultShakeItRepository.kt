@@ -2,6 +2,7 @@ package com.tsai.shakeit.data.source
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import com.google.android.libraries.maps.model.LatLng
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
 
@@ -101,8 +102,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getShopInfo(shopId)
     }
 
-    override suspend fun getAllShop(): Result<List<Shop>> {
-        return shakeItDataSource.getAllShop()
+    override suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>> {
+        return shakeItDataSource.getAllShop(center,distance)
     }
 
     override suspend fun getProduct(shopId: String): Result<List<Product>> {

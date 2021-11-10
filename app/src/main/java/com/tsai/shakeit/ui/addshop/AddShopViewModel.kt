@@ -139,7 +139,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         shop_Id = "",
                         shop_Img = it,
                         time = timeList,
-                        menu_Img = menu
+                        menu_Img = menu,
                     )
                     when (val result = repository.postShopInfo(shop)) {
                         is Result.Success -> {

@@ -2,9 +2,13 @@ package com.tsai.shakeit.data.source.remote
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.SetOptions
+import com.firebase.geofire.GeoFireUtils
+import com.firebase.geofire.GeoLocation
+import com.firebase.geofire.GeoQueryBounds
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import com.google.android.libraries.maps.model.LatLng
+import com.google.firebase.firestore.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
 import com.tsai.shakeit.R
@@ -19,6 +23,7 @@ import com.tsai.shakeit.util.Util
 import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+
 
 private const val ORDERS = "orders"
 private const val KEY_CREATED_TIME = "date"
@@ -281,27 +286,69 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getAllShop(): Result<List<Shop>> =
+    override suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>> =
         suspendCoroutine { continuation ->
 
             val shop = FirebaseFirestore.getInstance().collection(SHOP)
 
-            shop
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val shopData = task.result!!.toObjects(Shop::class.java)
-                        continuation.resume(Result.Success(shopData))
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
-                            )
-                            return@addOnCompleteListener
+            val shopList = mutableListOf<Shop>()
+
+            val centerGeo = GeoLocation(center.latitude, center.longitude)
+            val bounds: List<GeoQueryBounds> =
+                GeoFireUtils.getGeoHashQueryBounds(centerGeo, distance)
+            val tasks: MutableList<Task<QuerySnapshot>> = ArrayList()
+
+            for (b in bounds) {
+                shop
+                    .orderBy("geoPoint")
+                    .startAt(b.startHash)
+                    .endAt(b.endHash)
+                tasks.add(shop.get())
+            }
+
+            // Collect all the query results together into a single list
+            Tasks.whenAllComplete(tasks)
+                .addOnCompleteListener {
+                    val matchingDocs: MutableList<Shop> = mutableListOf()
+                    for (task in tasks) {
+                        val snap = task.result
+                        for (doc in snap.documents) {
+                            val lat = doc.getDouble("lat")!!
+                            val lon = doc.getDouble("lon")!!
+                            // We have to filter out a few false positives due to GeoHash
+                            // accuracy, but most will match
+                            val docLocation = GeoLocation(lat, lon)
+                            val distanceInM =
+                                GeoFireUtils.getDistanceBetween(docLocation, centerGeo)
+                            if (distanceInM <= distance) {
+                                val shopDoc = doc.toObject(Shop::class.java)
+                                shopDoc?.let {
+                                    matchingDocs.add(it)
+                                }
+                            }
                         }
-                        continuation.resume(Result.Fail("getShopInfo Failed"))
                     }
+                    continuation.resume(Result.Success(matchingDocs.distinct()))
+                    // matchingDocs contains the results
+                    // ...
                 }
+
+//            shop
+//                .get()
+//                .addOnCompleteListener { task ->
+//                    if (task.isSuccessful) {
+//                        val shopData = task.result!!.toObjects(Shop::class.java)
+//                        continuation.resume(Result.Success(shopData))
+//                    } else {
+//                        task.exception?.let {
+//                            Logger.w(
+//                                "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
+//                            )
+//                            return@addOnCompleteListener
+//                        }
+//                        continuation.resume(Result.Fail("getShopInfo Failed"))
+//                    }
+//                }
         }
 
     override suspend fun getProduct(shopName: String): Result<List<Product>> =

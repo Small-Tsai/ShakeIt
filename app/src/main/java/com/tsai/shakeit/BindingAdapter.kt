@@ -9,12 +9,15 @@ import androidx.appcompat.widget.AppCompatImageButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
+import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
+import com.tsai.shakeit.ui.home.HomeViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
@@ -176,10 +179,27 @@ fun EditText.bindPosition(type: Int, viewModel: AddMenuItemViewModel, position: 
 @BindingAdapter("mode")
 fun ImageView.bindTrafficIcon(mode: String) {
     when (mode) {
-        "walking" -> setImageResource(R.drawable.ic_baseline_directions_walk_24)
-        "driving" -> setImageResource(R.drawable.ic_baseline_drive_eta_24)
+        WALKING -> setImageResource(R.drawable.ic_baseline_directions_walk_24)
+        DRIVING -> setImageResource(R.drawable.ic_baseline_drive_eta_24)
     }
 }
+
+@BindingAdapter("trafficMode", "reverse")
+fun FloatingActionButton.bindTraffic(mode: String, reverse: Boolean) {
+    when (mode) {
+        WALKING -> if (!reverse) {
+            foreground = ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
+        } else {
+            foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
+        }
+        DRIVING -> if (!reverse) {
+            foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
+        } else {
+            foreground = ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
+        }
+    }
+}
+
 
 
 

@@ -2,8 +2,10 @@ package com.tsai.shakeit.data.source
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import com.google.android.libraries.maps.model.LatLng
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
+import com.tsai.shakeit.data.directionPlaceModel.Distance
 
 interface ShakeItRepository {
 
@@ -48,7 +50,7 @@ interface ShakeItRepository {
 
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
-    suspend fun getAllShop(): Result<List<Shop>>
+    suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>>
 
     suspend fun getProduct(shopId: String): Result<List<Product>>
 
@@ -60,7 +62,7 @@ interface ShakeItRepository {
 
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
-    suspend fun getDirection(url:String): Result<Direction>
+    suspend fun getDirection(url: String): Result<Direction>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 

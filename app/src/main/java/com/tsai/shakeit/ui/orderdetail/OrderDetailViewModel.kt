@@ -33,6 +33,10 @@ class OrderDetailViewModel(
     val shop: LiveData<Shop>
         get() = _shop
 
+    private var _navToHome = MutableLiveData<Shop>()
+    val navToHome: LiveData<Shop>
+        get() = _navToHome
+
     init {
         if (type =="history"){
             Logger.d("orderId = ${mOrder?.order_Id}")
@@ -41,6 +45,10 @@ class OrderDetailViewModel(
             getOrderProduct()
         }
         getShopData()
+    }
+
+    fun navToHome(shop: Shop) {
+        _navToHome.value = shop
     }
 
     private fun getHistoryProduct(){

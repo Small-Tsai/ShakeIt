@@ -140,6 +140,81 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bottom_sheetNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:background="@drawable/bg_dialog_corner"
+            android:backgroundTint="@color/darkgrey"
+            android:visibility="visible"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="100dp"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            tools:context=".ui.home.HomeDialogFragment">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/over_Btn"
+                android:layout_width="76sp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:backgroundTint="@color/red"
+                android:fontFamily="@font/roboto"
+                android:onClick="@{()->viewModel.mapNavDone()}"
+                android:padding="10dp"
+                android:text="結束"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="20dp"
+                app:elevation="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/white"
+                app:srcCompat="@drawable/color_circle" />
+
+            <TextView
+                android:id="@+id/textView35"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/roboto"
+                android:letterSpacing="0.05"
+                android:text="@{viewModel.trafficTimeLiveData}"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="24dp"
+                android:text="@{viewModel.distanceLiveData}"
+                android:textColor="@color/grey2"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textView35"
+                app:layout_constraintTop_toBottomOf="@+id/textView35" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/appCompatImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="120dp"
+                android:background="@drawable/nav_selector"
+                android:elevation="5dp"
+                android:rotation="35"
+                android:src="@drawable/ic_baseline_navigation_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -310,15 +385,15 @@
                 app:layout_constraintBottom_toBottomOf="@+id/commentSize"
                 app:layout_constraintStart_toEndOf="@+id/commentSize"
                 app:layout_constraintTop_toTopOf="@+id/commentSize"
-                app:srcCompat="@drawable/ic_baseline_directions_walk_24" />
+                mode="@{viewModel.mode}" />
 
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="10 分鐘"
-                android:textSize="12sp"
+                android:text="@{viewModel.trafficTimeLiveData}"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="@+id/imageView" />
@@ -491,7 +566,10 @@
                     android:text="上午10時-下午9:30"
                     app:layout_constraintStart_toStartOf="@+id/textView26"
                     app:layout_constraintTop_toBottomOf="@+id/textView26" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

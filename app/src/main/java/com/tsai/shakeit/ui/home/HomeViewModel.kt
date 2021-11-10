@@ -3,11 +3,13 @@ package com.tsai.shakeit.ui.home
 import android.annotation.SuppressLint
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.libraries.maps.model.*
+import com.google.android.libraries.maps.model.LatLngBounds
+import com.google.android.material.snackbar.Snackbar
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Favorite
@@ -18,20 +20,24 @@ import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
+import com.tsai.shakeit.util.Util
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     var binding: FragmentHomeBinding? = null
 
-    private val _hasNavToMenu = MutableLiveData<Shop?>()
-    val hasNavToMenu: LiveData<Shop?>
-        get() = _hasNavToMenu
+    private val _navToMenu = MutableLiveData<Shop?>()
+    val navToMenu: LiveData<Shop?>
+        get() = _navToMenu
 
     private val _isInserted = MutableLiveData<Boolean>()
     val isInserted: LiveData<Boolean>
         get() = _isInserted
 
-    private val _isWalkOrRide = MutableLiveData<Boolean?>()
+    private val _isWalkOrRide = MutableLiveData<Boolean?>().apply { value = null }
     val isWalkOrRide: LiveData<Boolean?>
         get() = _isWalkOrRide
 
@@ -55,28 +61,40 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToSetting: LiveData<Boolean?>
         get() = _navToSetting
 
-    val timeDisplay = MutableLiveData<Boolean>()
-
-    val selectedShop = MutableLiveData<Shop>()
-
     private val _isfilterShopBtnClickable = MutableLiveData<Boolean>()
     val isfilterShopClickable: LiveData<Boolean>
         get() = _isfilterShopBtnClickable
 
+    private val _mode = MutableLiveData<String>().apply { value = "walking" }
+    val mode: LiveData<String>
+        get() = _mode
+
+    private val _mapNavState = MutableLiveData<Boolean?>()
+    val mapNavState: LiveData<Boolean?>
+        get() = _mapNavState
+
+    private val _options = MutableLiveData<PolylineOptions>()
+    val options: LiveData<PolylineOptions>
+        get() = _options
+
+    val distanceLiveData = MutableLiveData<String>().apply { value = "" }
+    val trafficTimeLiveData = MutableLiveData<String>().apply { value = "" }
+
+    val timeDisplay = MutableLiveData<Boolean>().apply { value = false }
+    val selectedShop = MutableLiveData<Shop>()
+
     init {
-        timeDisplay.value = false
-        _isWalkOrRide.value = null
         getShopData()
         getMyFavorite()
     }
 
-    //獲取店家資料
+    //getShop
     private fun getShopData() {
         viewModelScope.launch {
 
             _isfilterShopBtnClickable.value = false
 
-            when (val result = repository.getAllShop()) {
+            when (val result = withContext(Dispatchers.IO) { repository.getAllShop() }) {
                 is Result.Success -> {
                     _shopLiveData.value = result.data!!
                     _isfilterShopBtnClickable.value = true
@@ -86,16 +104,19 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-
-    fun navToSetting() {
-        _navToSetting.value = true
-        _navToSetting.value = null
+    fun mapNavDone() {
+        _mapNavState.value = false
+        _mapNavState.value = null
     }
 
     // use to check has favorite or not
     private fun getMyFavorite() {
         viewModelScope.launch {
-            _Favorite = repository.getFavorite(UserInfo.userId)
+            _Favorite = withContext(viewModelScope.coroutineContext) {
+                withContext(Dispatchers.Main) {
+                    repository.getFavorite(UserInfo.userId)
+                }
+            }
         }
     }
 
@@ -104,7 +125,25 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _isInserted.value = _Favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
-    //刪除收藏
+    //nav to setting page
+    fun navToSetting() {
+        _navToSetting.value = true
+        _navToSetting.value = null
+    }
+
+    //nav to menu page
+    fun navToMenu(shop: Shop) {
+        _navToMenu.value = shop
+        _navToMenu.value = null
+    }
+
+    //nav to addShop page
+    fun navToAddShop() {
+        _navToAddShop.value = true
+        _navToAddShop.value = null
+    }
+
+    //delete favorite
     fun deleteFavorite(shopId: String) {
         viewModelScope.launch {
             when (val result = repository.deleteFavorite(shopId)) {
@@ -113,10 +152,12 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    //上傳收藏
+    //upload favorite
     fun postMyFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            when (val result = repository.postFavorite(favorite)) {
+            when (val result = withContext(Dispatchers.IO) {
+                repository.postFavorite(favorite)
+            }) {
                 is Result.Success -> {
                     checkHasFavorite()
                     mToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
@@ -127,26 +168,16 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    //用Snippet獲得選取的店家
+    //get selected shop
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
         _snippet.value = markerSnippet
         selectedShop.value = shopLiveData.value?.first { it.shop_Id == markerSnippet }
     }
 
-    //bottomSheet 營業時間顯示與否
+    //bottomSheet shop open time
     fun displayOrNot() {
         timeDisplay.value = timeDisplay.value == false
-    }
-
-    fun navToMenu(shop: Shop) {
-        _hasNavToMenu.value = shop
-        _hasNavToMenu.value = null
-    }
-
-    fun navToAddShop() {
-        _navToAddShop.value = true
-        _navToAddShop.value = null
     }
 
     fun isWalk() {
@@ -157,7 +188,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _isWalkOrRide.value = null
     }
 
+    //set icon img for walk or ride
     var i = 0
+
     @SuppressLint("UseCompatLoadingForDrawables")
     fun isRide() {
 
@@ -169,6 +202,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             }
             binding?.rideFab?.let {
                 it.foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
+                _mode.value = "walking"
             }
 
         } else {
@@ -176,6 +210,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
             binding?.walkFab?.let {
                 it.foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
+                _mode.value = "driving"
             }
 
             binding?.rideFab?.let {
@@ -191,6 +226,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         setAnimation(b)
     }
 
+    //set walk or ride icon animation
     private fun setAnimation(b: Boolean) {
         val fromTop =
             AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.from_top_anim)
@@ -203,8 +239,144 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
+    //set walk or ride icon visibility
     private fun setVisibility(b: Boolean) {
         if (b) binding?.rideFab?.visibility = View.VISIBLE
         else binding?.rideFab?.visibility = View.GONE
     }
+
+    val bounds = MutableLiveData<LatLngBounds>()
+
+    val currentPositon = MutableLiveData<LatLng>()
+
+
+    private var navOption = PolylineOptions()
+
+    fun drawPolyLine() {
+        _options.value = navOption
+    }
+
+    fun getCurrentPosition(currentPositon: LatLng) {
+        this.currentPositon.value = currentPositon
+    }
+
+    fun getDirection(url: String, mode: String, lon: Double) {
+
+        viewModelScope.launch {
+
+            navOption = PolylineOptions().apply {
+                width(20f)
+                color(Util.getColor(R.color.blue))
+                geodesic(true)
+                visible(true)
+            }
+
+            when (val result = withContext(Dispatchers.IO) {
+                repository.getDirection(url)
+            }) {
+                is Result.Success -> {
+                    val directions = result.data
+                    val route = directions.routes[0]
+                    val leg = route.legs[0]
+                    val distance = leg.distance
+                    val duration = leg.duration
+
+                    distanceLiveData.value = distance.text
+                    trafficTimeLiveData.value = duration.text
+
+                    val stepList: MutableList<LatLng> = ArrayList()
+                    val pattern: List<PatternItem>
+
+                    if (mode == "walking") {
+                        pattern = listOf(Dot(), Gap(10f))
+                        navOption.jointType(JointType.ROUND)
+                    } else {
+                        pattern = listOf(Dash(20f))
+                    }
+
+                    navOption.pattern(pattern)
+
+                    for (stepModel in leg.steps) {
+                        val decodedList = decode(stepModel.polyline.points)
+                        for (latLng in decodedList) {
+                            stepList.add(LatLng(latLng.latitude, latLng.longitude))
+                        }
+                    }
+
+                    navOption.addAll(stepList)
+
+                    val startLocation: LatLng?
+                    val endLocation: LatLng?
+
+                    if (lon > leg.startLocation.lng) {
+                        startLocation = LatLng(
+                            leg.startLocation.lat,
+                            leg.startLocation.lng - 0.001
+                        )
+                        endLocation =
+                            LatLng(
+                                leg.endLocation.lat,
+                                leg.endLocation.lng + 0.001
+                            )
+                    } else {
+                        startLocation = LatLng(
+                            leg.startLocation.lat,
+                            leg.startLocation.lng + 0.001
+                        )
+                        endLocation =
+                            LatLng(
+                                leg.endLocation.lat,
+                                leg.endLocation.lng - 0.001
+                            )
+                    }
+
+                    val builder = LatLngBounds.builder()
+                    builder.include(endLocation).include(startLocation)
+                    val latLngBounds = builder.build()
+
+                    latLngBounds?.let {
+                        bounds.value = it
+                    }
+
+                }
+                is Result.Fail -> {
+                    binding?.root?.let {
+                        Snackbar.make(
+                            it, result.error,
+                            Snackbar.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun decode(points: String): List<LatLng> {
+    val len = points.length
+    val path: MutableList<LatLng> = java.util.ArrayList(len / 2)
+    var index = 0
+    var lat = 0
+    var lng = 0
+    while (index < len) {
+        var result = 1
+        var shift = 0
+        var b: Int
+        do {
+            b = points[index++].toInt() - 63 - 1
+            result += b shl shift
+            shift += 5
+        } while (b >= 0x1f)
+        lat += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        result = 1
+        shift = 0
+        do {
+            b = points[index++].toInt() - 63 - 1
+            result += b shl shift
+            shift += 5
+        } while (b >= 0x1f)
+        lng += if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        path.add(LatLng(lat * 1e-5, lng * 1e-5))
+    }
+    return path
 }

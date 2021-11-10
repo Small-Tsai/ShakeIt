@@ -1,9 +1,15 @@
 package com.tsai.shakeit.ext
 
+import android.Manifest
 import android.icu.text.SimpleDateFormat
+import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.google.firebase.Timestamp
+import com.permissionx.guolindev.PermissionX
+import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.util.Util.getString
 import java.util.*
 
 fun Long.toDisplayFormat(): String {
@@ -15,13 +21,24 @@ fun Timestamp.toTimeFromTimeStamp(): String {
         .toString()
 }
 
-fun mToast(text: String, duration: String?=null) {
-    when(duration){
+fun mToast(text: String, duration: String? = null) {
+    when (duration) {
         null -> Toast.makeText(ShakeItApplication.instance, text, "0".toInt()).show()
         "long" -> Toast.makeText(ShakeItApplication.instance, text, "1".toInt()).show()
         "short" -> Toast.makeText(ShakeItApplication.instance, text, "0".toInt()).show()
     }
 }
+
+fun View.visibility(i: Int) {
+    when (i) {
+        0 -> visibility = View.GONE
+        1 -> visibility = View.VISIBLE
+        2 -> visibility = View.INVISIBLE
+    }
+}
+
+
+
 
 
 

@@ -3,6 +3,7 @@ package com.tsai.shakeit.data.source
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.*
+import com.tsai.shakeit.data.directionPlaceModel.Direction
 
 interface ShakeItRepository {
 
@@ -58,6 +59,8 @@ interface ShakeItRepository {
     suspend fun getOrderHistory(userId: String): Result<List<Order>>
 
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
+
+    suspend fun getDirection(url:String): Result<Direction>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 

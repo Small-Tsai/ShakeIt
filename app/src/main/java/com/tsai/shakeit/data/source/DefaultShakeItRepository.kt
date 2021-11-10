@@ -3,7 +3,7 @@ package com.tsai.shakeit.data.source
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.tsai.shakeit.data.*
-import com.tsai.shakeit.data.Comment
+import com.tsai.shakeit.data.directionPlaceModel.Direction
 
 class DefaultShakeItRepository(
     private val shakeItDataSource: ShakeItDataSource
@@ -123,6 +123,10 @@ class DefaultShakeItRepository(
 
     override suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>> {
        return shakeItDataSource.getHistoryOrderProduct(orderId)
+    }
+
+    override suspend fun getDirection(url: String): Result<Direction> {
+        return shakeItDataSource.getDirection(url)
     }
 
 

@@ -26,7 +26,7 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     var shopFilterList = MutableLiveData<List<String>>()
 
     //use to navToHome from Favorite Page and move camera
-    val selectedFavorite = MutableLiveData<Shop>()
+    val selectedShop = MutableLiveData<Shop>()
 
     //use to update filterShopList on FireBase
     fun updateFilterShopList(list: List<String>) {

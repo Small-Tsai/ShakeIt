@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        updateUI(currentUser);
+        updateUser(currentUser);
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,8 +91,6 @@ class LoginFragment : Fragment() {
                 firebaseAuthWithGoogle(account.idToken!!)
 
             } catch (e: ApiException) {
-
-                // Google Sign In failed, update UI appropriately
                 Logger.w("Google sign in failed $e")
             }
         }
@@ -107,20 +105,20 @@ class LoginFragment : Fragment() {
 
                 if (task.isSuccessful) {
 
-                    // Sign in success, update UI with the signed-in user's information
+                    // Sign in success, update UserInfo with the signed-in user's information
                     Logger.d("signInWithCredential:success")
                     val user = auth.currentUser
-                    updateUI(user)
+                    updateUser(user)
                 } else {
 
                     // If sign in fails, display a message to the user.
                     Logger.d("signInWithCredential:failure ${task.exception}")
-                    updateUI(null)
+                    updateUser(null)
                 }
             }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
+    private fun updateUser(user: FirebaseUser?) {
         user?.let {
             UserInfo.userId = user.uid
             UserInfo.userName = user.displayName.toString()

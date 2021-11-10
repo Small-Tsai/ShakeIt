@@ -45,8 +45,8 @@ class FavoriteFragment : Fragment() {
 
         viewModel.navToHome.observe(viewLifecycleOwner, Observer {
             val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
-            mainViewModel.currentFragmentType.value = CurrentFragmentType.FAVORITE_NAV_HOME
-            mainViewModel.selectedFavorite.value = it
+            mainViewModel.currentFragmentType.value = CurrentFragmentType.FAVORITE
+            mainViewModel.selectedShop.value = it
             findNavController().navigate(FavoriteFragmentDirections.navToHome())
         })
 

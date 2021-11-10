@@ -107,7 +107,6 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
 }
 
 
-
 @BindingAdapter("circleimageUrl")
 fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
 
@@ -164,13 +163,21 @@ fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
     }, 1500)
 }
 
-@BindingAdapter("getCurrentType", "viewModel","gerCurrentPosition")
-fun EditText.bindPosition(type: Int, viewModel: AddMenuItemViewModel,position: Int) {
+@BindingAdapter("getCurrentType", "viewModel", "gerCurrentPosition")
+fun EditText.bindPosition(type: Int, viewModel: AddMenuItemViewModel, position: Int) {
     setOnFocusChangeListener { view, b ->
         if (b) {
             viewModel.recordCurrentSelectedType(type)
             viewModel.recordCurrentSelectedPosition(position)
         }
+    }
+}
+
+@BindingAdapter("mode")
+fun ImageView.bindTrafficIcon(mode: String) {
+    when (mode) {
+        "walking" -> setImageResource(R.drawable.ic_baseline_directions_walk_24)
+        "driving" -> setImageResource(R.drawable.ic_baseline_drive_eta_24)
     }
 }
 

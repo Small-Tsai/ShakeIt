@@ -1,19 +1,22 @@
 package com.tsai.shakeit.data.source.remote
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
+import com.tsai.shakeit.R
 import com.tsai.shakeit.data.*
+import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.network.ShakeItApi
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
-import okhttp3.internal.wait
+import com.tsai.shakeit.util.Util
+import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -505,6 +508,30 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
                 }
         }
+
+    override suspend fun getDirection(url: String): Result<Direction> {
+
+        if (!isInternetConnected()) {
+            return Result.Fail(Util.getString(R.string.internet_not_connected))
+        }
+
+        return try {
+
+            // this will run on a thread managed by Retrofit
+            val listResult = ShakeItApi.retrofitService.getDirection(url)
+
+            listResult.error?.let {
+                return Result.Fail(it)
+            }
+
+            Result.Success(listResult)
+
+        } catch (e: Exception) {
+            Logger.w("[${this::class.simpleName}] exception=${e.message}")
+            Result.Error(e)
+        }
+    }
+
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =
         suspendCoroutine { continuation ->

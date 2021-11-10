@@ -8,12 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ui.favorite.FavoriteFragmentDirections
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
+import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
@@ -101,10 +105,17 @@ class OrderDetailFragment : Fragment() {
         })
 
         viewModel.shop.observe(viewLifecycleOwner, { shop ->
+            binding.shop = shop
             binding.orderTelBtn.setOnClickListener {
                 telUri = Uri.parse("tel:${shop.tel}");
                 startActivity(Intent(Intent.ACTION_DIAL, telUri))
             }
+        })
+
+        viewModel.navToHome.observe(viewLifecycleOwner, {
+            val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+            mainViewModel.selectedShop.value = it
+            findNavController().navigate(FavoriteFragmentDirections.navToHome())
         })
 
         binding.orderDetailRev.adapter = adapter

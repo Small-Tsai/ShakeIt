@@ -41,6 +41,9 @@ class MainActivity : AppCompatActivity() {
 
         setUpBottomNavigation(navView, navController)
 
+        viewModel.currentFragmentType.observe(this,{
+            Logger.d("current fragment type = $it")
+        })
 
         viewModel.shopFilterList.observe(this, Observer {
             viewModel.updateFilterShopList(it)

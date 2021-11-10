@@ -4,12 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel" />
+
         <variable
             name="totalPrice"
             type="int" />
+
+        <variable
+            name="shop"
+            type="com.tsai.shakeit.data.Shop" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -82,6 +88,7 @@
                     android:layout_marginBottom="16dp"
                     android:backgroundTint="@color/gery"
                     android:fontFamily="@font/roboto"
+                    android:onClick="@{()->viewModel.navToHome(shop)}"
                     android:text="導航至店家"
                     android:textColor="@color/black"
                     app:cornerRadius="5dp"
@@ -107,11 +114,11 @@
 
                 <TextView
                     android:id="@+id/order_totalPrice"
+                    totalPrice="@{totalPrice}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto"
-                    totalPrice="@{totalPrice}"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toTopOf="@+id/order_tel_btn"
                     app:layout_constraintStart_toStartOf="@+id/order_tel_btn" />
@@ -124,8 +131,8 @@
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
             android:background="@color/gery"
+            android:fontFamily="@font/roboto"
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
             android:text="餐點"

@@ -81,9 +81,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val distanceLiveData = MutableLiveData<String>().apply { value = "" }
     val trafficTimeLiveData = MutableLiveData<String>().apply { value = "" }
     val timeDisplay = MutableLiveData<Boolean>().apply { value = false }
-    val userSettingTime = MutableLiveData<String>().apply { value = "10" }
+    val userSettingTime = MutableLiveData<String>().apply { value = "30" }
     val selectedShop = MutableLiveData<Shop>()
-
+    var distance: Double = 0.0
 
     init {
         getMyFavorite()
@@ -92,8 +92,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //getShop
     fun getShopData(center: LatLng) {
         viewModelScope.launch {
-
-            var distance: Double = 0.0
 
             when (mode.value) {
                 WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt()  }

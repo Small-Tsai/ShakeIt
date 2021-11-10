@@ -4,25 +4,19 @@ import android.Manifest.permission.*
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
-import android.view.inputmethod.InputMethodManager
 import android.widget.RelativeLayout
 import android.widget.TextView.OnEditorActionListener
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -41,6 +35,7 @@ import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.permission.AppPermissions
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
@@ -67,6 +62,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var selectedShop: Shop
     private lateinit var polyLine: Polyline
     var locationPermissionGranted = false
+    private val vAnimator = ValueAnimator()
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -210,15 +206,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
 
-                mMap.clear()
-
                 //if nav From Order
                 if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                     viewModel.getCurrentPosition(LatLng(lat, lon))
                 }
 
+                mMap.clear()
+                vAnimator.pause()
                 shopData.forEach { shop ->
-                    Logger.d("$shop")
                     if (!dbList.contains(shop.name)) {
                         val newPosition = LatLng(shop.lat, shop.lon)
                         val iconGen = IconGenerator(binding.root.context)
@@ -243,9 +238,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         // observe get google direction done
         viewModel.options.observe(viewLifecycleOwner, {
+
+            Logger.d("options observe")
+
             if (this::polyLine.isInitialized) {
                 polyLine.remove()
             }
+
             it?.let {
                 bottomSheetNavBehavior.isDraggable = false
                 bottomSheetBehavior.halfExpandedRatio = 0.0001f
@@ -274,7 +273,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         binding.editText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == IME_ACTION_SEARCH) {
-                val currentPosition =LatLng(lat,lon)
+                val currentPosition = LatLng(lat, lon)
                 viewModel.getShopData(currentPosition)
                 mapSearchAnimation(currentPosition)
             }
@@ -475,7 +474,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                                 mMap.moveCamera(
                                     CameraUpdateFactory.newLatLngZoom(
                                         currentPosition,
-                                        18F
+                                        15F
                                     )
                                 )
                             }
@@ -541,31 +540,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             )
         )
 
-        val locationA = Location("point A")
-
-        locationA.latitude = lat
-        locationA.longitude = lon
-
-        val locationB = Location("point B")
-
-        locationB.latitude = selectedShop.lat
-        locationB.longitude = selectedShop.lon
-
-        val distance = locationA.distanceTo(locationB)
-
-        Logger.d("$distance")
-
     }
 
     private fun mapSearchAnimation(currentPosition: LatLng) {
 
+        mToast("搜尋中...")
+
         val circle: Circle = mMap.addCircle(
             CircleOptions().center(currentPosition)
-                .strokeColor(Color.CYAN).radius(100.0)
+                .strokeColor(Util.getColor(R.color.blue)).radius(2000.0)
         )
 
-        val vAnimator = ValueAnimator()
-        vAnimator.repeatCount = ValueAnimator.REVERSE
+        vAnimator.repeatCount = ValueAnimator.INFINITE
         vAnimator.repeatMode = ValueAnimator.RESTART /* PULSE */
         vAnimator.setIntValues(0, 100)
         vAnimator.duration = 1000

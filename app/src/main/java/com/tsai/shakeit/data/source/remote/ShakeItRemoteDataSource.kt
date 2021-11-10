@@ -329,26 +329,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         }
                     }
                     continuation.resume(Result.Success(matchingDocs.distinct()))
-                    // matchingDocs contains the results
-                    // ...
                 }
-
-//            shop
-//                .get()
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        val shopData = task.result!!.toObjects(Shop::class.java)
-//                        continuation.resume(Result.Success(shopData))
-//                    } else {
-//                        task.exception?.let {
-//                            Logger.w(
-//                                "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
-//                            )
-//                            return@addOnCompleteListener
-//                        }
-//                        continuation.resume(Result.Fail("getShopInfo Failed"))
-//                    }
-//                }
         }
 
     override suspend fun getProduct(shopName: String): Result<List<Product>> =

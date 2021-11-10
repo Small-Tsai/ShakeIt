@@ -160,7 +160,7 @@
             android:layout_marginHorizontal="24dp"
             android:background="@drawable/bg_dialog_corner"
             android:backgroundTint="@color/darkgrey"
-            android:visibility="visible"
+            android:visibility="@{mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV? View.VISIBLE : View.GONE}"
             app:behavior_hideable="true"
             app:behavior_peekHeight="100dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"

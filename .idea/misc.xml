@@ -16,7 +16,7 @@
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.25462962962962965" />
         <entry key="app/src/main/res/drawable/nav_selector.xml" value="0.39814814814814814" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/add_menu_item_btn.xml" value="0.35507246376811596" />
+        <entry key="app/src/main/res/layout/add_menu_item_btn.xml" value="0.165" />
         <entry key="app/src/main/res/layout/add_menu_item_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/add_menu_item_row.xml" value="0.165" />
         <entry key="app/src/main/res/layout/add_menu_item_title.xml" value="0.35507246376811596" />
@@ -24,6 +24,7 @@
         <entry key="app/src/main/res/layout/comment.xml" value="0.18297101449275363" />
         <entry key="app/src/main/res/layout/comment_dialog_fragment.xml" value="0.16983695652173914" />
         <entry key="app/src/main/res/layout/comment_fragment.xml" value="0.16983695652173914" />
+        <entry key="app/src/main/res/layout/dialog_menu_order_name.xml" value="0.3378623188405797" />
         <entry key="app/src/main/res/layout/dialog_order_name.xml" value="0.5" />
         <entry key="app/src/main/res/layout/drinks_detail_fragment.xml" value="0.3574074074074074" />
         <entry key="app/src/main/res/layout/drinks_select_row.xml" value="0.22" />

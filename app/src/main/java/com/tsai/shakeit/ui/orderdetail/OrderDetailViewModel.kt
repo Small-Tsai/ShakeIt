@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 class OrderDetailViewModel(
     val mOrder: Order?,
     private val repository: ShakeItRepository,
-    private val shopImg: String?,
     val type: String?
 ) :
     ViewModel() {
@@ -90,14 +89,13 @@ class OrderDetailViewModel(
     fun navToMenu() {
         mOrder?.let { order ->
             shop.value?.let { shop ->
-                _navToMenu.value = shopImg?.let { shopImg ->
+                _navToMenu.value =
                     Shop(
                         name = order.shop_Name,
                         shop_Id = order.shop_Id,
                         shop_Img = shop.shop_Img,
                         branch = order.branch
                     )
-                }
             }
             _navToMenu.value = null
         }

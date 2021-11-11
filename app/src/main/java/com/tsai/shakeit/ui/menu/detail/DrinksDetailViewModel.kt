@@ -11,15 +11,8 @@ import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
-import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.UserInfo
+import com.tsai.shakeit.util.*
 import kotlinx.coroutines.launch
-
-private const val ICE = "ice"
-private const val CAPACITY = "capacity"
-private const val SUGAR = "sugar"
-private const val OTHERS = "others"
-
 
 class DrinksDetailViewModel(
     val data: Product,
@@ -71,7 +64,7 @@ class DrinksDetailViewModel(
         }
     }
 
-    fun closeDialog() {
+    private fun closeDialog() {
         _showDialog.value = false
     }
 

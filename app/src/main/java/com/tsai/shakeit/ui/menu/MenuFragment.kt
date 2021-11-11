@@ -1,14 +1,21 @@
 package com.tsai.shakeit.ui.menu
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
+import com.tsai.shakeit.databinding.DialogOrderNameBinding
 import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
@@ -38,6 +45,16 @@ class MenuFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        val dialogBinding: DialogMenuOrderNameBinding? =
+            DataBindingUtil.inflate(
+                LayoutInflater.from(requireActivity()),
+                R.layout.dialog_menu_order_name,
+                null,
+                false
+            )
+
+        val customDialog = AlertDialog.Builder(requireActivity(), 0).create()
 
         binding = MenuFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
@@ -100,6 +117,23 @@ class MenuFragment : Fragment() {
             it?.let { findNavController().navigate(MenuFragmentDirections.navToAddItem(viewModel.selectedShop)) }
         })
 
+        viewModel.showDialog.observe(viewLifecycleOwner, {
+            it?.let {
+                when (it) {
+                    true -> customDialog.apply { setView(dialogBinding?.root) }.show()
+                    false -> customDialog.dismiss()
+                }
+            }
+        })
+
+        viewModel.shareOrder.observe(viewLifecycleOwner,{
+            it?.let { startActivity(it) }
+        })
+
+
+
+        dialogBinding?.viewModel = viewModel
+        dialogBinding?.lifecycleOwner = viewLifecycleOwner
         binding.recyclerView.adapter = adapter
         return binding.root
     }

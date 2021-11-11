@@ -1,16 +1,21 @@
 package com.tsai.shakeit.ui.menu
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MenuViewModel(
@@ -50,6 +55,65 @@ class MenuViewModel(
     val hasOrder: LiveData<Boolean>
         get() = _hasOrder
 
+    private val _showDialog = MutableLiveData<Boolean?>()
+    val showDialog: LiveData<Boolean?>
+        get() = _showDialog
+
+    private val _shareOrder = MutableLiveData<Intent?>()
+    val shareOrder: LiveData<Intent?>
+        get() = _shareOrder
+
+    var title = MutableLiveData<String>().apply {
+        value = "我的訂單"
+    }
+
+    private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
+    private var otherId = ""
+
+    private val mOrder = Order(
+        shop_Name = selectedShop.name,
+        branch = selectedShop.branch,
+        date = Timestamp.now(),
+        order_Name = title.value!!,
+        shop_Id = selectedShop.shop_Id,
+        user_Id = UserInfo.userId,
+        invitation = arrayListOf(UserInfo.userId),
+        shop_Img = selectedShop.shop_Img
+    )
+
+
+    private fun shareOrderToLINE() {
+
+        mOrder.order_Id = myId
+
+        val lineUrl = "https://line.me/R/msg/text/https://com.smalltsai.shakeit/${mOrder.order_Id}"
+        val sendIntent = Intent.parseUri(lineUrl,Intent.URI_INTENT_SCHEME)
+
+        _shareOrder.value = sendIntent
+        _shareOrder.value = null
+
+    }
+
+    fun startShare() {
+        if (_hasOrder.value == false) {
+            _showDialog.value = true
+            _showDialog.value = null
+        } else {
+            shareOrderToLINE()
+        }
+    }
+
+    fun addNewDocToFireBase() {
+        viewModelScope.launch {
+            when (val result =
+                withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
+                is Result.Success -> {
+                    shareOrderToLINE()
+                }
+            }
+        }
+    }
+
     fun hasOrder() {
         _hasOrder.value = true
     }
@@ -68,9 +132,6 @@ class MenuViewModel(
             }
         }
     }
-
-    private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
-    private var otherId = ""
 
     init {
         getProduct()

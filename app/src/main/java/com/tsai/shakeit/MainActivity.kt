@@ -2,6 +2,8 @@ package com.tsai.shakeit
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -18,6 +20,7 @@ import com.tsai.shakeit.ui.home.HomeFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,10 +29,10 @@ class MainActivity : AppCompatActivity() {
 
     val viewModel by viewModels<MainViewModel> { getVmFactory() }
 
-
-    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
@@ -38,6 +41,8 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView = binding.bottomNavigation
+
+
 
         setUpBottomNavigation(navView, navController)
 

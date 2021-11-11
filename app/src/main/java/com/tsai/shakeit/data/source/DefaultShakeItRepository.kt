@@ -75,7 +75,11 @@ class DefaultShakeItRepository(
         order: Order,
         orderProduct: List<OrderProduct>
     ): Result<Boolean> {
-        return shakeItDataSource.postHistoryOrder(order,orderProduct)
+        return shakeItDataSource.postHistoryOrder(order, orderProduct)
+    }
+
+    override suspend fun crateNewOrderForShare(order: Order): Result<Boolean> {
+        return shakeItDataSource.createNewOrderForShare(order)
     }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
@@ -103,7 +107,7 @@ class DefaultShakeItRepository(
     }
 
     override suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>> {
-        return shakeItDataSource.getAllShop(center,distance)
+        return shakeItDataSource.getAllShop(center, distance)
     }
 
     override suspend fun getProduct(shopId: String): Result<List<Product>> {
@@ -115,20 +119,23 @@ class DefaultShakeItRepository(
     }
 
     override suspend fun getOrderProduct(orderId: String): Result<List<OrderProduct>> {
-       return shakeItDataSource.getOrderProduct(orderId)
+        return shakeItDataSource.getOrderProduct(orderId)
     }
 
     override suspend fun getOrderHistory(userId: String): Result<List<Order>> {
-       return shakeItDataSource.getOrderHistory(userId)
+        return shakeItDataSource.getOrderHistory(userId)
     }
 
     override suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>> {
-       return shakeItDataSource.getHistoryOrderProduct(orderId)
+        return shakeItDataSource.getHistoryOrderProduct(orderId)
     }
 
     override suspend fun getDirection(url: String): Result<Direction> {
         return shakeItDataSource.getDirection(url)
     }
 
+    override suspend fun joinToOrder(orderId: String): Result<Boolean> {
+        return shakeItDataSource.joinToOrder(orderId)
+    }
 
 }

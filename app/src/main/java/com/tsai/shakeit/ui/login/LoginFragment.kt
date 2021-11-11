@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,6 +23,7 @@ import com.tsai.shakeit.databinding.LoginFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
+import kotlinx.coroutines.launch
 
 private const val RC_SIGN_IN = 9001
 
@@ -34,6 +36,7 @@ class LoginFragment : Fragment() {
     private lateinit var binding: LoginFragmentBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var orderId: String
 
     override fun onStart() {
         super.onStart()
@@ -53,6 +56,14 @@ class LoginFragment : Fragment() {
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
+
+        if (requireActivity().intent.action == "android.intent.action.VIEW") {
+            requireActivity().intent.data?.pathSegments?.get(0)?.let {
+                Logger.d(it)
+                orderId = it
+            }
+        }
+
     }
 
     override fun onCreateView(
@@ -66,9 +77,13 @@ class LoginFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        binding.signInButton.setOnClickListener{
+        binding.signInButton.setOnClickListener {
             signIn()
         }
+
+        viewModel.navToOrder.observe(viewLifecycleOwner, {
+            it?.let { findNavController().navigate(LoginFragmentDirections.navToOrder()) }
+        })
 
         return binding.root
     }
@@ -120,11 +135,22 @@ class LoginFragment : Fragment() {
 
     private fun updateUser(user: FirebaseUser?) {
         user?.let {
+
             UserInfo.userId = user.uid
             UserInfo.userName = user.displayName.toString()
             UserInfo.userImage = user.photoUrl.toString()
-            viewModel.uploadUser()
-            findNavController().navigate(LoginFragmentDirections.navToHome())
+
+            lifecycleScope.launch {
+
+                viewModel.uploadUser()
+
+                if (::orderId.isInitialized) {
+                    viewModel.joinToOrder(orderId)
+                } else {
+                    findNavController().navigate(LoginFragmentDirections.navToHome())
+                }
+
+            }
         }
     }
 }

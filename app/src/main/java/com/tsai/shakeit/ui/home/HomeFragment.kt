@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
 import android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
 import android.widget.RelativeLayout
 import android.widget.TextView.OnEditorActionListener
@@ -266,17 +267,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //when change traffic mode getDirection
         viewModel.mode.observe(viewLifecycleOwner, {
-            if (this::selectedShop.isInitialized) {
-//                getDirection(it)
+            if (this::selectedShop.isInitialized &&
+                mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG
+            ) {
+                getDirection(it)
             }
         })
 
         binding.editText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
-            if (actionId == IME_ACTION_SEARCH) {
+            if (actionId == IME_ACTION_DONE) {
                 val currentPosition = LatLng(lat, lon)
                 viewModel.getShopData(currentPosition)
                 mapSearchAnimation(currentPosition)
             }
+
             false
         })
 
@@ -303,6 +307,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
+    //stop Map navigation
     private fun stopMapNavigation() {
         bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -363,7 +368,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 getDirection("${viewModel.mode.value}")
             }
             return@setOnMarkerClickListener true
-
         }
 
         //map onClick
@@ -491,26 +495,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     //set google map UI
     @SuppressLint("MissingPermission")
     private fun setMapUI() {
-        mMap.uiSettings.isMyLocationButtonEnabled = true
+        mMap.uiSettings.isMyLocationButtonEnabled = false
+        mMap.uiSettings.isMapToolbarEnabled = false
         mMap.isMyLocationEnabled = true
-        mMap.uiSettings.isMapToolbarEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
-        setMyLocationButtonPosition()
-
-    }
-
-    //set myPositionBtn
-    private fun setMyLocationButtonPosition() {
-
-        val map = view?.findViewById<View>(R.id.map)
-        val myPositionBtn = map?.findViewById<View>("2".toInt())
-        val rlp = myPositionBtn?.layoutParams as RelativeLayout.LayoutParams
-
-        rlp.apply {
-            addRule(RelativeLayout.ALIGN_PARENT_TOP, 0)
-            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE)
-            setMargins(0, 0, 30, 280)
-        }
     }
 
     //getDirection

@@ -62,9 +62,6 @@
             android:name="order"
             app:argType="com.tsai.shakeit.data.Order" />
         <argument
-            android:name="shopImg"
-            app:argType="string" />
-        <argument
             android:name="type"
             app:argType="string" />
     </fragment>

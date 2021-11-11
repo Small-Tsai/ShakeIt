@@ -48,6 +48,8 @@ interface ShakeItRepository {
 
     suspend fun postHistoryOrder(order: Order, orderProduct: List<OrderProduct>): Result<Boolean>
 
+    suspend fun crateNewOrderForShare(order: Order): Result<Boolean>
+
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
     suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>>
@@ -63,6 +65,8 @@ interface ShakeItRepository {
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
     suspend fun getDirection(url: String): Result<Direction>
+
+    suspend fun joinToOrder(orderId:String): Result<Boolean>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 

@@ -14,7 +14,6 @@ fun Fragment.getVmFactory(
     shopData: Shop? = null,
     shopId: String? = null,
     shopList: Array<Shop> = arrayOf(),
-    shopImg: String? = null,
     userId: String? = null,
     orderSize: Int? = null,
     type:String? = null
@@ -27,7 +26,6 @@ fun Fragment.getVmFactory(
         repository,
         shopId,
         shopList,
-        shopImg,
         userId,
         orderSize,
         type

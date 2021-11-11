@@ -31,12 +31,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/homeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.home.HomeFragment">
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/locationButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="126dp"
+                android:background="@drawable/nav_selector"
+                android:elevation="5dp"
+                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                android:onClick="@{()->viewModel.moveCameraToCurrentLocation()}"
+                android:rotation="35"
+                android:src="@drawable/ic_baseline_navigation_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <fragment
                 android:id="@+id/map"
@@ -55,7 +69,7 @@
                 android:layout_marginStart="48dp"
                 android:background="@drawable/square_button_black"
                 android:gravity="center"
-                android:imeOptions="actionSearch"
+                android:imeOptions="actionDone"
                 android:inputType="number"
                 android:text="@={viewModel.userSettingTime}"
                 android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
@@ -93,7 +107,7 @@
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/idSearchView"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_margin="10dp"
                     app:iconifiedByDefault="false"
@@ -109,8 +123,7 @@
                     android:clickable="@{viewModel.isfilterShopClickable}"
                     android:foreground="@drawable/setting_lines"
                     android:onClick="@{()-> viewModel.navToSetting()}"
-                    android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                    app:layout_constraintEnd_toEndOf="@+id/idSearchView" />
+                    android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}" />
 
 
             </androidx.cardview.widget.CardView>

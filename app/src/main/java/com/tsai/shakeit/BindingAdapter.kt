@@ -18,6 +18,7 @@ import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
 import com.tsai.shakeit.ui.home.HomeViewModel
+import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel

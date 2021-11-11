@@ -45,6 +45,8 @@ interface ShakeItDataSource {
 
     suspend fun postUserInfo(user: User): Result<Boolean>
 
+    suspend fun createNewOrderForShare(order: Order): Result<Boolean>
+
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
     suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>>
@@ -62,6 +64,8 @@ interface ShakeItDataSource {
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
     suspend fun getDirection(url:String): Result<Direction>
+
+    suspend fun joinToOrder(orderId:String): Result<Boolean>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 

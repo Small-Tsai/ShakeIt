@@ -48,10 +48,6 @@ class OrderDetailFragment : Fragment() {
             OrderDetailFragmentArgs.fromBundle(
                 requireArguments()
             ).order,
-            shopImg =
-            OrderDetailFragmentArgs.fromBundle(
-                requireArguments()
-            ).shopImg,
             type =
             OrderDetailFragmentArgs.fromBundle(
                 requireArguments()

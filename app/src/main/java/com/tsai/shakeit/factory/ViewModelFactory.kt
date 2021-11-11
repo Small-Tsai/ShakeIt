@@ -30,7 +30,6 @@ class ViewModelFactory(
     private val repository: ShakeItRepository,
     private val shopId: String? = "",
     private val shopList: Array<Shop> = arrayOf(),
-    private val shopImg: String? = null,
     private val userId: String? = null,
     private val orderSize: Int? = null,
     private val type: String? = null
@@ -49,7 +48,7 @@ class ViewModelFactory(
                     product?.let { DrinksDetailViewModel(it, repository, shop, userId, orderSize) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
-                    OrderDetailViewModel(order, repository, shopImg, type)
+                    OrderDetailViewModel(order, repository, type)
 
                 isAssignableFrom(OrderViewModel::class.java) ->
                     OrderViewModel(repository)

@@ -41,7 +41,6 @@ class OrderFragment : Fragment() {
                 findNavController().navigate(
                     OrderFragmentDirections.navToOrderDetail(
                         order,
-                        order.shop_Img,
                         "current"
                     )
                 )

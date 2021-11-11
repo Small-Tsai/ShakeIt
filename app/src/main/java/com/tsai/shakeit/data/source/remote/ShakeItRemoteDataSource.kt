@@ -17,24 +17,10 @@ import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.ShakeItApi
-import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.UserInfo
-import com.tsai.shakeit.util.Util
+import com.tsai.shakeit.util.*
 import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-
-
-private const val ORDERS = "orders"
-private const val KEY_CREATED_TIME = "date"
-private const val FAVORITE = "favorite"
-private const val SHOP = "shop"
-private const val ORDER_PRODUCT = "orderProduct"
-private const val PRODUCT = "product"
-private const val COMMENT = "Comment"
-private const val FILTER_SHOP = "filterShop"
-private const val USERS = "users"
-private const val ORDER_HISTORY = "orderHistory"
 
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
@@ -75,12 +61,9 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val myId = order.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
             var otherId = ""
-
             val orders = FirebaseFirestore.getInstance().collection(ORDERS)
             var document = orders.document(myId)
 
-            //當選擇的訂單UserId 不是本地Id則 document 導向該訂單Id 並且只修改price與product
-            //else訂單Id = 本地Id 則直接set覆蓋
             if (otherUserId.isNotEmpty() && otherUserId != UserInfo.userId) {
                 otherId = order.shop_Id.substring(0, 10) + otherUserId.substring(0, 10)
                 document = orders.document(otherId)
@@ -369,8 +352,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             val order = FirebaseFirestore.getInstance().collection(ORDERS)
             var document = order.document(myId)
 
-            //當選擇的訂單UserId 不是本地Id則 document 導向該訂單Id 並且只修改price與product
-            //else訂單Id = 本地Id 則直接set覆蓋
             if (otherUserId.isNotEmpty() && otherUserId != UserInfo.userId) {
                 otherId = shopId.substring(0, 10) + otherUserId.substring(0, 10)
                 document = order.document(otherId)
@@ -560,6 +541,29 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         }
     }
 
+    override suspend fun joinToOrder(orderId: String): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val orders = FirebaseFirestore.getInstance().collection(ORDERS)
+            val document = orders.document(orderId)
+
+            document
+                .update("invitation", FieldValue.arrayUnion(UserInfo.userId))
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.Success(true))
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "Error updateInvitation documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
+                        }
+                        continuation.resume(Result.Fail("getComment Failed"))
+                    }
+                }
+        }
+
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -658,6 +662,26 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Fail("postUser Failed"))
                     }
                 }
+        }
+
+    override suspend fun createNewOrderForShare(order: Order): Result<Boolean> =
+        suspendCoroutine { continuation ->
+
+            val myId = order.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
+            val orders = FirebaseFirestore.getInstance().collection(ORDERS)
+            var document = orders.document(myId)
+
+            order.order_Id = myId
+
+            document
+                .set(order)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        continuation.resume(Result.Success(true))
+                    }
+                }
+
+
         }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {

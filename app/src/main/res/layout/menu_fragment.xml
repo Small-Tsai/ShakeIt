@@ -140,7 +140,7 @@
             android:text=""
             android:textColor="@color/black"
             android:translationZ="90dp"
-            android:visibility="@{viewModel.hasOrder? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{viewModel.hasOrderProduct? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintEnd_toEndOf="@+id/appCompatButton"
             app:layout_constraintTop_toTopOf="@+id/appCompatButton" />
 

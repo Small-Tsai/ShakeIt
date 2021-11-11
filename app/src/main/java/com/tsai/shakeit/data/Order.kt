@@ -11,7 +11,7 @@ import java.lang.ref.Reference
 @Parcelize
 data class Order(
     val address: String = "",
-    val order_Name: String = "",
+    var order_Name: String = "",
     val shop_Name: String = "",
     val user_Id: String = "",
     var order_Id: String = "",

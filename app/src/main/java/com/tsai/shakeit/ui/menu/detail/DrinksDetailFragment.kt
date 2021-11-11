@@ -33,9 +33,9 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
                 requireArguments()
             ).userId,
 
-            orderSize = DrinksDetailFragmentArgs.fromBundle(
+            hasOrder = DrinksDetailFragmentArgs.fromBundle(
                 requireArguments()
-            ).orderSize
+            ).hasOrder
         )
     }
 
@@ -86,6 +86,7 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
                 }
             }
         })
+
 
         dialogBinding?.viewModel = viewModel
         dialogBinding?.lifecycleOwner = viewLifecycleOwner

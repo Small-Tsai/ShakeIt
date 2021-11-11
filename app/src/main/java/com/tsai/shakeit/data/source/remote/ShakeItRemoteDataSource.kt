@@ -55,7 +55,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         order: Order,
         orderProduct: OrderProduct,
         otherUserId: String,
-        orderSize: Int
+        hasOrder: Boolean
     ): Result<Boolean> =
         suspendCoroutine { continuation ->
 
@@ -70,7 +70,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 document
                     .set(order, SetOptions.mergeFields("order_Price"))
             } else {
-                if (orderSize == 0) {
+                if (!hasOrder) {
                     order.order_Id = myId
                     document.set(order)
                 }
@@ -732,23 +732,26 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         return liveData
     }
 
-    override fun getShopOrder(shopId: String): MutableLiveData<List<Order>> {
+    override fun getShopOrder(orderId: String): MutableLiveData<List<Order>> {
 
+        Logger.d("shopId = $orderId")
         val liveData = MutableLiveData<List<Order>>()
 
         FirebaseFirestore.getInstance()
             .collection(ORDERS)
-            .whereEqualTo("shop_Id", shopId)
-            .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
+            .whereEqualTo("order_Id", orderId)
             .addSnapshotListener { snapshot, e ->
 
                 val list = mutableListOf<Order>()
 
                 if (snapshot != null) {
                     for (document in snapshot) {
-//                        Log.d(TAG, "Current data: ${document.data}")
+//                        Logger.d( "Current data: ${document.data}")
                         val order = document.toObject(Order::class.java)
-                        list.add(order)
+                        if (order.order_Id == orderId) {
+//                            Logger.d("$order")
+                            list.add(order)
+                        }
                     }
                 }
                 liveData.value = list

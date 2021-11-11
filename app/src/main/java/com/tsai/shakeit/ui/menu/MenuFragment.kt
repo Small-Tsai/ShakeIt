@@ -1,21 +1,21 @@
 package com.tsai.shakeit.ui.menu
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
-import com.tsai.shakeit.databinding.DialogOrderNameBinding
 import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
@@ -45,6 +45,8 @@ class MenuFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
 
         val dialogBinding: DialogMenuOrderNameBinding? =
             DataBindingUtil.inflate(
@@ -79,7 +81,7 @@ class MenuFragment : Fragment() {
                                     shop_Img = viewModel.selectedShop.shop_Img
                                 ),
                                 userId = otherUserId,
-                                orderSize = orderProduct.size
+                                hasOrder = viewModel.hasOrder.value!!
                             )
                         )
                     }
@@ -99,14 +101,14 @@ class MenuFragment : Fragment() {
             it?.let { binding.shopInfo = it }
         })
 
-        viewModel.orderProduct.observe(viewLifecycleOwner, { orderList ->
-            if (!orderList.isNullOrEmpty()) {
-                viewModel.hasOrder()
-                viewModel.updateOrderTotalPrice(orderList.sumOf { it.price * it.qty })
+        viewModel.orderProduct.observe(viewLifecycleOwner, { orderListProduct ->
+            if (!orderListProduct.isNullOrEmpty()) {
+                viewModel.hasOrderProduct()
+                viewModel.updateOrderTotalPrice(orderListProduct.sumOf { it.price * it.qty })
             } else {
-                viewModel.noOrder()
+                viewModel.noOrderProduct()
             }
-            binding.textView9.text = orderList.size.toString()
+            binding.textView9.text = orderListProduct.size.toString()
         })
 
         viewModel.branchProduct.observe(viewLifecycleOwner, {
@@ -126,11 +128,18 @@ class MenuFragment : Fragment() {
             }
         })
 
-        viewModel.shareOrder.observe(viewLifecycleOwner,{
+        viewModel.shareOrder.observe(viewLifecycleOwner, {
             it?.let { startActivity(it) }
         })
 
+        viewModel.order.observe(viewLifecycleOwner, {
+            Logger.d("order = $it")
 
+            if (it.isEmpty()) viewModel.noOrder()
+            else viewModel.hasOrder()
+            Logger.d("${viewModel.hasOrder.value}")
+
+        })
 
         dialogBinding?.viewModel = viewModel
         dialogBinding?.lifecycleOwner = viewLifecycleOwner

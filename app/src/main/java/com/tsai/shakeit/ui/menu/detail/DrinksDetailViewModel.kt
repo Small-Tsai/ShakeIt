@@ -19,7 +19,7 @@ class DrinksDetailViewModel(
     private val repository: ShakeItRepository,
     private val shop: Shop?,
     private val otherUserId: String?,
-    private val orderSize: Int?
+    private val hasOrder: Boolean?
 ) :
     ViewModel() {
 
@@ -56,7 +56,7 @@ class DrinksDetailViewModel(
     }
 
     fun showDialog() {
-        if (orderSize == 0) {
+        if (hasOrder == false) {
             _showDialog.value = true
             _showDialog.value = null
         } else {
@@ -111,21 +111,18 @@ class DrinksDetailViewModel(
         viewModelScope.launch {
 
             if (mContentList[ICE].isNullOrEmpty()) {
-                mToast("尚未選擇冰量")
                 isIceSelected.value = false
                 unSelectText.value = "尚未選擇冰量"
             } else {
                 isIceSelected.value = true
             }
             if (mContentList[CAPACITY].isNullOrEmpty()) {
-                mToast("尚未選擇容量")
                 isCapacitySelected.value = false
                 unSelectText.value = "尚未選擇容量"
             } else {
                 isCapacitySelected.value = true
             }
             if (mContentList[SUGAR].isNullOrEmpty()) {
-                mToast("尚未選擇甜度")
                 isSugarSelected.value = false
                 unSelectText.value = "尚未選擇甜度"
             } else {
@@ -134,12 +131,12 @@ class DrinksDetailViewModel(
 
             mOrderProduct?.let { mOrderProduct ->
                 otherUserId?.let { otherUserId ->
-                    orderSize?.let { orderSize ->
+                    hasOrder?.let { hasOrder ->
                         when (val result = repository.postOrderToFireBase(
                             mOrder,
                             mOrderProduct,
                             otherUserId,
-                            orderSize
+                            hasOrder
                         )) {
                             is Result.Success -> {
                                 closeDialog()

@@ -1,7 +1,6 @@
 package com.tsai.shakeit.ui.menu
 
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -51,6 +50,14 @@ class MenuViewModel(
     val orderProduct: LiveData<List<OrderProduct>>
         get() = _orderProduct
 
+    private var _order = MutableLiveData<List<Order>>()
+    val order: LiveData<List<Order>>
+        get() = _order
+
+    private val _hasOrderProduct = MutableLiveData<Boolean>()
+    val hasOrderProduct: LiveData<Boolean>
+        get() = _hasOrderProduct
+
     private val _hasOrder = MutableLiveData<Boolean>()
     val hasOrder: LiveData<Boolean>
         get() = _hasOrder
@@ -81,13 +88,12 @@ class MenuViewModel(
         shop_Img = selectedShop.shop_Img
     )
 
-
     private fun shareOrderToLINE() {
 
         mOrder.order_Id = myId
 
         val lineUrl = "https://line.me/R/msg/text/https://com.smalltsai.shakeit/${mOrder.order_Id}"
-        val sendIntent = Intent.parseUri(lineUrl,Intent.URI_INTENT_SCHEME)
+        val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
 
         _shareOrder.value = sendIntent
         _shareOrder.value = null
@@ -105,20 +111,31 @@ class MenuViewModel(
 
     fun addNewDocToFireBase() {
         viewModelScope.launch {
+            mOrder.order_Name = title.value.toString()
             when (val result =
                 withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
                 is Result.Success -> {
                     shareOrderToLINE()
+                    _showDialog.value = false
+
                 }
             }
         }
     }
 
-    fun hasOrder() {
+    fun hasOrderProduct() {
+        _hasOrderProduct.value = true
+    }
+
+    fun noOrderProduct() {
+        _hasOrderProduct.value = false
+    }
+
+    fun hasOrder(){
         _hasOrder.value = true
     }
 
-    fun noOrder() {
+    fun noOrder(){
         _hasOrder.value = false
     }
 
@@ -135,7 +152,17 @@ class MenuViewModel(
 
     init {
         getProduct()
+        getOrder()
         getOrderProduct()
+    }
+
+    private fun getOrder() {
+        if (otherUserId != UserInfo.userId && otherUserId != "") {
+            otherId = selectedShop.shop_Id.substring(0, 10) + otherUserId?.substring(0, 10)
+            _order = repository.getShopOrder(otherId)
+        } else {
+            _order = repository.getShopOrder(myId)
+        }
     }
 
     private fun getOrderProduct() {

@@ -32,7 +32,7 @@ interface ShakeItDataSource {
         order: Order,
         orderProduct: OrderProduct,
         otherUserId: String,
-        orderSize: Int
+        hasOrder: Boolean
     ): Result<Boolean>
 
     suspend fun postProduct(product: Product): Result<Boolean>
@@ -71,7 +71,7 @@ interface ShakeItDataSource {
 
     fun getFireBaseOrder(userId: String): MutableLiveData<List<Order>>
 
-    fun getShopOrder(shopId: String): MutableLiveData<List<Order>>
+    fun getShopOrder(orderId: String): MutableLiveData<List<Order>>
 
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 

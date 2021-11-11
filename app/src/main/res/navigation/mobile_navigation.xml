@@ -50,8 +50,8 @@
             android:name="userId"
             app:argType="string" />
         <argument
-            android:name="orderSize"
-            app:argType="integer" />
+            android:name="hasOrder"
+            app:argType="boolean" />
     </fragment>
 
     <fragment

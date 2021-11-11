@@ -31,7 +31,7 @@ class ViewModelFactory(
     private val shopId: String? = "",
     private val shopList: Array<Shop> = arrayOf(),
     private val userId: String? = null,
-    private val orderSize: Int? = null,
+    private val hasOrder: Boolean? = null,
     private val type: String? = null
 ) : ViewModelProvider.Factory {
 
@@ -45,7 +45,7 @@ class ViewModelFactory(
                     HomeViewModel(repository)
 
                 isAssignableFrom(DrinksDetailViewModel::class.java) ->
-                    product?.let { DrinksDetailViewModel(it, repository, shop, userId, orderSize) }
+                    product?.let { DrinksDetailViewModel(it, repository, shop, userId, hasOrder) }
 
                 isAssignableFrom(OrderDetailViewModel::class.java) ->
                     OrderDetailViewModel(order, repository, type)

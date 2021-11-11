@@ -46,9 +46,9 @@ class DefaultShakeItRepository(
         order: Order,
         orderProduct: OrderProduct,
         otherUserId: String,
-        orderSize: Int,
+        hasOrder: Boolean,
     ): Result<Boolean> {
-        return shakeItDataSource.postOrderToFireBase(order, orderProduct, otherUserId, orderSize)
+        return shakeItDataSource.postOrderToFireBase(order, orderProduct, otherUserId, hasOrder)
     }
 
     override suspend fun postProduct(product: Product): Result<Boolean> {
@@ -90,8 +90,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getFireBaseOrder(userId)
     }
 
-    override fun getShopOrder(shopId: String): MutableLiveData<List<Order>> {
-        return shakeItDataSource.getShopOrder(shopId)
+    override fun getShopOrder(orderId: String): MutableLiveData<List<Order>> {
+        return shakeItDataSource.getShopOrder(orderId)
     }
 
     override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {

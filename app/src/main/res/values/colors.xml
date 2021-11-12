@@ -19,4 +19,5 @@
     <color name="noColor"></color>
     <color name="blue">#1DA2BD</color>
     <color name="red">#E91E36</color>
+    <color name="loginBlue">#D575B2C5</color>
 </resources>

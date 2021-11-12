@@ -102,9 +102,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun getShopData(center: LatLng, type: String? = null) {
         viewModelScope.launch {
 
-            if (type == "search"){
+            if (type == "search") {
                 // do search animation
-            }else{
+            } else {
                 _status.value = LoadApiStatus.LOADING
             }
 
@@ -242,6 +242,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     //set walk or ride icon animation
     private fun setAnimation(b: Boolean) {
+
         val fromTop =
             AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.from_top_anim)
         val toBottom =
@@ -258,7 +259,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         if (b) binding?.rideFab?.visibility(1)
         else binding?.rideFab?.visibility(0)
     }
-
 
     val currentPositon = MutableLiveData<LatLng>()
 
@@ -327,6 +327,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     getDirectionDone.value = true
                     _bottomStatus.value = LoadApiStatus.DONE
                 }
+
                 is Result.Fail -> {
                     binding?.root?.let {
                         Snackbar.make(

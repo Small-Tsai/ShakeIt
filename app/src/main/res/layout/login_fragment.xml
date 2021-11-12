@@ -13,41 +13,124 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/yellow"
+        android:background="@color/loginBlue"
         tools:context=".ui.login.LoginFragment">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/shapeableImageView2"
-            android:layout_width="414dp"
-            android:layout_height="131dp"
-            android:layout_marginBottom="170dp"
+        <View
+            android:layout_width="300dp"
+            android:layout_height="3dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="150dp"
+            android:background="@color/white"
+            android:rotation="-20"
+            android:shadowColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/circle"
+            app:strokeColor="@color/white"
+            app:strokeWidth="3dp" />
+
+        <View
+            android:layout_width="300dp"
+            android:layout_height="3dp"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="150dp"
+            android:background="@color/white"
+            android:rotation="-20"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/circle"
+            app:strokeColor="@color/white"
+            app:strokeWidth="3dp" />
+
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:src="@drawable/shakeit_icon2"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/shapeableImageView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/shapeableImageView2"
+            android:layout_width="414dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="170dp"
+            android:background="@color/yellow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:shapeAppearanceOverlay="@style/loginCorner" />
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="10dp"
-            app:cardElevation="10dp"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_marginBottom="280dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView2">
+            app:layout_constraintTop_toTopOf="@+id/shapeableImageView2"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/blueloading" />
 
-            <com.shobhitpuri.custombuttons.GoogleSignInButton
-                android:id="@+id/signInButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/shapeableImageView2" />
+        <TextView
+            android:id="@+id/textView37"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:elevation="10dp"
+            android:fontFamily="@font/baloo"
+            android:text="Sign In"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
+            app:layout_constraintStart_toStartOf="@+id/shapeableImageView2"
+            app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView" />
 
-        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/textView36"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/cocktail"
+            android:backgroundTint="@color/white"
+            android:rotation="-15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/signIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/white"
+            android:elevation="5dp"
+            android:gravity="center"
+            android:text="Sign in with google"
+            android:textAllCaps="false"
+            android:textColor="@color/darkgrey"
+            app:icon="@drawable/login_icon_google"
+            app:iconGravity="start"
+            app:iconTint="@{null}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView37">
+
+        </com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

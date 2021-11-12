@@ -1,11 +1,13 @@
 package com.tsai.shakeit.ui.menu
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -45,8 +47,6 @@ class MenuFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-
 
         val dialogBinding: DialogMenuOrderNameBinding? =
             DataBindingUtil.inflate(
@@ -129,12 +129,10 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.shareOrder.observe(viewLifecycleOwner, {
-            it?.let { startActivity(it) }
+            it?.let { startActivity(Intent.createChooser(it,"choose:")) }
         })
 
         viewModel.order.observe(viewLifecycleOwner, {
-            Logger.d("order = $it")
-
             if (it.isEmpty()) viewModel.noOrder()
             else viewModel.hasOrder()
             Logger.d("${viewModel.hasOrder.value}")

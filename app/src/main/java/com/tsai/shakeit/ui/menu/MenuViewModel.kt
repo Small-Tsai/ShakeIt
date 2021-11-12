@@ -77,7 +77,7 @@ class MenuViewModel(
     private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
     private var otherId = ""
 
-    private val mOrder = Order(
+    val mOrder = Order(
         shop_Name = selectedShop.name,
         branch = selectedShop.branch,
         date = Timestamp.now(),

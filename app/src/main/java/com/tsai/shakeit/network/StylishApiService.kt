@@ -26,9 +26,7 @@ private val client = OkHttpClient.Builder()
                 false -> HttpLoggingInterceptor.Level.NONE
             }
         }
-    )
-    .build()
-
+    ).build()
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))

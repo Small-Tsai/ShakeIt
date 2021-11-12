@@ -11,6 +11,7 @@ import com.chauthai.swipereveallayout.ViewBinderHelper
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.databinding.OrderDetailRowBinding
 import com.tsai.shakeit.databinding.OrderDetailRowBtnBinding
+import com.tsai.shakeit.ext.visibility
 
 class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
     ListAdapter<OrderDetail, RecyclerView.ViewHolder>(DiffCallback) {
@@ -31,7 +32,7 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
             binding.viewModel = viewModel
 
             if (viewModel.type == "history"){
-                binding.swipeDeleteBtn.visibility = View.GONE
+                binding.swipeDeleteBtn.visibility(0)
             }
 
             binding.executePendingBindings()
@@ -55,7 +56,7 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
         fun bind(name: String) {
             binding.viewModel = viewModel
             if (viewModel.type =="history"){
-                binding.addItem.visibility = View.GONE
+                binding.addItem.visibility(0)
             }
             binding.executePendingBindings()
         }

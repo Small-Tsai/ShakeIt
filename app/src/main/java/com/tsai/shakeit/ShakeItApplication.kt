@@ -19,5 +19,4 @@ class ShakeItApplication : Application() {
         super.onCreate()
         instance = this
     }
-
 }

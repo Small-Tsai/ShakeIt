@@ -34,7 +34,7 @@ class OrderFragment : Fragment() {
         //set backPressed behavior
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().navigate(OrderFragmentDirections.navToFavorite())
+                findNavController().navigate(OrderFragmentDirections.navToHome())
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(

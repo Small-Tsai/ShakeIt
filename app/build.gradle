@@ -47,6 +47,9 @@ android {
 
 dependencies {
 
+    //lottie
+    def lottieVersion = "4.1.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 
     //permission
     implementation 'com.guolindev.permissionx:permissionx:1.6.0'

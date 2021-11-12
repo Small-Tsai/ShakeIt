@@ -12,9 +12,3 @@ fun Activity.getVmFactory(): ViewModelFactory {
     return ViewModelFactory(repository = repository)
 }
 
-fun Activity?.showToast(message: String) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).apply {
-        setGravity(Gravity.CENTER, 0, 0)
-        show()
-    }
-}

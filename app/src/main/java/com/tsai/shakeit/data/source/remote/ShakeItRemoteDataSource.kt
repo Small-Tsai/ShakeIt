@@ -35,8 +35,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(favorite)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Logger.d("Publish: $favorite")
-
+//                        Logger.d("Publish: $favorite")
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
@@ -218,8 +217,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 orderProduct.document(myShopId).collection(ORDER_PRODUCT).document(orderProductId)
 
             if (otherUserId != UserInfo.userId && otherUserId.isNotEmpty()) {
-                Logger.d(otherShopId)
-                Logger.d(orderProductId)
                 document =
                     orderProduct
                         .document(otherShopId)
@@ -291,27 +288,33 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             // Collect all the query results together into a single list
             Tasks.whenAllComplete(tasks)
-                .addOnCompleteListener {
-                    val matchingDocs: MutableList<Shop> = mutableListOf()
-                    for (task in tasks) {
-                        val snap = task.result
-                        for (doc in snap.documents) {
-                            val lat = doc.getDouble("lat")!!
-                            val lon = doc.getDouble("lon")!!
-                            // We have to filter out a few false positives due to GeoHash
-                            // accuracy, but most will match
-                            val docLocation = GeoLocation(lat, lon)
-                            val distanceInM =
-                                GeoFireUtils.getDistanceBetween(docLocation, centerGeo)
-                            if (distanceInM <= distance) {
-                                val shopDoc = doc.toObject(Shop::class.java)
-                                shopDoc?.let {
-                                    matchingDocs.add(it)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val matchingDocs: MutableList<Shop> = mutableListOf()
+                        for (task in tasks) {
+                            val snap = task.result
+                            for (doc in snap.documents) {
+                                val lat = doc.getDouble("lat")!!
+                                val lon = doc.getDouble("lon")!!
+                                // We have to filter out a few false positives due to GeoHash
+                                // accuracy, but most will match
+                                val docLocation = GeoLocation(lat, lon)
+                                val distanceInM =
+                                    GeoFireUtils.getDistanceBetween(docLocation, centerGeo)
+                                if (distanceInM <= distance) {
+                                    val shopDoc = doc.toObject(Shop::class.java)
+                                    shopDoc?.let {
+                                        matchingDocs.add(it)
+                                    }
                                 }
                             }
                         }
+                        if (!isInternetConnected()) {
+                            continuation.resume(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                        }else{
+                            continuation.resume(Result.Success(matchingDocs.distinct()))
+                        }
                     }
-                    continuation.resume(Result.Success(matchingDocs.distinct()))
                 }
         }
 
@@ -464,7 +467,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     if (task.isSuccessful) {
 
                         for (doc in task.result!!) {
-                            Logger.d(doc.id + " => " + doc.data)
+//                            Logger.d(doc.id + " => " + doc.data)
                             val product = doc.toObject(OrderProduct::class.java)
                             list.add(product)
                         }
@@ -509,7 +512,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     if (task.isSuccessful) {
 
                         for (doc in task.result!!) {
-                            Logger.d(doc.id + " => " + doc.data)
+//                            Logger.d(doc.id + " => " + doc.data)
                             val product = doc.toObject(OrderProduct::class.java)
                             list.add(product)
                         }
@@ -669,7 +672,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val myId = order.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
             val orders = FirebaseFirestore.getInstance().collection(ORDERS)
-            var document = orders.document(myId)
+            val document = orders.document(myId)
 
             order.order_Id = myId
 
@@ -680,14 +683,12 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         continuation.resume(Result.Success(true))
                     }
                 }
-
-
         }
 
     override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
 
         val liveData = MutableLiveData<List<String>>()
-        Logger.d(userId)
+//        Logger.d(userId)
         FirebaseFirestore.getInstance()
             .collection(FILTER_SHOP)
             .document(userId)

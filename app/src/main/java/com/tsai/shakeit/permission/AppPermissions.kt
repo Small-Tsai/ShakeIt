@@ -9,9 +9,6 @@ import com.tsai.shakeit.ui.home.HomeFragment
 import com.tsai.shakeit.util.Util
 
 class AppPermissions {
-
-
-
     // require permission
     fun askPermission(fragment: HomeFragment) {
 

@@ -32,8 +32,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -41,8 +39,6 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val navView = binding.bottomNavigation
-
-
 
         setUpBottomNavigation(navView, navController)
 
@@ -70,7 +66,6 @@ class MainActivity : AppCompatActivity() {
         navView.add(MeowBottomNavigation.Model(1, R.drawable.homeicon))
         navView.add(MeowBottomNavigation.Model(2, R.drawable.heartb))
         navView.add(MeowBottomNavigation.Model(3, R.drawable.shoppinglist))
-
         navView.setOnClickMenuListener {
             when (it.id) {
                 1 -> navController.navigate(HomeFragmentDirections.navToHome())

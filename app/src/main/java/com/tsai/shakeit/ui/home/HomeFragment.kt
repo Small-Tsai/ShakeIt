@@ -18,9 +18,12 @@ import android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
 import android.widget.RelativeLayout
 import android.widget.TextView.OnEditorActionListener
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
@@ -34,6 +37,7 @@ import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ext.mToast
@@ -42,6 +46,8 @@ import com.tsai.shakeit.permission.AppPermissions
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 
@@ -64,6 +70,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var polyLine: Polyline
     var locationPermissionGranted = false
     private val vAnimator = ValueAnimator()
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -97,6 +104,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        val dialogBinding: DialogMenuOrderNameBinding? =
+            DataBindingUtil.inflate(
+                LayoutInflater.from(requireActivity()),
+                R.layout.dialog_menu_order_name,
+                null,
+                false
+            )
+
+        val customDialog = AlertDialog.Builder(requireActivity(), 0).create()
 
         appPermission = AppPermissions()
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -192,9 +209,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             // observe when get currentPosition
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
-                viewModel.mode.value?.let { mode ->
-                    getDirection(mode)
-                }
+
+                viewModel.mode.value?.let { mode -> getDirection(mode) }
+
                 viewModel.getDirectionDone.observe(viewLifecycleOwner, {
                     if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                         it?.let {
@@ -204,7 +221,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     }
                 })
             }
-
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
 
                 //if nav From Order
@@ -217,7 +233,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 shopData.forEach { shop ->
                     if (!dbList.contains(shop.name)) {
                         val newPosition = LatLng(shop.lat, shop.lon)
-                        val iconGen = IconGenerator(binding.root.context)
+//                        val iconGen = IconGenerator(binding.root.context)
                         mMap.addMarker(
                             MarkerOptions().position(newPosition).snippet(shop.shop_Id)
 //                                .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon("${shop.name}  ${shop.branch}")))
@@ -274,13 +290,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
+        //traffic time editText action_done
         binding.editText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == IME_ACTION_DONE) {
                 val currentPosition = LatLng(lat, lon)
-                viewModel.getShopData(currentPosition)
                 mapSearchAnimation(currentPosition)
+                viewModel.getShopData(currentPosition, "search")
             }
-
             false
         })
 
@@ -469,7 +485,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     object : LocationCallback() {
                         override fun onLocationResult(locationResult: LocationResult?) {
                             locationResult ?: return
-
                             lat = locationResult.lastLocation.latitude
                             lon = locationResult.lastLocation.longitude
                             val currentPosition = LatLng(lat, lon)
@@ -532,22 +547,21 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun mapSearchAnimation(currentPosition: LatLng) {
 
-        mToast("搜尋中...")
-
         val circle: Circle = mMap.addCircle(
             CircleOptions().center(currentPosition)
                 .strokeColor(Util.getColor(R.color.blue)).radius(2000.0)
         )
 
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 14f))
         vAnimator.repeatCount = ValueAnimator.INFINITE
         vAnimator.repeatMode = ValueAnimator.RESTART /* PULSE */
-        vAnimator.setIntValues(0, 100)
-        vAnimator.duration = 1000
+        vAnimator.setIntValues(0, 1000)
+        vAnimator.duration = 1200
         vAnimator.setEvaluator(IntEvaluator())
         vAnimator.interpolator = AccelerateDecelerateInterpolator()
         vAnimator.addUpdateListener { valueAnimator ->
             val animatedFraction = valueAnimator.animatedFraction
-            circle.radius = (animatedFraction * 100).toDouble()
+            circle.radius = (animatedFraction * viewModel.distance).toDouble()
         }
         vAnimator.start()
     }

@@ -16,11 +16,10 @@ import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.visibility
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
@@ -78,6 +77,16 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val moveCamera: LiveData<Boolean?>
         get() = _moveCamera
 
+    // status: The internal MutableLiveData that stores the status of the most recent request
+    private val _status = MutableLiveData<LoadApiStatus>()
+    val status: LiveData<LoadApiStatus>
+        get() = _status
+
+    // BottomSheet Status: The internal MutableLiveData that stores the status of the bottomSheet
+    private val _bottomStatus = MutableLiveData<LoadApiStatus>()
+    val bottomStatus: LiveData<LoadApiStatus>
+        get() = _bottomStatus
+
     val distanceLiveData = MutableLiveData<String>().apply { value = "" }
     val trafficTimeLiveData = MutableLiveData<String>().apply { value = "" }
     val timeDisplay = MutableLiveData<Boolean>().apply { value = false }
@@ -90,31 +99,37 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     //getShop
-    fun getShopData(center: LatLng) {
+    fun getShopData(center: LatLng, type: String? = null) {
         viewModelScope.launch {
 
-            when (mode.value) {
-                WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt()  }
-                DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt()  }
+            if (type == "search"){
+                // do search animation
+            }else{
+                _status.value = LoadApiStatus.LOADING
             }
 
-            Logger.d("$distance")
+            when (mode.value) {
+                WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt() }
+                DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt() }
+            }
 
             _isfilterShopBtnClickable.value = false
 
             when (val result = withContext(Dispatchers.IO) {
-                repository.getAllShop(center,distance)
+                repository.getAllShop(center, distance)
             }) {
                 is Result.Success -> {
-                    mToast("已獲取店家資料")
                     _shopLiveData.value = result.data!!
                     _isfilterShopBtnClickable.value = true
+                    _status.value = LoadApiStatus.DONE
                 }
-                is Result.Fail -> mToast("獲取店家資料異常")
+                is Result.Fail -> {
+                    mToast("獲取店家資料異常請檢查是否開啟定位及網路", "long")
+                    _status.value = LoadApiStatus.ERROR
+                }
             }
         }
     }
-
 
     //when click nav Done
     fun mapNavDone() {
@@ -240,8 +255,8 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     //set walk or ride icon visibility
     private fun setVisibility(b: Boolean) {
-        if (b) binding?.rideFab?.visibility = View.VISIBLE
-        else binding?.rideFab?.visibility = View.GONE
+        if (b) binding?.rideFab?.visibility(1)
+        else binding?.rideFab?.visibility(0)
     }
 
 
@@ -262,6 +277,8 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun getDirection(url: String, mode: String) {
 
         viewModelScope.launch {
+
+            _bottomStatus.value = LoadApiStatus.LOADING
 
             navOption = PolylineOptions().apply {
                 width(20f)
@@ -306,7 +323,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                         }
                         navOption.addAll(stepList)
                     }.await()
+
                     getDirectionDone.value = true
+                    _bottomStatus.value = LoadApiStatus.DONE
                 }
                 is Result.Fail -> {
                     binding?.root?.let {

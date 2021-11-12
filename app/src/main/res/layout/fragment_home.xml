@@ -9,6 +9,8 @@
 
         <import type="com.tsai.shakeit.util.CurrentFragmentType" />
 
+        <import type="com.tsai.shakeit.network.LoadApiStatus" />
+
         <variable
             name="mainViewModel"
             type="com.tsai.shakeit.MainViewModel" />
@@ -45,10 +47,10 @@
                 android:layout_marginBottom="126dp"
                 android:background="@drawable/nav_selector"
                 android:elevation="5dp"
-                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 android:onClick="@{()->viewModel.moveCameraToCurrentLocation()}"
                 android:rotation="35"
                 android:src="@drawable/ic_baseline_navigation_24"
+                android:visibility="@{viewModel.status ==LoadApiStatus.ERROR ||viewModel.status==LoadApiStatus.LOADING ||viewModel.status == null? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -62,6 +64,45 @@
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="-36dp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/translucent_white80"
+                android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="centerInside"
+                android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loadingyellowcir"
+                app:lottie_speed="1.5"
+                app:lottie_url="REPLACE_JSON_URL" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/noConnect"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:paddingBottom="100dp"
+                android:scaleType="centerInside"
+                android:visibility="@{viewModel.status==LoadApiStatus.ERROR ? View.VISIBLE : View.GONE }"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/noconnect"
+                app:lottie_url="REPLACE_JSON_URL" />
+
             <EditText
                 android:id="@+id/editText"
                 android:layout_width="80dp"
@@ -72,22 +113,22 @@
                 android:imeOptions="actionDone"
                 android:inputType="number"
                 android:text="@={viewModel.userSettingTime}"
-                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/walk_fab"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/walk_fab" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/walk_fab"
+                reverse="@{false}"
+                trafficMode="@{viewModel.mode}"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:backgroundTint="@color/white"
-                trafficMode="@{viewModel.mode}"
-                reverse="@{false}"
                 android:onClick="@{()-> viewModel.isWalk()}"
-                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/search_cv" />
 
@@ -98,7 +139,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
-                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:cardCornerRadius="30dp"
                 app:cardElevation="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +148,7 @@
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/idSearchView"
-                    android:layout_width="match_parent"
+                    android:layout_width="300dp"
                     android:layout_height="30dp"
                     android:layout_margin="10dp"
                     app:iconifiedByDefault="false"
@@ -123,21 +164,20 @@
                     android:clickable="@{viewModel.isfilterShopClickable}"
                     android:foreground="@drawable/setting_lines"
                     android:onClick="@{()-> viewModel.navToSetting()}"
-                    android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}" />
-
+                    android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}" />
 
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/ride_fab"
+                reverse="@{true}"
+                trafficMode="@{viewModel.mode}"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:backgroundTint="@color/white"
                 android:foreground="@drawable/ride"
-                reverse="@{true}"
-                trafficMode="@{viewModel.mode}"
                 android:onClick="@{() -> viewModel.isRide()}"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
@@ -154,7 +194,7 @@
                 android:gravity="center_vertical"
                 android:onClick="@{()->viewModel.navToAddShop()}"
                 android:text="新增商家"
-                android:visibility="@{mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                 app:icon="@drawable/store"
                 app:iconGravity="textStart"
                 app:iconPadding="3dp"
@@ -166,6 +206,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--   NavBottomSheet     -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheetNav"
             android:layout_width="match_parent"
@@ -173,7 +215,7 @@
             android:layout_marginHorizontal="24dp"
             android:background="@drawable/bg_dialog_corner"
             android:backgroundTint="@color/darkgrey"
-            android:visibility="@{mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
             app:behavior_hideable="true"
             app:behavior_peekHeight="100dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
@@ -242,23 +284,42 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!--   BottomSheet     -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bg_dialog_corner"
-            android:elevation="10dp"
-            android:visibility="visible"
+            android:elevation="15dp"
+            android:visibility="@{viewModel.status ==LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING || mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV? View.INVISIBLE : View.VISIBLE}"
             app:behavior_hideable="true"
             app:behavior_peekHeight="250dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             tools:context=".ui.home.HomeDialogFragment">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/bottomloading"
+                android:layout_width="250dp"
+                android:layout_height="170dp"
+                android:layout_marginTop="50dp"
+                android:background="@color/white"
+                android:scaleType="centerInside"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.VISIBLE : View.GONE }"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/bottomloading"
+                app:lottie_url="REPLACE_JSON_URL" />
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewpager_home"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -285,6 +346,7 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/corner_radius"
                 android:backgroundTint="@color/gery"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -300,6 +362,7 @@
                 android:fontFamily="@font/roboto"
                 android:text="4.1"
                 android:textSize="13sp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/shopAddress" />
 
@@ -312,6 +375,7 @@
                 android:progressTint="#FFEB3B"
                 android:rating="4.1"
                 android:secondaryProgressTint="#FFEB3B"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/avgRating"
                 app:layout_constraintStart_toEndOf="@+id/avgRating"
                 app:layout_constraintTop_toTopOf="@+id/avgRating" />
@@ -323,6 +387,7 @@
                 android:layout_marginStart="4dp"
                 android:text=""
                 android:textSize="12sp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
                 app:layout_constraintStart_toEndOf="@+id/ratingBar" />
 
@@ -337,6 +402,7 @@
                 android:fontFamily="@font/roboto"
                 android:textColor="@color/black"
                 android:textSize="20dp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -348,6 +414,7 @@
                 android:fontFamily="@font/noto_sans"
                 android:text="@{shop.address}"
                 android:textSize="14dp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="@+id/commentUserName"
                 app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
 
@@ -358,6 +425,7 @@
                 android:layout_marginTop="20dp"
                 android:drawableTop="@drawable/tele"
                 android:text="撥打電話"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintEnd_toStartOf="@+id/nav_btn"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -370,6 +438,7 @@
                 style="@style/homedialog_icon"
                 android:drawableTop="@drawable/navigate"
                 android:text="開始導航"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tel_btn"
                 app:layout_constraintEnd_toStartOf="@+id/menu_btn"
@@ -384,6 +453,7 @@
                 android:drawableTop="@drawable/menu_icon"
                 android:onClick="@{()-> viewModel.navToMenu(shop)}"
                 android:text="查看菜單"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/nav_btn"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -401,6 +471,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite(shop.shop_Id) : viewModel.postMyFavorite(favorite)}"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/commentUserName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -411,6 +482,7 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="10dp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/commentSize"
                 app:layout_constraintStart_toEndOf="@+id/commentSize"
                 app:layout_constraintTop_toTopOf="@+id/commentSize" />
@@ -419,9 +491,11 @@
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_marginStart="4dp"
                 android:text="@{viewModel.trafficTimeLiveData}"
                 android:textSize="14sp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView"
                 app:layout_constraintStart_toEndOf="@+id/imageView"
                 app:layout_constraintTop_toTopOf="@+id/imageView" />
@@ -434,6 +508,7 @@
                 android:layout_marginBottom="2dp"
                 android:text="營業時間"
                 android:textSize="14sp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView2"
                 app:layout_constraintStart_toEndOf="@+id/imageView2"
                 app:layout_constraintTop_toTopOf="@+id/imageView2" />
@@ -443,6 +518,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_marginTop="8dp"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="@+id/avgRating"
                 app:layout_constraintTop_toBottomOf="@+id/avgRating"
                 app:srcCompat="@drawable/ic_baseline_access_time_24" />
@@ -456,9 +532,12 @@
                 android:foreground="@drawable/dropdown"
                 android:onClick="@{()->viewModel.displayOrNot()}"
                 android:scaleType="centerInside"
+                android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/textView13"
                 app:layout_constraintStart_toEndOf="@+id/textView13"
                 app:layout_constraintTop_toTopOf="@+id/textView13" />
+
+            <!--     Time       -->
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/timeLayout"
@@ -536,7 +615,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期一`]}"
                     app:layout_constraintBottom_toBottomOf="@+id/textView14"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/textView14" />
@@ -546,7 +625,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期二`]}"
                     app:layout_constraintStart_toStartOf="@+id/textView21"
                     app:layout_constraintTop_toBottomOf="@+id/textView21" />
 
@@ -555,7 +634,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期三`]}"
                     app:layout_constraintStart_toStartOf="@+id/textView22"
                     app:layout_constraintTop_toBottomOf="@+id/textView22" />
 
@@ -564,7 +643,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期四`]}"
                     app:layout_constraintStart_toStartOf="@+id/textView23"
                     app:layout_constraintTop_toBottomOf="@+id/textView23" />
 
@@ -573,7 +652,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期五`]}"
                     app:layout_constraintStart_toStartOf="@+id/textView24"
                     app:layout_constraintTop_toBottomOf="@+id/textView24" />
 
@@ -582,7 +661,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期六`]}"
                     app:layout_constraintStart_toStartOf="@+id/textView25"
                     app:layout_constraintTop_toBottomOf="@+id/textView25" />
 
@@ -591,13 +670,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="上午10時-下午9:30"
+                    android:text="@{viewModel.selectedShop.time[`星期日`]}"
                     app:layout_constraintStart_toStartOf="@+id/textView26"
                     app:layout_constraintTop_toBottomOf="@+id/textView26" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

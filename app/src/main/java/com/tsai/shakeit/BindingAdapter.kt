@@ -54,21 +54,12 @@ fun TextView.bindAddPrice(price: Int, content: String) {
     } else {
         "+$ $price"
     }
-
 }
 
 @BindingAdapter("timeToDisplayFormat")
 fun bindDisplayFormatTime(textView: TextView, time: Timestamp?) {
     textView.text = time?.toTimeFromTimeStamp()
 }
-
-@BindingAdapter("editorControllerStatus")
-fun bindEditorControllerStatus(imageButton: AppCompatImageButton, qty: Int) {
-    imageButton.apply {
-        isClickable = true
-    }
-}
-
 
 @BindingAdapter("mRadioButton", "viewModel", "position")
 fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, position: Int) {
@@ -88,8 +79,6 @@ fun TextView.bindOthers(orderProduct: OrderProduct) {
         text =
             "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
     }
-
-
 }
 
 @BindingAdapter("qtyText")

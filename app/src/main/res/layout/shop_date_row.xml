@@ -19,7 +19,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
@@ -36,33 +36,36 @@
 
         <EditText
             android:id="@+id/open_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:focusableInTouchMode="false"
             android:gravity="center"
-            android:text="@={viewModel.timeOpen}"
             android:hint="開始營業時間"
             android:imeOptions="actionNext"
             android:inputType="datetime"
             android:nextFocusForward="@id/close_time"
+            android:text="@={viewModel.timeOpen}"
             app:layout_constraintBottom_toBottomOf="@+id/textView10"
+            app:layout_constraintEnd_toStartOf="@+id/close_time"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/textView10"
             app:layout_constraintTop_toTopOf="@+id/textView10" />
 
         <EditText
             android:id="@+id/close_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:focusableInTouchMode="false"
-            android:text="@={viewModel.timeClose}"
             android:gravity="center"
             android:hint="結束營業時間"
             android:inputType="datetime"
+            android:text="@={viewModel.timeClose}"
             app:layout_constraintBottom_toBottomOf="@+id/open_time"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/open_time"
             app:layout_constraintTop_toTopOf="@+id/open_time" />
 

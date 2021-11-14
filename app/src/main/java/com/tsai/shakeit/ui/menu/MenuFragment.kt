@@ -135,7 +135,7 @@ class MenuFragment : Fragment() {
         viewModel.order.observe(viewLifecycleOwner, {
             if (it.isEmpty()) viewModel.noOrder()
             else viewModel.hasOrder()
-            Logger.d("${viewModel.hasOrder.value}")
+            Logger.d("hasOrder = ${viewModel.hasOrder.value}")
 
         })
 

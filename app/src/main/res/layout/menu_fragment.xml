@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.tsai.shakeit.network.LoadApiStatus" />
+
         <import type="android.view.View" />
 
         <variable
@@ -21,7 +23,6 @@
         android:layout_height="match_parent"
         tools:context=".ui.menu.MenuFragment">
 
-
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/invite_fab"
             fabAnimation="@{true}"
@@ -31,10 +32,11 @@
             android:layout_marginEnd="8dp"
             android:backgroundTint="@color/grey2"
             android:fontFamily="@font/roboto"
-            android:singleLine="true"
             android:onClick="@{()->viewModel.startShare()}"
+            android:singleLine="true"
             android:text="邀請好友"
             app:cornerRadius="10sp"
+            android:visibility="@{viewModel.status == LoadApiStatus.ERROR || viewModel.status==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
             app:icon="@drawable/share_icon"
             app:iconTint="@null"
             app:layout_constraintEnd_toEndOf="@+id/addOrder_img"
@@ -89,6 +91,7 @@
             android:padding="0dp"
             android:text="新增商品"
             android:textColor="@color/white"
+            android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.GONE : View.VISIBLE }"
             android:textSize="12sp"
             app:cornerRadius="20dp"
             app:layout_constraintEnd_toEndOf="@+id/menu_title"
@@ -97,7 +100,6 @@
             app:rippleColor="@color/white"
             app:strokeColor="@color/white"
             app:strokeWidth="1dp" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -108,10 +110,10 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/appCompatButton"
             app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.GONE : View.VISIBLE }"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/addOrder_img"
             tools:listitem="@layout/menu_product_row" />
-
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/appCompatButton"
@@ -124,6 +126,7 @@
             android:fontFamily="@font/noto_sans"
             android:onClick="@{()->viewModel.doNavToOrder()}"
             android:text="查看訂單"
+            android:visibility="@{viewModel.status == LoadApiStatus.LOADING? View.GONE: View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -156,6 +159,46 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/translucent_white80"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/menuLottie"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view2"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loadingyellowcir"
+            app:lottie_url="REPLACE_JSON_URL" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/noConnectLottie"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addOrder_img"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/noconnect"
+            app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </layout>

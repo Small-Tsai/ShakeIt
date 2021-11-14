@@ -4,18 +4,24 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable-v24/bg_dialog_corner.xml" value="0.41770833333333335" />
+        <entry key="app/src/main/res/drawable-v24/color_circle.xml" value="0.14322916666666666" />
         <entry key="app/src/main/res/drawable-v24/comment_dialog_bg.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable-v24/corner_radius2.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable-v24/menu_icon.xml" value="0.12708333333333333" />
         <entry key="app/src/main/res/drawable-v24/order_selector.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable-v24/ride.xml" value="0.12708333333333333" />
+        <entry key="app/src/main/res/drawable/blackstroke_corner_radius.xml" value="0.14322916666666666" />
+        <entry key="app/src/main/res/drawable/circle.xml" value="0.14322916666666666" />
         <entry key="app/src/main/res/drawable/corner_radius.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable/darkcolor_circle.xml" value="0.39814814814814814" />
+        <entry key="app/src/main/res/drawable/home_top_corner.xml" value="0.14322916666666666" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_right_24.xml" value="0.2015625" />
         <entry key="app/src/main/res/drawable/ic_baseline_navigation_24.xml" value="0.2713541666666667" />
         <entry key="app/src/main/res/drawable/ic_home.xml" value="0.25462962962962965" />
         <entry key="app/src/main/res/drawable/nav_selector.xml" value="0.39814814814814814" />
+        <entry key="app/src/main/res/drawable/stroke_corner_radius.xml" value="0.14322916666666666" />
+        <entry key="app/src/main/res/drawable/walking_icon.xml" value="0.26145833333333335" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/add_menu_item_btn.xml" value="0.165" />
         <entry key="app/src/main/res/layout/add_menu_item_fragment.xml" value="0.25" />
@@ -33,7 +39,7 @@
         <entry key="app/src/main/res/layout/favorite_image_item.xml" value="0.14361702127659576" />
         <entry key="app/src/main/res/layout/fragment_dashboard.xml" value="0.335" />
         <entry key="app/src/main/res/layout/fragment_favorite.xml" value="0.14361702127659576" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.23694779116465864" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_notifications.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/fragment_order.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_order_name_dialog.xml" value="0.18489583333333334" />
@@ -51,7 +57,7 @@
         <entry key="app/src/main/res/layout/order_selector.xml" value="0.4015625" />
         <entry key="app/src/main/res/layout/setting_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/setting_item_row.xml" value="0.375" />
-        <entry key="app/src/main/res/layout/shop_date_row.xml" value="0.11930091185410334" />
+        <entry key="app/src/main/res/layout/shop_date_row.xml" value="0.335" />
         <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.43854166666666666" />
         <entry key="app/src/main/res/xml/file_path.xml" value="0.23020833333333332" />
       </map>
@@ -66,7 +72,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.165" />
+        <option name="scale" value="0.335" />
       </ProjectState>
     </option>
   </component>

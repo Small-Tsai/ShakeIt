@@ -13,11 +13,14 @@
     <color name="darkgrey">#88000000</color>
     <color name="grey_yellow">#DFDBD7</color>
     <color name="translucent_40">#66000000</color>
+    <color name="translucent_blue_40">#CDA9E6F3</color>
     <color name="translucent_80">#cccccccc</color>
     <color name="translucent_white80">#ccffffff</color>
+    <color name="translucent_white90">#FDF8D1</color>
     <color name="transparent">#00000000</color>
     <color name="noColor"></color>
     <color name="blue">#1DA2BD</color>
     <color name="red">#E91E36</color>
     <color name="loginBlue">#D575B2C5</color>
+    <color name="yellow_e7">#A3FFF0B8</color>
 </resources>

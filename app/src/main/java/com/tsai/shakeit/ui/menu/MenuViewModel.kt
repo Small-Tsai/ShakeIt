@@ -10,6 +10,8 @@ import com.google.firebase.Timestamp
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.Dispatchers
@@ -69,6 +71,10 @@ class MenuViewModel(
     private val _shareOrder = MutableLiveData<Intent?>()
     val shareOrder: LiveData<Intent?>
         get() = _shareOrder
+
+    private val _status = MutableLiveData<LoadApiStatus?>()
+    val status: LiveData<LoadApiStatus?>
+        get() = _status
 
     var title = MutableLiveData<String>().apply {
         value = "我的訂單"
@@ -131,11 +137,11 @@ class MenuViewModel(
         _hasOrderProduct.value = false
     }
 
-    fun hasOrder(){
+    fun hasOrder() {
         _hasOrder.value = true
     }
 
-    fun noOrder(){
+    fun noOrder() {
         _hasOrder.value = false
     }
 
@@ -180,19 +186,17 @@ class MenuViewModel(
 
     private fun getProduct() {
         viewModelScope.launch {
+
+            _status.value = LoadApiStatus.LOADING
+
             when (val result = repository.getProduct(selectedShop.name)) {
                 is Result.Success -> {
                     _branchProduct.value = result.data!!
+                    _status.value = LoadApiStatus.DONE
                 }
                 is Result.Fail -> {
-                    Toast.makeText(
-                        ShakeItApplication.instance,
-                        "商品獲取失敗..",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                is Result.Error -> {
-                    Logger.d("getProduct Error")
+                    mToast("商品獲取失敗請檢查是否開啟網路", "long")
+                    _status.value = LoadApiStatus.ERROR
                 }
             }
         }

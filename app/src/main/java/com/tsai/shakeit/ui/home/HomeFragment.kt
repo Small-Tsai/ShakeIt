@@ -12,42 +12,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
-import android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
-import android.widget.RelativeLayout
-import android.widget.TextView.OnEditorActionListener
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
-import com.google.maps.android.ui.IconGenerator
 import com.tsai.shakeit.BuildConfig.DIRECTION_API_KEY
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Shop
-import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.visibility
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.permission.AppPermissions
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 
@@ -70,6 +61,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var polyLine: Polyline
     var locationPermissionGranted = false
     private val vAnimator = ValueAnimator()
+
+    val fromTop: Animation =
+        AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
+    val toTopGone: Animation =
+        AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -105,16 +101,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
 
-        val dialogBinding: DialogMenuOrderNameBinding? =
-            DataBindingUtil.inflate(
-                LayoutInflater.from(requireActivity()),
-                R.layout.dialog_menu_order_name,
-                null,
-                false
-            )
-
-        val customDialog = AlertDialog.Builder(requireActivity(), 0).create()
-
         appPermission = AppPermissions()
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
@@ -129,19 +115,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        //walk or ride onClikck
-        viewModel.isWalkOrRide.observe(viewLifecycleOwner, {
-            when (it) {
-                true -> {
-                    viewModel.onWalkOrRideBtnClicked(it)
-                }
-                false -> {
-                    viewModel.onWalkOrRideBtnClicked(it)
-                    viewModel.isNull()
-                }
-            }
-        })
 
         //check has favorite
         viewModel.Favorite.observe(viewLifecycleOwner, {
@@ -166,8 +139,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     tabsHome.setupWithViewPager(it)
                     it.adapter = CommentPagerAdapter(childFragmentManager, shopId = shop.shop_Id)
                     it.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabsHome))
-
                 }
+            }
+        })
+
+        viewModel.currentFragmentType.observe(viewLifecycleOwner, {
+            when (it) {
+                CurrentFragmentType.HOME ->
+                    if (viewModel.status.value != LoadApiStatus.LOADING &&
+                        binding.constraintLayout2.visibility != View.VISIBLE
+                    ) {
+                        toolbarVisible()
+                    }
+                CurrentFragmentType.HOME_NAV -> toolbarGone()
             }
         })
 
@@ -201,7 +185,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //nav Setting
         viewModel.navToSetting.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(HomeFragmentDirections.navToSetting(viewModel.shopLiveData.value!!.toTypedArray())) }
+            it?.let {
+                findNavController().navigate(
+                    HomeFragmentDirections.navToSetting(
+                        viewModel.shopLiveData.value!!.toTypedArray()
+                    )
+                )
+            }
         })
 
         //addMarker to map
@@ -248,6 +238,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { moveCameraToCurrentLocation() }
         })
 
+        viewModel.userSettingTime.observe(viewLifecycleOwner, {
+            UserInfo.userCurrentSettingTrafficTime = it
+        })
+
         //navBtn onclick
         binding.navBtn.setOnClickListener {
             viewModel.drawPolyLine()
@@ -267,6 +261,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 bottomSheetBehavior.halfExpandedRatio = 0.0001f
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
                 mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+                viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
                 bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
                 val currentPosition = LatLng(lat, lon)
@@ -283,22 +278,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //when change traffic mode getDirection
         viewModel.mode.observe(viewLifecycleOwner, {
-            if (this::selectedShop.isInitialized &&
-                mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG
-            ) {
-                getDirection(it)
+            if (locationPermissionGranted) {
+                Logger.d("mode observe $it")
+                val currentPosition = LatLng(lat, lon)
+                mapSearchAnimation(currentPosition)
+                viewModel.getShopData(currentPosition, "search")
             }
         })
 
         //traffic time editText action_done
-        binding.editText.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
+        binding.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == IME_ACTION_DONE) {
                 val currentPosition = LatLng(lat, lon)
                 mapSearchAnimation(currentPosition)
                 viewModel.getShopData(currentPosition, "search")
             }
             false
-        })
+        }
 
         setBackPressedBehavior()
         binding.addShopFab.isExtended = false
@@ -380,6 +376,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
+                viewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
                 viewModel.getSelectedShopSnippet(it.snippet)
                 getDirection("${viewModel.mode.value}")
             }
@@ -408,13 +405,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        Logger.d("expand")
-                    }
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
                             mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                            viewModel.currentFragmentType.value = CurrentFragmentType.HOME
                         }
                     }
                     else -> {
@@ -422,58 +416,39 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
             }
 
-            val fromTop =
-                AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
-            val toTopGone =
-                AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
-
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
 
                 if (slideOffset > 0.4f) {
                     if (x == 0) {
                         x = 1
-                        binding.apply {
-                            idSearchView.startAnimation(toTopGone)
-                            walkFab.startAnimation(toTopGone)
-                            editText.startAnimation(toTopGone)
-                            searchCv.startAnimation(toTopGone)
-                            filterBar.startAnimation(toTopGone)
-                            addShopFab.startAnimation(toTopGone)
-                            searchCv.visibility(0)
-                            filterBar.visibility(0)
-                            idSearchView.visibility(0)
-                            walkFab.visibility(0)
-                            editText.visibility(0)
-                            addShopFab.visibility(0)
-                        }
-
+                        toolbarGone()
                     }
                 }
 
                 if (x == 1 && slideOffset < 0.4f) {
                     x = 0
-                    binding.apply {
-                        idSearchView.startAnimation(fromTop)
-                        walkFab.startAnimation(fromTop)
-                        editText.startAnimation(fromTop)
-                        searchCv.startAnimation(fromTop)
-                        filterBar.startAnimation(fromTop)
-                        addShopFab.startAnimation(fromTop)
-                        searchCv.visibility(1)
-                        filterBar.visibility(1)
-                        idSearchView.visibility(1)
-                        walkFab.visibility(1)
-                        editText.visibility(1)
-                        addShopFab.visibility(1)
+                    if (viewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
+                        toolbarVisible()
                     }
                 }
             }
         })
     }
 
+    private fun toolbarVisible() {
+        binding.constraintLayout2.startAnimation(fromTop)
+        binding.constraintLayout2.visibility(1)
+    }
+
+    private fun toolbarGone() {
+        binding.constraintLayout2.startAnimation(toTopGone)
+        binding.constraintLayout2.visibility(0)
+    }
+
     // get location
     @SuppressLint("MissingPermission")
     fun getDeviceLocation() {
+        viewModel.loading()
         try {
             if (locationPermissionGranted) {
                 setMapUI()

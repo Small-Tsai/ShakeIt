@@ -145,8 +145,8 @@ fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
     isExtended = false
     elevation = 10f
     textSize = 18f
-    scaleX = 0.8f
-    scaleY = 0.8f
+    scaleX = 0.9f
+    scaleY = 0.9f
     val handler = android.os.Handler(Looper.getMainLooper())
     handler.postDelayed({
         extend()
@@ -171,22 +171,6 @@ fun ImageView.bindTrafficIcon(mode: String) {
     when (mode) {
         WALKING -> setImageResource(R.drawable.ic_baseline_directions_walk_24)
         DRIVING -> setImageResource(R.drawable.ic_baseline_drive_eta_24)
-    }
-}
-
-@BindingAdapter("trafficMode", "reverse")
-fun FloatingActionButton.bindTraffic(mode: String, reverse: Boolean) {
-    when (mode) {
-        WALKING -> if (!reverse) {
-            foreground = ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
-        } else {
-            foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
-        }
-        DRIVING -> if (!reverse) {
-            foreground = ShakeItApplication.instance.getDrawable(R.drawable.ride)
-        } else {
-            foreground = ShakeItApplication.instance.getDrawable(R.drawable.walking_icon)
-        }
     }
 }
 

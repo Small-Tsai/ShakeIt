@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="com.tsai.shakeit.util.AppConstantKt" />
+
         <import type="com.tsai.shakeit.util.CurrentFragmentType" />
 
         <import type="com.tsai.shakeit.network.LoadApiStatus" />
@@ -39,6 +41,29 @@
             android:layout_height="match_parent"
             tools:context=".ui.home.HomeFragment">
 
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/addShop_fab"
+                fabAnimationBig="@{true}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="22dp"
+                android:backgroundTint="@color/grey2"
+                android:fontFamily="@font/roboto"
+                android:gravity="center_vertical"
+                android:onClick="@{()->viewModel.navToAddShop()}"
+                android:text="新增商家"
+                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV || mainViewModel.currentFragmentType == CurrentFragmentType.HOME_DIALOG? View.GONE : View.VISIBLE}"
+                app:elevation="5dp"
+                app:icon="@drawable/store"
+                app:iconGravity="textStart"
+                app:iconPadding="3dp"
+                app:iconSize="27dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/locationButton"
+                app:strokeColor="@color/darkgrey"
+                app:strokeWidth="1dp" />
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/locationButton"
                 android:layout_width="50dp"
@@ -50,7 +75,7 @@
                 android:onClick="@{()->viewModel.moveCameraToCurrentLocation()}"
                 android:rotation="35"
                 android:src="@drawable/ic_baseline_navigation_24"
-                android:visibility="@{viewModel.status ==LoadApiStatus.ERROR ||viewModel.status==LoadApiStatus.LOADING ||viewModel.status == null? View.GONE : View.VISIBLE }"
+                android:visibility="@{mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV || viewModel.status ==LoadApiStatus.ERROR ||viewModel.status==LoadApiStatus.LOADING ||viewModel.status == null? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -86,125 +111,115 @@
                 app:lottie_speed="1.5"
                 app:lottie_url="REPLACE_JSON_URL" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/noConnect"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:paddingBottom="100dp"
-                android:scaleType="centerInside"
-                android:visibility="@{viewModel.status==LoadApiStatus.ERROR ? View.VISIBLE : View.GONE }"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/noconnect"
-                app:lottie_url="REPLACE_JSON_URL" />
 
-            <EditText
-                android:id="@+id/editText"
-                android:layout_width="80dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout2"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="48dp"
-                android:background="@drawable/square_button_black"
-                android:gravity="center"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:text="@={viewModel.userSettingTime}"
-                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@+id/walk_fab"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/walk_fab" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/walk_fab"
-                reverse="@{false}"
-                trafficMode="@{viewModel.mode}"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/white"
-                android:onClick="@{()-> viewModel.isWalk()}"
-                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_cv" />
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/search_cv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="16dp"
-                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="15dp"
+                android:background="@drawable/home_top_corner"
+                android:backgroundTint="@color/grey2"
+                android:elevation="10dp"
+                android:visibility="@{viewModel.status == LoadApiStatus.ERROR ||viewModel.status == LoadApiStatus.LOADING? View.GONE : View.VISIBLE}"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/shapeableImageView3"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/stroke_corner_radius"
+                    android:backgroundTint="@{viewModel.mode==AppConstantKt.WALKING? @color/white : @color/white }"
+                    android:elevation="5dp"
+                    android:foreground="@{viewModel.mode ==AppConstantKt.WALKING? @drawable/blackstroke_corner_radius : @drawable/stroke_corner_radius}"
+                    android:onClick="@{()->viewModel.selectWalk()}"
+                    android:paddingVertical="4dp"
+                    android:src="@{viewModel.mode == AppConstantKt.WALKING? @drawable/walkingselect : @drawable/walking }"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/editText"
+                    app:layout_constraintStart_toStartOf="@+id/idSearchView"
+                    app:layout_constraintTop_toBottomOf="@+id/idSearchView"
+                    app:shapeAppearanceOverlay="@style/homeIconCorner" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/shapeableImageView4"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/stroke_corner_radius"
+                    android:backgroundTint="@{viewModel.mode==AppConstantKt.DRIVING? @color/white : @color/white }"
+                    android:elevation="5dp"
+                    android:foreground="@{viewModel.mode ==AppConstantKt.DRIVING? @drawable/blackstroke_corner_radius : @drawable/stroke_corner_radius}"
+                    android:onClick="@{()->viewModel.selectDriving()}"
+                    android:padding="4dp"
+                    android:src="@{viewModel.mode == AppConstantKt.DRIVING? @drawable/motorselect : @drawable/motorcycle }"
+                    app:chipIconSize="32dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView3"
+                    app:layout_constraintCircleRadius="10dp"
+                    app:layout_constraintEnd_toEndOf="@+id/filter_bar"
+                    app:layout_constraintStart_toEndOf="@+id/editText"
+                    app:layout_constraintTop_toTopOf="@+id/shapeableImageView3"
+                    app:shapeAppearanceOverlay="@style/homeIconCorner" />
+
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/idSearchView"
-                    android:layout_width="300dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="10dp"
+                    android:layout_width="0dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/corner_radius"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
                     app:iconifiedByDefault="false"
+                    app:layout_constraintEnd_toStartOf="@+id/filter_bar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:queryHint="Search Here" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/filter_bar"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_marginStart="315dp"
-                    android:layout_marginTop="14dp"
-                    android:backgroundTint="@color/white"
+                    android:layout_marginEnd="16dp"
+                    android:backgroundTint="@color/transparent"
                     android:clickable="@{viewModel.isfilterShopClickable}"
                     android:foreground="@drawable/setting_lines"
+                    android:foregroundTint="@color/darkgrey"
                     android:onClick="@{()-> viewModel.navToSetting()}"
-                    android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}" />
+                    android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="@+id/idSearchView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/idSearchView" />
 
-            </androidx.cardview.widget.CardView>
+                <EditText
+                    android:id="@+id/editText"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/corner_radius"
+                    android:backgroundTint="@color/white"
+                    android:gravity="center"
+                    android:imeOptions="actionDone"
+                    android:inputType="number"
+                    android:text="@={viewModel.userSettingTime}"
+                    android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView3"
+                    app:layout_constraintEnd_toStartOf="@+id/shapeableImageView4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/shapeableImageView3"
+                    app:layout_constraintTop_toTopOf="@+id/shapeableImageView3" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/ride_fab"
-                reverse="@{true}"
-                trafficMode="@{viewModel.mode}"
-                android:layout_width="42dp"
-                android:layout_height="42dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:backgroundTint="@color/white"
-                android:foreground="@drawable/ride"
-                android:onClick="@{() -> viewModel.isRide()}"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/walk_fab" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/addShop_fab"
-                fabAnimationBig="@{true}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:backgroundTint="@color/white"
-                android:fontFamily="@font/roboto"
-                android:gravity="center_vertical"
-                android:onClick="@{()->viewModel.navToAddShop()}"
-                android:text="新增商家"
-                android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                app:icon="@drawable/store"
-                app:iconGravity="textStart"
-                app:iconPadding="3dp"
-                app:iconSize="27dp"
-                app:layout_constraintBottom_toBottomOf="@+id/walk_fab"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/walk_fab"
-                app:strokeWidth="1dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <!--   NavBottomSheet     -->
 
@@ -215,7 +230,7 @@
             android:layout_marginHorizontal="24dp"
             android:background="@drawable/bg_dialog_corner"
             android:backgroundTint="@color/darkgrey"
-            android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
+            android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType!=CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
             app:behavior_hideable="true"
             app:behavior_peekHeight="100dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
@@ -244,27 +259,31 @@
 
             <TextView
                 android:id="@+id/textView35"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
+                android:singleLine="true"
                 android:fontFamily="@font/roboto"
                 android:letterSpacing="0.05"
                 android:text="@{viewModel.trafficTimeLiveData}"
                 android:textColor="@color/white"
-                android:textSize="24sp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/appCompatImageButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="24dp"
+                android:autoSizeTextType="uniform"
                 android:text="@{viewModel.distanceLiveData}"
                 android:textColor="@color/grey2"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/appCompatImageButton"
                 app:layout_constraintStart_toStartOf="@+id/textView35"
                 app:layout_constraintTop_toBottomOf="@+id/textView35" />
 
@@ -292,7 +311,8 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_dialog_corner"
             android:elevation="15dp"
-            android:visibility="@{viewModel.status ==LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING || mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV? View.INVISIBLE : View.VISIBLE}"
+            android:onClick="@{()->viewModel.doNothing()}"
+            android:visibility="@{viewModel.status ==LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING || mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
             app:behavior_hideable="true"
             app:behavior_peekHeight="250dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
@@ -421,12 +441,16 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tel_btn"
                 style="@style/homedialog_icon"
+                android:layout_width="0dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
                 android:drawableTop="@drawable/tele"
                 android:text="撥打電話"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
+                app:layout_constraintBottom_toTopOf="@+id/viewpager_home"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toStartOf="@+id/nav_btn"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -436,11 +460,13 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/nav_btn"
                 style="@style/homedialog_icon"
+                android:layout_width="0dp"
                 android:drawableTop="@drawable/navigate"
                 android:text="開始導航"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tel_btn"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toStartOf="@+id/menu_btn"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/tel_btn"
@@ -449,6 +475,7 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/menu_btn"
                 style="@style/homedialog_icon"
+                android:layout_width="0dp"
                 android:layout_marginEnd="24dp"
                 android:drawableTop="@drawable/menu_icon"
                 android:onClick="@{()-> viewModel.navToMenu(shop)}"
@@ -456,6 +483,7 @@
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/nav_btn"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/nav_btn"
@@ -466,7 +494,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="24dp"
                 android:background="@{viewModel.isInserted? @drawable/heart : @drawable/emptyheart }"
                 android:clickable="true"
                 android:focusable="true"
@@ -678,6 +706,21 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/noConnect"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:paddingBottom="100dp"
+            android:scaleType="centerInside"
+            android:visibility="@{viewModel.status == LoadApiStatus.ERROR? View.VISIBLE : View.GONE}"
+            app:layout_anchor="@+id/homeLayout"
+            app:layout_anchorGravity="center"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/noconnect"
+            app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

@@ -271,8 +271,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val shop = FirebaseFirestore.getInstance().collection(SHOP)
 
-            val shopList = mutableListOf<Shop>()
-
             val centerGeo = GeoLocation(center.latitude, center.longitude)
             val bounds: List<GeoQueryBounds> =
                 GeoFireUtils.getGeoHashQueryBounds(centerGeo, distance)
@@ -311,8 +309,15 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         }
                         if (!isInternetConnected()) {
                             continuation.resume(Result.Fail(Util.getString(R.string.internet_not_connected)))
-                        }else{
+                        } else {
                             continuation.resume(Result.Success(matchingDocs.distinct()))
+                        }
+                    } else {
+                        task.exception?.let {
+                            Logger.w(
+                                "[${this::class.simpleName}] Error get documents. ${it.message}"
+                            )
+                            return@addOnCompleteListener
                         }
                     }
                 }
@@ -329,7 +334,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObjects(Product::class.java)
-                        continuation.resume(Result.Success(shopData))
+                        if (!isInternetConnected()) {
+                            continuation.resume(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                        } else {
+                            continuation.resume(Result.Success(shopData))
+                        }
                     } else {
                         task.exception?.let {
                             Logger.w(
@@ -337,7 +346,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                             )
                             return@addOnCompleteListener
                         }
-                        continuation.resume(Result.Fail("getProduct Failed"))
                     }
                 }
         }
@@ -611,7 +619,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                             )
                             return@addOnCompleteListener
                         }
-                        continuation.resume(Result.Fail("getComment Failed"))
+                        continuation.resume(Result.Fail("postShopInfo Failed"))
                     }
                 }
         }
@@ -621,25 +629,23 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val storageRef = FirebaseStorage.getInstance().reference
             val imageRef = storageRef.child("images/${image.lastPathSegment}")
-            Logger.d("上傳圖片中")
+
             imageRef
                 .putFile(image)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-
+                        mToast("上傳中...")
                         imageRef.downloadUrl.addOnSuccessListener {
                             continuation.resume(Result.Success(it.toString()))
                         }
-
                     } else {
                         task.exception?.let {
                             Logger.w(
                                 "Error updateFilterShop documents. ${it.message}"
                             )
+                            continuation.resume(Result.Fail("上傳圖片失敗！"))
                             return@addOnCompleteListener
                         }
-                        Logger.d("上傳圖片失敗！")
-                        continuation.resume(Result.Fail("getComment Failed"))
                     }
                 }
         }
@@ -660,8 +666,8 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                             Logger.w(
                                 "Error userInfo documents. ${it.message}"
                             )
-                            return@addOnCompleteListener
                         }
+                        Logger.d("postUserInfo = fail")
                         continuation.resume(Result.Fail("postUser Failed"))
                     }
                 }

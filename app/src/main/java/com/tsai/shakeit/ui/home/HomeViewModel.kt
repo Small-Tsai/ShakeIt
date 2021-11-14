@@ -1,7 +1,5 @@
 package com.tsai.shakeit.ui.home
 
-import android.view.View
-import android.view.animation.AnimationUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,14 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.mToast
-import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
 import kotlinx.coroutines.*
@@ -32,10 +28,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private val _isInserted = MutableLiveData<Boolean>()
     val isInserted: LiveData<Boolean>
         get() = _isInserted
-
-    private val _isWalkOrRide = MutableLiveData<Boolean?>().apply { value = null }
-    val isWalkOrRide: LiveData<Boolean?>
-        get() = _isWalkOrRide
 
     private val _shopLiveData = MutableLiveData<List<Shop>>()
     val shopLiveData: LiveData<List<Shop>>
@@ -61,7 +53,8 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val isfilterShopClickable: LiveData<Boolean>
         get() = _isfilterShopBtnClickable
 
-    private val _mode = MutableLiveData<String>().apply { value = WALKING }
+    private val _mode =
+        MutableLiveData<String>().apply { value = UserInfo.userCurrentSelectTraffic }
     val mode: LiveData<String>
         get() = _mode
 
@@ -87,10 +80,15 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val bottomStatus: LiveData<LoadApiStatus>
         get() = _bottomStatus
 
+    //record fragment type from home page
+    val currentFragmentType = MutableLiveData<CurrentFragmentType>()
+
+
     val distanceLiveData = MutableLiveData<String>().apply { value = "" }
     val trafficTimeLiveData = MutableLiveData<String>().apply { value = "" }
     val timeDisplay = MutableLiveData<Boolean>().apply { value = false }
-    val userSettingTime = MutableLiveData<String>().apply { value = "30" }
+    val userSettingTime =
+        MutableLiveData<String>().apply { value = UserInfo.userCurrentSettingTrafficTime }
     val selectedShop = MutableLiveData<Shop>()
     var distance: Double = 0.0
 
@@ -105,7 +103,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             if (type == "search") {
                 // do search animation
             } else {
-                _status.value = LoadApiStatus.LOADING
+              loading()
             }
 
             when (mode.value) {
@@ -124,11 +122,15 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     _status.value = LoadApiStatus.DONE
                 }
                 is Result.Fail -> {
-                    mToast("獲取店家資料異常請檢查是否開啟定位及網路", "long")
+                    mToast(result.error, "long")
                     _status.value = LoadApiStatus.ERROR
                 }
             }
         }
+    }
+
+    fun loading(){
+        _status.value = LoadApiStatus.LOADING
     }
 
     //when click nav Done
@@ -214,56 +216,22 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         timeDisplay.value = timeDisplay.value == false
     }
 
-    fun isWalk() {
-        _isWalkOrRide.value = _isWalkOrRide.value == null
+    fun selectWalk() {
+
+        UserInfo.userCurrentSelectTraffic = WALKING
+        _mode.value = UserInfo.userCurrentSelectTraffic
     }
 
-    fun isNull() {
-        _isWalkOrRide.value = null
+    fun selectDriving() {
+        UserInfo.userCurrentSelectTraffic = DRIVING
+        _mode.value = UserInfo.userCurrentSelectTraffic
+
     }
 
-    //set icon img for walk or ride
-    private var i = 0
-    fun isRide() {
-        if (isWalkOrRide.value == true && i > 0) {
-            i = 0
-            binding?.rideFab?.let { _mode.value = "walking" }
-        } else {
-            i += 1
-            binding?.walkFab?.let { _mode.value = "driving" }
-        }
-        _isWalkOrRide.value = false
-    }
+    fun doNothing() {}
 
-    fun onWalkOrRideBtnClicked(b: Boolean) {
-        setVisibility(b)
-        setAnimation(b)
-    }
-
-    //set walk or ride icon animation
-    private fun setAnimation(b: Boolean) {
-
-        val fromTop =
-            AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.from_top_anim)
-        val toBottom =
-            AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.to_bottom_anim)
-        if (b) {
-            binding?.rideFab?.startAnimation(toBottom)
-        } else {
-            binding?.rideFab?.startAnimation(fromTop)
-        }
-    }
-
-    //set walk or ride icon visibility
-    private fun setVisibility(b: Boolean) {
-        if (b) binding?.rideFab?.visibility(1)
-        else binding?.rideFab?.visibility(0)
-    }
-
-    val currentPositon = MutableLiveData<LatLng>()
-
+    private val currentPositon = MutableLiveData<LatLng>()
     val getDirectionDone = MutableLiveData<Boolean>()
-
     private var navOption = PolylineOptions()
 
     fun drawPolyLine() {
@@ -275,7 +243,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     fun getDirection(url: String, mode: String) {
-
         viewModelScope.launch {
 
             _bottomStatus.value = LoadApiStatus.LOADING
@@ -291,22 +258,19 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 repository.getDirection(url)
             }) {
                 is Result.Success -> {
-
                     async {
-
                         val directions = result.data
                         val route = directions.routes[0]
                         val leg = route.legs[0]
                         val distance = leg.distance
                         val duration = leg.duration
+                        val stepList: MutableList<LatLng> = ArrayList()
+                        val pattern: List<PatternItem>
 
                         distanceLiveData.value = distance.text
                         trafficTimeLiveData.value = duration.text
 
-                        val stepList: MutableList<LatLng> = ArrayList()
-                        val pattern: List<PatternItem>
-
-                        if (mode == "walking") {
+                        if (mode == WALKING) {
                             pattern = listOf(Dot(), Gap(10f))
                             navOption.jointType(JointType.ROUND)
                         } else {
@@ -340,6 +304,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 }
+
 
 private fun decode(points: String): List<LatLng> {
     val len = points.length

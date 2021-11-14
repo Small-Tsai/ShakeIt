@@ -33,41 +33,53 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:id="@+id/textView31"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/settingToolbar"
+            android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:background="@drawable/one_side_border"
-            android:backgroundTint="@color/grey2"
-            android:fontFamily="@font/roboto"
-            android:gravity="center"
-            android:text="顯示商家"
-            android:textColor="@color/black"
-            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/showAll_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="2dp"
-            android:backgroundTint="@color/white"
-            android:elevation="5dp"
-            android:fontFamily="@font/roboto"
-            android:letterSpacing="0.1"
-            android:onClick="@{()->viewModel.doCheck(@string/empty)}"
-            android:text="@{viewModel.isAllChecked? @string/show_nothing : @string/show_all}"
-            android:textColor="@color/darkgrey"
-            android:textSize="14sp"
-            app:cornerRadius="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView31"
-            app:layout_constraintStart_toStartOf="@+id/textView31"
-            app:layout_constraintTop_toTopOf="@+id/textView31"
-            app:rippleColor="@color/yellow" />
+            <TextView
+                android:id="@+id/textView31"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/one_side_border"
+                android:backgroundTint="@color/grey2"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:text="顯示商家"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/showAll_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/showAll_btn" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/showAll_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/white"
+                android:elevation="5dp"
+                android:fontFamily="@font/roboto"
+                android:letterSpacing="0.1"
+                android:onClick="@{()->viewModel.doCheck(@string/empty)}"
+                android:text="@{viewModel.isAllChecked? @string/show_nothing : @string/show_all}"
+                android:textColor="@color/darkgrey"
+
+                android:textSize="14sp"
+                app:cornerRadius="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/yellow" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/setting_shop_rev"
@@ -76,7 +88,7 @@
             android:background="@color/white"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView31"
+            app:layout_constraintTop_toBottomOf="@+id/settingToolbar"
             tools:layout_editor_absoluteX="-16dp" />
 
 

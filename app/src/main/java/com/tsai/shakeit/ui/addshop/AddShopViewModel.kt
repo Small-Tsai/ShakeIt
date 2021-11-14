@@ -11,16 +11,21 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import kotlin.coroutines.resume
 
 class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
@@ -41,6 +46,11 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     private val _navToHome = MutableLiveData<Boolean?>()
     val navToHome: LiveData<Boolean?>
         get() = _navToHome
+
+    // status: The internal MutableLiveData that stores the status of the most recent request
+    private val _status = MutableLiveData<LoadApiStatus>()
+    val status: LiveData<LoadApiStatus>
+        get() = _status
 
     init {
         _isDateOpen.value = false
@@ -63,36 +73,6 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     private val menuFireBaseImageUri: LiveData<String>
         get() = _menuFireBaseImageUri
 
-    private suspend fun postImgUriToFireBase() {
-        viewModelScope.async {
-            shopImageUri.value?.let {
-                when (val result = repository.postImage(it)) {
-                    is Result.Success -> {
-                        mToast("上傳封面成功", "long")
-                        _shopFireBaseImageUri.value = result.data!!
-                    }
-                    is Result.Fail -> {
-                        mToast("上傳封面失敗", "long")
-                    }
-                }
-            }
-        }
-        viewModelScope.async {
-            menuImageUri.value?.let {
-                when (val result = repository.postImage(it)) {
-                    is Result.Success -> {
-                        mToast("上傳菜單成功", "long")
-                        _menuFireBaseImageUri.value = result.data!!
-                    }
-                    is Result.Fail -> {
-                        mToast("上傳菜單失敗", "long")
-                    }
-                }
-            }
-        }.await()
-    }
-
-
     var timeList: HashMap<String, String> = hashMapOf()
     var timeOpen = MutableLiveData<String>()
     var timeClose = MutableLiveData<String>()
@@ -110,6 +90,49 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     var lat = 0.0
     var lon = 0.0
 
+    private suspend fun postImgUriToFireBase() {
+
+        if (!Util.isInternetConnected()) {
+            _status.value = LoadApiStatus.ERROR
+            mToast(Util.getString(R.string.internet_not_connected))
+        } else if (name.isEmpty() || branch.isEmpty() || address.isEmpty()) {
+            mToast("店家名、分店名、店家地址不可空白喔！")
+        } else {
+            viewModelScope.async {
+                _status.value = LoadApiStatus.LOADING
+                shopImageUri.value?.let {
+                    when (val result = withContext(Dispatchers.IO) {
+                        repository.postImage(it)
+                    }) {
+                        is Result.Success -> {
+                            _shopFireBaseImageUri.value = result.data!!
+                        }
+                        is Result.Fail -> {
+                            mToast(result.error, "long")
+                            _status.value = LoadApiStatus.ERROR
+                        }
+                    }
+                }
+            }
+            viewModelScope.async {
+
+                menuImageUri.value?.let {
+                    when (val result = withContext(Dispatchers.IO) {
+                        repository.postImage(it)
+                    }) {
+                        is Result.Success -> {
+                            _menuFireBaseImageUri.value = result.data!!
+                        }
+                        is Result.Fail -> {
+                            mToast(result.error, "long")
+                            _status.value = LoadApiStatus.ERROR
+                        }
+                    }
+                }
+            }.await()
+        }
+    }
+
     fun setTimeList(timeOpen: String, timeClose: String, position: Int) {
         when (position) {
             0 -> timeList["星期一"] = "$timeOpen-$timeClose"
@@ -125,6 +148,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
 
     fun postShopInfo() {
         viewModelScope.launch {
+
             postImgUriToFireBase()
 
             _shopFireBaseImageUri.value?.let {
@@ -146,9 +170,11 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                             mToast("發佈 ${shop.name}$branch 商店資訊成功！")
                             _navToHome.value = true
                             _navToHome.value = false
+                            _status.value = LoadApiStatus.DONE
                         }
                         is Result.Fail -> {
                             mToast("發佈 ${shop.name}$branch 商店資訊失敗！")
+                            _status.value = LoadApiStatus.ERROR
                         }
                     }
                 }

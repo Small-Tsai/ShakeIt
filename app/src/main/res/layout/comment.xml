@@ -28,7 +28,7 @@
             app:shapeAppearanceOverlay="@style/circle" />
 
         <TextView
-            android:id="@+id/commentUserName"
+            android:id="@+id/shopName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -44,8 +44,8 @@
             android:fontFamily="@font/roboto"
             timeToDisplayFormat="@{comment.date}"
             android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/commentUserName"
-            app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
+            app:layout_constraintStart_toStartOf="@+id/shopName"
+            app:layout_constraintTop_toBottomOf="@+id/shopName" />
 
         <RatingBar
             android:id="@+id/ratingBar"
@@ -57,7 +57,7 @@
             android:rating="@{comment.rating}"
             android:secondaryProgressTint="#FFEB3B"
             app:layout_constraintBottom_toBottomOf="@+id/cardView4"
-            app:layout_constraintStart_toStartOf="@+id/commentUserName"
+            app:layout_constraintStart_toStartOf="@+id/shopName"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <View

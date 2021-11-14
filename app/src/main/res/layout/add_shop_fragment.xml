@@ -7,7 +7,7 @@
 
         <import type="android.view.View" />
 
-        <import type="com.tsai.shakeit.network.LoadApiStatus"/>
+        <import type="com.tsai.shakeit.network.LoadApiStatus" />
 
         <variable
             name="viewModel"
@@ -29,6 +29,7 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="4dp"
             android:backgroundTint="@color/gery"
+            android:clickable="@{viewModel.status==LoadApiStatus.LOADING? false : true}"
             android:elevation="5dp"
             android:onClick="@{()->viewModel.postShopInfo()}"
             android:text="確認發佈"
@@ -307,19 +308,26 @@
 
         </ScrollView>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:translationZ="90dp"
+            android:background="@color/translucent_white80"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/addShopLottie"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/translucent_white80"
-            android:scaleType="centerInside"
-            android:visibility="@{viewModel.status==LoadApiStatus.LOADING? View.VISIBLE : View.GONE }"
+            style="@style/loadingStyle"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="true"
+            android:translationZ="90dp"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/loadingyellowcir"
+            app:lottie_speed="1.5"
             app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

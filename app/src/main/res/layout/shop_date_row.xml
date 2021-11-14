@@ -6,10 +6,6 @@
     <data>
 
         <variable
-            name="editText"
-            type="android.widget.EditText" />
-
-        <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.addshop.AddShopViewModel" />
 

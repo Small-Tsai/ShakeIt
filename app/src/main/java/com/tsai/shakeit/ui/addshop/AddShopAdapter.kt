@@ -9,23 +9,25 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.ShopDateRowBinding
 import com.tsai.shakeit.ui.addshop.AddShopAdapter.DateViewHolder
+import com.tsai.shakeit.util.Logger.d
 import java.util.*
+import java.util.logging.Logger
 
 class AddShopAdapter(private val viewModel: AddShopViewModel) :
-    ListAdapter<String, DateViewHolder>(DiffCallback) {
+    ListAdapter<HashMap<String, String>, DateViewHolder>(DiffCallback) {
 
 
-    private companion object DiffCallback : DiffUtil.ItemCallback<String>() {
+    private companion object DiffCallback : DiffUtil.ItemCallback<HashMap<String, String>>() {
         override fun areItemsTheSame(
-            oldItem: String,
-            newItem: String
+            oldItem: HashMap<String, String>,
+            newItem: HashMap<String, String>
         ): Boolean {
             return oldItem === newItem
         }
 
         override fun areContentsTheSame(
-            oldItem: String,
-            newItem: String
+            oldItem: HashMap<String, String>,
+            newItem: HashMap<String, String>
         ): Boolean {
             return oldItem == newItem
         }
@@ -37,9 +39,11 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
         private val viewModel: AddShopViewModel
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(date: String) {
+        fun bind(date: HashMap<String, String>) {
 
-            binding.textView10.text = date
+            binding.textView10.text = date.keys.first()
+            viewModel.timeOpen.value = date[date.keys.first()]?.substring(0,6)
+            viewModel.timeClose.value = date[date.keys.first()]?.substring(7)
             binding.viewModel = viewModel
             binding.viewHolder = this
 
@@ -84,5 +88,4 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
     override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-
 }

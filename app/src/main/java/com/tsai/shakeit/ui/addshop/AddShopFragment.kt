@@ -21,7 +21,6 @@ import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.AddShopFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.util.Logger
 
 private const val AUTOCOMPLETE_REQUEST_CODE = 2
@@ -45,13 +44,18 @@ class AddShopFragment : Fragment() {
 
         val adapter = AddShopAdapter(viewModel)
 
+        viewModel.timeHashList.observe(viewLifecycleOwner, {
+            Logger.d("$it")
+            adapter.submitList(it)
+        })
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.menuPhoto.setOnClickChoosePhoto(fromMenu)
         binding.shopPhoto.setOnClickChoosePhoto(fromShop)
         binding.dateRev.adapter = adapter
 
-        adapter.submitList(viewModel.dateList)
+//        adapter.submitList(viewModel.dateList)
 
         viewModel.popBack.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigateUp() }
@@ -105,8 +109,11 @@ class AddShopFragment : Fragment() {
                         data?.let {
                             val place = Autocomplete.getPlaceFromIntent(it)
                             binding.addressEdt.setText(place.address)
+                            binding.telEdt.setText("0${place.phoneNumber.toString().substring(4)}")
                             viewModel.lat = place.latLng.latitude
                             viewModel.lon = place.latLng.longitude
+                            viewModel.tel = "0${place.phoneNumber.toString().substring(4)}"
+                            viewModel.setTimeListByAutoComplete(place.openingHours.periods)
                         }
                     }
 
@@ -180,7 +187,13 @@ class AddShopFragment : Fragment() {
 
         // Set the fields to specify which types of place data to
         // return after the user has made a selection.
-        val fields = listOf(Place.Field.ADDRESS, Place.Field.LAT_LNG)
+        val fields =
+            listOf(
+                Place.Field.ADDRESS,
+                Place.Field.LAT_LNG,
+                Place.Field.PHONE_NUMBER,
+                Place.Field.OPENING_HOURS
+            )
 
         // Start the autocomplete intent.
         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)

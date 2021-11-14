@@ -1,18 +1,13 @@
 package com.tsai.shakeit.ui.addshop
 
 import android.net.Uri
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.libraries.places.api.model.DayOfWeek
+import com.google.android.libraries.places.api.model.Period
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -24,12 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import kotlin.coroutines.resume
 
 class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() {
-
-    val dateList = listOf<String>("星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日")
 
     private val _isDateOpen = MutableLiveData<Boolean>()
     val isDateOpen: LiveData<Boolean>
@@ -52,6 +43,13 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     val status: LiveData<LoadApiStatus>
         get() = _status
 
+    private val _timeHashList = MutableLiveData<MutableList<HashMap<String, String>>>().apply {
+        value = mutableListOf()
+    }
+    val timeHashList: LiveData<MutableList<HashMap<String, String>>>
+        get() = _timeHashList
+
+
     init {
         _isDateOpen.value = false
     }
@@ -73,7 +71,11 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     private val menuFireBaseImageUri: LiveData<String>
         get() = _menuFireBaseImageUri
 
-    var timeList: HashMap<String, String> = hashMapOf()
+    private val _timeList =
+        MutableLiveData<HashMap<String, String>>().apply { value = hashMapOf() }
+    val timeList: LiveData<HashMap<String, String>>
+        get() = _timeList
+
     var timeOpen = MutableLiveData<String>()
     var timeClose = MutableLiveData<String>()
     var adapterPostion = MutableLiveData<Int>()
@@ -133,17 +135,65 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         }
     }
 
-    fun setTimeList(timeOpen: String, timeClose: String, position: Int) {
-        when (position) {
-            0 -> timeList["星期一"] = "$timeOpen-$timeClose"
-            1 -> timeList["星期二"] = "$timeOpen-$timeClose"
-            2 -> timeList["星期三"] = "$timeOpen-$timeClose"
-            3 -> timeList["星期四"] = "$timeOpen-$timeClose"
-            4 -> timeList["星期五"] = "$timeOpen-$timeClose"
-            5 -> timeList["星期六"] = "$timeOpen-$timeClose"
-            6 -> timeList["星期日"] = "$timeOpen-$timeClose"
+    fun setTimeListByAutoComplete(periods: MutableList<Period>) {
+        periods.forEach {
+            val openHour = it.open.time.hours
+            val closeHour = it.close.time.hours
+            val openMinutes = it.open.time.minutes
+            val closeMinutes = it.close.time.minutes
+            val openText = String.format("%02d:%02d", openHour, openMinutes)
+            val closeText = String.format("%02d:%02d", closeHour, closeMinutes)
+            _timeList.value?.let { list ->
+                when (it.open.day) {
+                    DayOfWeek.MONDAY -> {
+                        list["星期一"] = "$openText - $closeText"
+                        _timeHashList.value?.add(hashMapOf("星期一" to "$openText - $closeText"))
+                    }
+                    DayOfWeek.TUESDAY -> {
+                        list["星期二"] = "$openText - $closeText"
+                        _timeHashList.value?.add(hashMapOf("星期二" to "$openText - $closeText"))
+                    }
+                    DayOfWeek.WEDNESDAY -> {
+                        list["星期三"] = "$openText - $closeText"
+                        _timeHashList.value?.add(hashMapOf("星期三" to "$openText - $closeText"))
+                    }
+                    DayOfWeek.THURSDAY -> {
+                        list["星期四"] = "$openText - $closeText"
+                        _timeHashList.value?.add(hashMapOf("星期四" to "$openText - $closeText"))
+                    }
+                    DayOfWeek.FRIDAY -> {
+                        list["星期五"] = "$openText - $closeText"
+
+                        _timeHashList.value?.add(hashMapOf("星期五" to "$openText - $closeText"))
+                    }
+                    DayOfWeek.SATURDAY -> {
+                        list["星期六"] = "$openText - $closeText"
+                        _timeHashList.value?.add(hashMapOf("星期六" to "$openText - $closeText"))
+                    }
+                    DayOfWeek.SUNDAY -> {
+                        list["星期日"] = "$openText - $closeText"
+                        _timeHashList.value?.add(hashMapOf("星期日" to "$openText - $closeText"))
+                    }
+                }
+                _timeHashList.value = _timeHashList.value
+            }
         }
-        Logger.d("$timeList")
+        Logger.d("timeList = ${_timeList.value}")
+    }
+
+    fun setTimeList(timeOpen: String, timeClose: String, position: Int) {
+        _timeList.value?.let {
+            when (position) {
+                6 -> it["星期一"] = "$timeOpen-$timeClose"
+                1 -> it["星期二"] = "$timeOpen-$timeClose"
+                2 -> it["星期三"] = "$timeOpen-$timeClose"
+                3 -> it["星期四"] = "$timeOpen-$timeClose"
+                4 -> it["星期五"] = "$timeOpen-$timeClose"
+                5 -> it["星期六"] = "$timeOpen-$timeClose"
+                0 -> it["星期日"] = "$timeOpen-$timeClose"
+            }
+        }
+        Logger.d("timeList = ${_timeList.value}")
     }
 
     fun postShopInfo() {
@@ -154,7 +204,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
             _shopFireBaseImageUri.value?.let {
                 _menuFireBaseImageUri.value?.let { menu ->
                     val shop = Shop(
-                        name = name,
+                        name = name.replace(" ",""),
                         branch = branch,
                         address = address,
                         tel = tel,
@@ -162,10 +212,12 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         lon = lon,
                         shop_Id = "",
                         shop_Img = it,
-                        time = timeList,
+                        time = _timeList.value,
                         menu_Img = menu,
                     )
-                    when (val result = repository.postShopInfo(shop)) {
+                    when (val result = withContext(Dispatchers.IO){
+                        repository.postShopInfo(shop)
+                    }) {
                         is Result.Success -> {
                             mToast("發佈 ${shop.name}$branch 商店資訊成功！")
                             _navToHome.value = true

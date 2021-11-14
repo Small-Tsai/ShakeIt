@@ -97,9 +97,7 @@
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animationView"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:scaleType="centerInside"
+                style="@style/loadingStyle"
                 android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -263,9 +261,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
-                android:singleLine="true"
                 android:fontFamily="@font/roboto"
                 android:letterSpacing="0.05"
+                android:singleLine="true"
                 android:text="@{viewModel.trafficTimeLiveData}"
                 android:textColor="@color/white"
                 android:textSize="20sp"
@@ -412,16 +410,17 @@
                 app:layout_constraintStart_toEndOf="@+id/ratingBar" />
 
             <TextView
-                android:id="@+id/commentUserName"
+                android:id="@+id/shopName"
                 branch="@{shop.branch}"
                 shopName="@{shop.name}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:singleLine="true"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/roboto"
                 android:textColor="@color/black"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -431,12 +430,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:singleLine="true"
                 android:fontFamily="@font/noto_sans"
                 android:text="@{shop.address}"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
-                app:layout_constraintStart_toStartOf="@+id/commentUserName"
-                app:layout_constraintTop_toBottomOf="@+id/commentUserName" />
+                app:layout_constraintStart_toStartOf="@+id/shopName"
+                app:layout_constraintTop_toBottomOf="@+id/shopName" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tel_btn"
@@ -500,7 +500,7 @@
                 android:focusable="true"
                 android:onClick="@{() -> viewModel.isInserted?  viewModel.deleteFavorite(shop.shop_Id) : viewModel.postMyFavorite(favorite)}"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
-                app:layout_constraintBottom_toBottomOf="@+id/commentUserName"
+                app:layout_constraintBottom_toBottomOf="@+id/shopName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -519,7 +519,6 @@
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_marginStart="4dp"
                 android:text="@{viewModel.trafficTimeLiveData}"
                 android:textSize="14sp"

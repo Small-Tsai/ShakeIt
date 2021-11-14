@@ -51,15 +51,18 @@ class FavoriteFragment : Fragment() {
         val adapter = FavoriteAdapter(viewModel)
 
 
-        viewModel.favoriteItem.observe(viewLifecycleOwner, Observer {
+        viewModel.favoriteItem.observe(viewLifecycleOwner, {
             it?.let { adapter.submitList(it) }
         })
 
-        viewModel.myFavorite.observe(viewLifecycleOwner, Observer {
+        viewModel.myFavorite.observe(viewLifecycleOwner, {
             viewModel.buildFavoriteList(it)
+            if (it.isNotEmpty()) {
+                viewModel.favoriteIsEmpty.value = false
+            }
         })
 
-        viewModel.navToHome.observe(viewLifecycleOwner, Observer {
+        viewModel.navToHome.observe(viewLifecycleOwner, {
             val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
             mainViewModel.currentFragmentType.value = CurrentFragmentType.FAVORITE
             mainViewModel.selectedShop.value = it

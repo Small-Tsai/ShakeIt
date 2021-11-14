@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.favorite.FavoriteViewModel" />
@@ -39,10 +41,37 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView7"
             tools:itemCount="3"
-            tools:listitem="@layout/favorite_shopimg_row" >
-
+            tools:listitem="@layout/favorite_shopimg_row">
 
         </androidx.recyclerview.widget.RecyclerView>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView2"
+            android:layout_width="0dp"
+            android:layout_height="400dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="38dp"
+            android:layout_marginEnd="32dp"
+            android:visibility="@{viewModel.favoriteIsEmpty? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/favorite_rev"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/empty"
+            app:lottie_url="REPLACE_JSON_URL" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/roboto"
+            android:text="尚未有任何收藏"
+            android:textSize="24sp"
+            android:visibility="@{viewModel.favoriteIsEmpty? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView2"
+            app:layout_constraintEnd_toEndOf="@+id/lottieAnimationView2"
+            app:layout_constraintStart_toStartOf="@+id/lottieAnimationView2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

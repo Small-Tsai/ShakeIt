@@ -50,6 +50,9 @@ class OrderFragment : Fragment() {
 
         viewModel.userOrderList.observe(viewLifecycleOwner, {
             adapter.submitList(it)
+            if (it.isNotEmpty()) {
+                viewModel.hasOrder.value = true
+            }
         })
 
         viewModel.navToOrderDetail.observe(viewLifecycleOwner, {
@@ -67,11 +70,11 @@ class OrderFragment : Fragment() {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToSendComment(it)) }
         })
 
-        viewModel.navToOrderHistory.observe(viewLifecycleOwner,{
+        viewModel.navToOrderHistory.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToOrderHistory()) }
         })
 
-        viewModel.orderProduct.observe(viewLifecycleOwner,{
+        viewModel.orderProduct.observe(viewLifecycleOwner, {
             Logger.d("$it")
         })
 

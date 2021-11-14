@@ -33,6 +33,8 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val shopId: LiveData<String?>
         get() = _shopId
 
+    val hasOrder = MutableLiveData<Boolean>().apply { value = false }
+
     init {
         getOrderData()
     }

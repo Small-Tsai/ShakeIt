@@ -153,7 +153,7 @@ class MenuViewModel(
         }
     }
 
-    init {
+    fun initProduct() {
         getProduct()
         getOrder()
         getOrderProduct()

@@ -46,7 +46,9 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun deleteOrder(orderId: String) {
         Logger.d("deleteOrder")
         viewModelScope.launch {
-            repository.deleteOrder(orderId)
+           withContext(Dispatchers.IO){
+               repository.deleteOrder(orderId)
+           }
         }
     }
 

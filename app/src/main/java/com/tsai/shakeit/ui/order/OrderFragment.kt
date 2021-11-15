@@ -50,9 +50,7 @@ class OrderFragment : Fragment() {
 
         viewModel.userOrderList.observe(viewLifecycleOwner, {
             adapter.submitList(it)
-            if (it.isNotEmpty()) {
-                viewModel.hasOrder.value = true
-            }
+            viewModel.hasOrder.value = it.isNotEmpty()
         })
 
         viewModel.navToOrderDetail.observe(viewLifecycleOwner, {

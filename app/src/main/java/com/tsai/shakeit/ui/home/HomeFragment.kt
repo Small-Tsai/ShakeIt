@@ -494,7 +494,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mMap.uiSettings.isMyLocationButtonEnabled = false
         mMap.uiSettings.isMapToolbarEnabled = false
         mMap.isMyLocationEnabled = true
-        mMap.uiSettings.isZoomControlsEnabled = true
     }
 
     //getDirection

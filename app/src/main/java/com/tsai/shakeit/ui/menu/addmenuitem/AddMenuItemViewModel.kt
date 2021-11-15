@@ -192,7 +192,7 @@ class AddMenuItemViewModel(
 
                 //set product data
                 val product = Product(
-                    name = name,
+                    name = name.replace(" ",""),
                     content = dercription,
                     capacity = _capacityList.value!!,
                     ice = _iceList.value!!,
@@ -200,9 +200,9 @@ class AddMenuItemViewModel(
                     others = _others.value!!,
                     shopId = shop!!.shop_Id,
                     shopAddress = shop.address,
-                    shop_Name = shop.name,
-                    branch = shop.branch,
-                    type = type,
+                    shop_Name = shop.name.replace(" ",""),
+                    branch = shop.branch.replace(" ",""),
+                    type = type.replace(" ",""),
                     product_Img = _productFireBaseImageUri.value.toString()
                 )
                 Logger.d("product = $product")

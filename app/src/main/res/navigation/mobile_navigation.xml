@@ -109,7 +109,8 @@
             app:argType="com.tsai.shakeit.data.Shop" />
         <action
             android:id="@+id/action_addMenuItemFragment_to_menuFragment"
-            app:popUpTo="@id/menuFragment" />
+            app:popUpTo="@id/menuFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <action

@@ -47,6 +47,8 @@ class MenuFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
+        viewModel.initProduct()
+
         val dialogBinding: DialogMenuOrderNameBinding? =
             DataBindingUtil.inflate(
                 LayoutInflater.from(requireActivity()),
@@ -128,14 +130,12 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.shareOrder.observe(viewLifecycleOwner, {
-            it?.let { startActivity(Intent.createChooser(it,"choose:")) }
+            it?.let { startActivity(Intent.createChooser(it, "choose:")) }
         })
 
         viewModel.order.observe(viewLifecycleOwner, {
             if (it.isEmpty()) viewModel.noOrder()
             else viewModel.hasOrder()
-            Logger.d("hasOrder = ${viewModel.hasOrder.value}")
-
         })
 
         dialogBinding?.viewModel = viewModel

@@ -77,16 +77,7 @@ class AddMenuItemFragment : Fragment() {
         })
 
         viewModel.navToMenu.observe(viewLifecycleOwner, {
-            it?.let {
-                viewModel.shop?.let { shop ->
-                    findNavController().navigate(
-                        AddMenuItemFragmentDirections.navToMenu(
-                            shop,
-                            UserInfo.userId
-                        )
-                    )
-                }
-            }
+            it?.let { findNavController().navigateUp() }
         })
 
         binding.productCapaRev.adapter = addCapacityAdapter

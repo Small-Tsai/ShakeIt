@@ -95,15 +95,11 @@ class MenuViewModel(
     )
 
     private fun shareOrderToLINE() {
-
         mOrder.order_Id = myId
-
         val lineUrl = "https://line.me/R/msg/text/https://com.smalltsai.shakeit/${mOrder.order_Id}"
         val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
-
         _shareOrder.value = sendIntent
         _shareOrder.value = null
-
     }
 
     fun startShare() {
@@ -117,13 +113,14 @@ class MenuViewModel(
 
     fun addNewDocToFireBase() {
         viewModelScope.launch {
+            _status.value = LoadApiStatus.LOADING
             mOrder.order_Name = title.value.toString()
             when (val result =
                 withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
                 is Result.Success -> {
                     shareOrderToLINE()
                     _showDialog.value = false
-
+                    _status.value = LoadApiStatus.DONE
                 }
             }
         }

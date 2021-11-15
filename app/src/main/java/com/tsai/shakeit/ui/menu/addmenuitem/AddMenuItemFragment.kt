@@ -16,6 +16,7 @@ import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.databinding.AddMenuItemFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 
 
 class AddMenuItemFragment : Fragment() {
@@ -37,6 +38,7 @@ class AddMenuItemFragment : Fragment() {
     ): View {
         binding = AddMenuItemFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         viewModel.initSelectItem()
 
         val addCapacityAdapter = AddMenuItemAdapter(viewModel)
@@ -70,8 +72,21 @@ class AddMenuItemFragment : Fragment() {
             viewModel.setListPrice(it)
         })
 
-        viewModel.popBack.observe(viewLifecycleOwner,{
+        viewModel.popBack.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigateUp() }
+        })
+
+        viewModel.navToMenu.observe(viewLifecycleOwner, {
+            it?.let {
+                viewModel.shop?.let { shop ->
+                    findNavController().navigate(
+                        AddMenuItemFragmentDirections.navToMenu(
+                            shop,
+                            UserInfo.userId
+                        )
+                    )
+                }
+            }
         })
 
         binding.productCapaRev.adapter = addCapacityAdapter

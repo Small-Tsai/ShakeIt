@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="com.tsai.shakeit.network.LoadApiStatus" />
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel" />
@@ -146,6 +148,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="32dp"
                     android:layout_marginBottom="8dp"
+                    android:clickable="@{viewModel.status==LoadApiStatus.LOADING ? false : true }"
                     android:onClick="@{() -> viewModel.showDialog()}"
                     android:text="加入訂單"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -190,6 +193,28 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/translucent_white80"
+            android:translationZ="90dp"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/drinksDetailLottie"
+            style="@style/loadingStyle"
+            android:translationZ="90dp"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loadingyellowcir"
+            app:lottie_speed="1.5"
+            app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

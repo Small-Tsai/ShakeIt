@@ -5,24 +5,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.databinding.AddMenuItemRowBinding
 import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.Util
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.HashMap
 
 class AddMenuItemViewModel(
     private val repository: ShakeItRepository,
-    private val shop: Shop?
+    val shop: Shop?
 ) : ViewModel() {
-
-    lateinit var binding: AddMenuItemRowBinding
 
     private val _addCapacityListLiveData = MutableLiveData<List<AddMenuItem>>()
     val addCapacityListLiveData: LiveData<List<AddMenuItem>>
@@ -47,6 +50,14 @@ class AddMenuItemViewModel(
     private val _popBack = MutableLiveData<Boolean?>()
     val popBack: LiveData<Boolean?>
         get() = _popBack
+
+    private val _status = MutableLiveData<LoadApiStatus?>()
+    val status: LiveData<LoadApiStatus?>
+        get() = _status
+
+    private val _navToMenu = MutableLiveData<Boolean?>()
+    val navToMenu: LiveData<Boolean?>
+        get() = _navToMenu
 
     val content = MutableLiveData<String>()
     val price = MutableLiveData<String>()
@@ -135,67 +146,109 @@ class AddMenuItemViewModel(
     //merge content and price
     fun mergeAllList() {
 
-        viewModelScope.launch {
+        if (!Util.isInternetConnected()) {
+            _status.value = LoadApiStatus.ERROR
+            mToast(Util.getString(R.string.internet_not_connected))
+        } else if (userCapaContentList.isNullOrEmpty() || userCapaPriceList.isNullOrEmpty()) {
+            mToast("請至少填寫一組容量與價格選項")
+        } else if (userIceContentList.isNullOrEmpty()) {
+            mToast("請至少填寫一組冰量選項")
+        } else if (userSugarContentList.isNullOrEmpty()) {
+            mToast("請至少填寫一組甜度選項")
+        } else if (name.isEmpty() || type.isEmpty()) {
+            mToast("商品名稱與類別不可留白喔")
+        } else {
+            viewModelScope.launch {
 
-            //post image first
-            postImgUriToFireBase()
+                //post image first
+                postImgUriToFireBase()
 
-            userCapaContentList.keys.forEach {
-                if (!userCapaPriceList[it].isNullOrEmpty()) {
-                    _capacityList.value?.set(
-                        userCapaContentList[it] ?: "",
-                        userCapaPriceList[it]?.toInt() ?: 0
+                userCapaContentList.keys.forEach {
+                    if (!userCapaPriceList[it].isNullOrEmpty()) {
+                        _capacityList.value?.set(
+                            userCapaContentList[it] ?: "",
+                            userCapaPriceList[it]?.toInt() ?: 0
+                        )
+                    }
+                }
+                userIceContentList.keys.forEach {
+                    _iceList.value?.set(
+                        userIceContentList[it] ?: "",
+                        0
                     )
                 }
-            }
-            userIceContentList.keys.forEach { _iceList.value?.set(userIceContentList[it] ?: "", 0) }
-            userSugarContentList.keys.forEach {
-                _sugarList.value?.set(
-                    userSugarContentList[it] ?: "", 0
-                )
-            }
-            userOtherContentList.keys.forEach {
-                if (!userOtherPriceList[it].isNullOrEmpty())
-                    _others.value?.set(
-                        userOtherContentList[it] ?: "",
-                        userOtherPriceList[it]?.toInt() ?: 0
+                userSugarContentList.keys.forEach {
+                    _sugarList.value?.set(
+                        userSugarContentList[it] ?: "", 0
                     )
+                }
+                userOtherContentList.keys.forEach {
+                    if (!userOtherPriceList[it].isNullOrEmpty())
+                        _others.value?.set(
+                            userOtherContentList[it] ?: "",
+                            userOtherPriceList[it]?.toInt() ?: 0
+                        )
+                }
+
+                //set product data
+                val product = Product(
+                    name = name,
+                    content = dercription,
+                    capacity = _capacityList.value!!,
+                    ice = _iceList.value!!,
+                    sugar = _sugarList.value!!,
+                    others = _others.value!!,
+                    shopId = shop!!.shop_Id,
+                    shopAddress = shop.address,
+                    shop_Name = shop.name,
+                    branch = shop.branch,
+                    type = type,
+                    product_Img = _productFireBaseImageUri.value.toString()
+                )
+                Logger.d("product = $product")
+
+                if (_productFireBaseImageUri.value != null) {
+                    //post product data to firebase
+                    when (val result = withContext(Dispatchers.IO) {
+                        repository.postProduct(product)
+                    }) {
+                        is Result.Success -> {
+                            mToast("上傳商品成功", "long")
+                            _status.value = LoadApiStatus.DONE
+                            _navToMenu.value = true
+                            _navToMenu.value = null
+                        }
+                        is Result.Fail -> {
+                            _status.value = LoadApiStatus.ERROR
+                        }
+                    }
+                }
             }
-
-            //set product data
-            val product = Product(
-                name = name,
-                content = dercription,
-                capacity = _capacityList.value!!,
-                ice = _iceList.value!!,
-                sugar = _sugarList.value!!,
-                others = _others.value!!,
-                shopId = shop!!.shop_Id,
-                shopAddress = shop.address,
-                shop_Name = shop.name,
-                branch = shop.branch,
-                type = type,
-                product_Img = _productFireBaseImageUri.value.toString()
-            )
-            Logger.d("product = $product")
-
-            //post product data to firebase
-            repository.postProduct(product)
         }
     }
 
     //use to post product img
     val productImageUri = MutableLiveData<Uri>()
+
     private suspend fun postImgUriToFireBase() {
+
         viewModelScope.async {
-            productImageUri.value?.let {
-                when (val result = repository.postImage(it)) {
-                    is Result.Success -> {
-                        _productFireBaseImageUri.value = result.data!!
-                        mToast("上傳商品成功", "long")
-                    }
-                    is Result.Fail -> {
-                        mToast("上傳封面失敗", "long")
+
+            if (productImageUri.value == null) {
+                mToast("請上傳一張商品圖片")
+            } else {
+                _status.value = LoadApiStatus.LOADING
+                productImageUri.value?.let {
+                    when (val result = withContext(Dispatchers.IO) {
+                        repository.postImage(it)
+                    }) {
+                        is Result.Success -> {
+                            _productFireBaseImageUri.value = result.data!!
+                        }
+                        is Result.Fail -> {
+                            mToast(result.error, "long")
+                            _status.value = LoadApiStatus.ERROR
+                        }
                     }
                 }
             }

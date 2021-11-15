@@ -47,6 +47,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private val viewModel by viewModels<HomeViewModel> {
         getVmFactory()
     }
+
     private lateinit var telUri: Uri
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mMap: GoogleMap
@@ -66,7 +67,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
     val toTopGone: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -238,6 +238,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { moveCameraToCurrentLocation() }
         })
 
+        //obseve userSetting traffic time
         viewModel.userSettingTime.observe(viewLifecycleOwner, {
             UserInfo.userCurrentSettingTrafficTime = it
         })
@@ -255,24 +256,25 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             if (this::polyLine.isInitialized) {
                 polyLine.remove()
             }
+            if (mainViewModel.currentFragmentType.value != CurrentFragmentType.MENU) {
+                it?.let {
+                    bottomSheetNavBehavior.isDraggable = false
+                    bottomSheetBehavior.halfExpandedRatio = 0.0001f
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                    mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+                    viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+                    bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-            it?.let {
-                bottomSheetNavBehavior.isDraggable = false
-                bottomSheetBehavior.halfExpandedRatio = 0.0001f
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
-                viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
-                bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    val currentPosition = LatLng(lat, lon)
 
-                val currentPosition = LatLng(lat, lon)
-
-                mMap.animateCamera(
-                    CameraUpdateFactory.newLatLngZoom(
-                        currentPosition,
-                        17F,
+                    mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            currentPosition,
+                            17F,
+                        )
                     )
-                )
-                polyLine = mMap.addPolyline(it)
+                    polyLine = mMap.addPolyline(it)
+                }
             }
         })
 
@@ -339,7 +341,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     //when nav from favorite move camera
     private fun moveCameraToSelectedShop() {
-        if (this::selectedShop.isInitialized) {
+        if (this::selectedShop.isInitialized &&
+            mainViewModel.currentFragmentType.value != CurrentFragmentType.MENU
+        ) {
             val position = LatLng(selectedShop.lat, selectedShop.lon)
             mMap.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
@@ -435,11 +439,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
     }
 
+    //set toolbar visibility
     private fun toolbarVisible() {
         binding.constraintLayout2.startAnimation(fromTop)
         binding.constraintLayout2.visibility(1)
     }
 
+    //set toolbar visibility
     private fun toolbarGone() {
         binding.constraintLayout2.startAnimation(toTopGone)
         binding.constraintLayout2.visibility(0)
@@ -520,6 +526,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     }
 
+    //map search animation
     private fun mapSearchAnimation(currentPosition: LatLng) {
 
         val circle: Circle = mMap.addCircle(

@@ -37,7 +37,6 @@ class MenuFragment : Fragment() {
             userId = MenuFragmentArgs.fromBundle(
                 requireArguments()
             ).userId
-
         )
     }
 

@@ -34,7 +34,6 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
             binding.position = adapterPosition
             binding.viewModel = viewModel
             binding.type = type
-            viewModel.binding = binding
             binding.textView32.text = adapterPosition.toString()
             viewModel.content.value = ""
             viewModel.price.value = ""

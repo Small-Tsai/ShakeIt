@@ -5,6 +5,10 @@
 
     <data>
 
+        <import type="com.tsai.shakeit.network.LoadApiStatus" />
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel" />
@@ -24,9 +28,10 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:backgroundTint="@color/gery"
+            android:clickable="@{viewModel.status==LoadApiStatus.LOADING? false:true }"
             android:elevation="5dp"
-            android:text="發佈商品"
             android:onClick="@{()->viewModel.mergeAllList()}"
+            android:text="發佈商品"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,8 +61,8 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    android:onClick="@{()->viewModel.popBack()}"
                     android:background="@drawable/dropdown"
+                    android:onClick="@{()->viewModel.popBack()}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -130,9 +135,9 @@
                         android:layout_height="50dp"
                         android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:text="@={viewModel.name}"
                         android:nextFocusForward="@id/productDes_edt"
                         android:singleLine="true"
+                        android:text="@={viewModel.name}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -167,9 +172,9 @@
                         android:layout_height="50dp"
                         android:imeOptions="actionNext"
                         android:inputType="text"
-                        android:text="@={viewModel.type}"
                         android:nextFocusForward="@id/productDes_edt"
                         android:singleLine="true"
+                        android:text="@={viewModel.type}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -203,9 +208,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:imeOptions="actionDone"
-                        android:text="@={viewModel.dercription}"
                         android:inputType="textMultiLine"
                         android:nextFocusForward="@id/address_edt"
+                        android:text="@={viewModel.dercription}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/black"
                         android:textSize="18sp">
@@ -268,6 +273,28 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/translucent_white80"
+            android:translationZ="90dp"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/addItemLoading"
+            style="@style/loadingStyle"
+            android:translationZ="90dp"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loadingyellowcir"
+            app:lottie_speed="1.5"
+            app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

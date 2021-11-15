@@ -1,18 +1,18 @@
 package com.tsai.shakeit.ui.menu.detail
 
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
-import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DrinksDetailViewModel(
     val data: Product,
@@ -50,6 +50,10 @@ class DrinksDetailViewModel(
     private val _showDialog = MutableLiveData<Boolean?>()
     val showDialog: LiveData<Boolean?>
         get() = _showDialog
+
+    private val _status = MutableLiveData<LoadApiStatus?>()
+    val status: LiveData<LoadApiStatus?>
+        get() = _status
 
     var title = MutableLiveData<String>().apply {
         value = "我的訂單"
@@ -132,16 +136,20 @@ class DrinksDetailViewModel(
             mOrderProduct?.let { mOrderProduct ->
                 otherUserId?.let { otherUserId ->
                     hasOrder?.let { hasOrder ->
-                        when (val result = repository.postOrderToFireBase(
-                            mOrder,
-                            mOrderProduct,
-                            otherUserId,
-                            hasOrder
-                        )) {
+                        _status.value = LoadApiStatus.LOADING
+                        when (val result = withContext(Dispatchers.IO) {
+                            repository.postOrderToFireBase(
+                                mOrder,
+                                mOrderProduct,
+                                otherUserId,
+                                hasOrder
+                            )
+                        }) {
                             is Result.Success -> {
                                 closeDialog()
                                 popBack()
                                 mToast("加入訂單成功")
+                                _status.value = LoadApiStatus.DONE
                             }
                         }
                     }

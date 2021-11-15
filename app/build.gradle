@@ -6,6 +6,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -46,6 +47,8 @@ android {
 }
 
 dependencies {
+
+
 
     //lottie
     def lottieVersion = "4.1.0"
@@ -114,6 +117,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.0.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.0'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.1'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.0'
+
     //geo
     implementation 'com.firebase:geofire-android-common:3.1.0'
 

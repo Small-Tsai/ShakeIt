@@ -49,6 +49,7 @@ class AddMenuItemFragment : Fragment() {
         binding.productPhotoBtn.setOnClickChoosePhoto(fromProduct)
 
         viewModel.addCapacityListLiveData.observe(viewLifecycleOwner, {
+            Logger.d("observe it")
             addCapacityAdapter.submitList(it.toMutableList())
         })
 
@@ -65,7 +66,7 @@ class AddMenuItemFragment : Fragment() {
         })
 
         viewModel.content.observe(viewLifecycleOwner, {
-            viewModel.setListContent(it)
+            it?.let { viewModel.setListContent(it) }
         })
 
         viewModel.price.observe(viewLifecycleOwner, {

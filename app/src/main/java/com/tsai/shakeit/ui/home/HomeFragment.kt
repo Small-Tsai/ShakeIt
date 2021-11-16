@@ -4,9 +4,12 @@ import android.Manifest.permission.*
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +18,8 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -25,6 +30,7 @@ import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.tabs.TabLayout
+import com.google.maps.android.ui.IconGenerator
 import com.tsai.shakeit.BuildConfig.DIRECTION_API_KEY
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
@@ -48,24 +54,27 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         getVmFactory()
     }
 
+    // Declare a variable for the cluster manager.
     private lateinit var telUri: Uri
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mMap: GoogleMap
     private lateinit var appPermission: AppPermissions
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
-    private var lat by Delegates.notNull<Double>()
-    private var lon by Delegates.notNull<Double>()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var bottomSheetNavBehavior: BottomSheetBehavior<View>
     private lateinit var mainViewModel: MainViewModel
     private lateinit var selectedShop: Shop
     private lateinit var polyLine: Polyline
-    var locationPermissionGranted = false
-    private val vAnimator = ValueAnimator()
+    private lateinit var mContext: Context
 
-    val fromTop: Animation =
+    private var lat by Delegates.notNull<Double>()
+    private var lon by Delegates.notNull<Double>()
+    private val vAnimator = ValueAnimator()
+    var locationPermissionGranted = false
+
+    private val fromTop: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
-    val toTopGone: Animation =
+    private val toTopGone: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -109,7 +118,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetNavBehavior = BottomSheetBehavior.from(binding.bottomSheetNav)
         bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        val mContext = binding.root.context
+        mContext = binding.root.context
 
         //get map
         val mapFragment =
@@ -117,7 +126,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         //check has favorite
-        viewModel.Favorite.observe(viewLifecycleOwner, {
+        viewModel.favorite.observe(viewLifecycleOwner, {
             viewModel.mShopId?.let { viewModel.checkHasFavorite() }
         })
 
@@ -223,10 +232,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 shopData.forEach { shop ->
                     if (!dbList.contains(shop.name)) {
                         val newPosition = LatLng(shop.lat, shop.lon)
-//                        val iconGen = IconGenerator(binding.root.context)
                         mMap.addMarker(
                             MarkerOptions().position(newPosition).snippet(shop.shop_Id)
-//                                .icon(BitmapDescriptorFactory.fromBitmap(iconGen.makeIcon("${shop.name}  ${shop.branch}")))
+                                .icon(
+                                    BitmapDescriptorFactory.fromBitmap(
+                                        getMarkerIconWithLabel(
+                                            shop.name.substring(
+                                                0,
+                                                1
+                                            ), shop.branch
+                                        )
+                                    )
+                                )
                         )
                     }
                 }
@@ -251,11 +268,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         // observe get google direction done
         viewModel.options.observe(viewLifecycleOwner, {
 
-            Logger.d("options observe")
-
             if (this::polyLine.isInitialized) {
                 polyLine.remove()
             }
+
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.MENU) {
                 it?.let {
                     bottomSheetNavBehavior.isDraggable = false
@@ -336,7 +352,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         appPermission.askPermission(this)
         moveCameraToSelectedShop()
         setBottomSheetBehavior()
-
     }
 
     //when nav from favorite move camera
@@ -454,13 +469,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     // get location
     @SuppressLint("MissingPermission")
     fun getDeviceLocation() {
-        viewModel.loading()
         try {
             if (locationPermissionGranted) {
                 setMapUI()
                 val locationRequest = LocationRequest.create()
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
                 mFusedLocationProviderClient.requestLocationUpdates(
                     locationRequest,
                     object : LocationCallback() {
@@ -480,7 +493,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                             }
                         }
                     },
-                    null
+                    Looper.getMainLooper()
                 )
             }
         } catch (e: SecurityException) {
@@ -545,6 +558,21 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             circle.radius = (animatedFraction * viewModel.distance).toDouble()
         }
         vAnimator.start()
+    }
+
+    private fun getMarkerIconWithLabel(label: String, branch: String): Bitmap {
+        val iconGenerator = IconGenerator(mContext)
+        val markerView: View =
+            LayoutInflater.from(mContext).inflate(R.layout.map_marker, null)
+        val imgMarker = markerView.findViewById<ImageView>(R.id.mapIcon)
+        val tvLabel = markerView.findViewById<TextView>(R.id.marker_shop)
+        val tvLabel2 = markerView.findViewById<TextView>(R.id.textView38)
+        imgMarker.setImageResource(R.drawable.location64)
+        tvLabel.text = label
+        tvLabel2.text = branch
+        iconGenerator.setContentView(markerView)
+        iconGenerator.setBackground(null)
+        return iconGenerator.makeIcon(label)
     }
 }
 

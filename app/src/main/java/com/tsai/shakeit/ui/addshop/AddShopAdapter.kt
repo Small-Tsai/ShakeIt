@@ -41,9 +41,17 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(date: HashMap<String, String>) {
 
-            binding.textView10.text = date.keys.first()
-            viewModel.timeOpen.value = date[date.keys.first()]?.substring(0,6)
-            viewModel.timeClose.value = date[date.keys.first()]?.substring(7)
+            val hashKey = date.keys.first()
+            val hashValue = date[hashKey]
+            binding.textView10.text = hashKey
+
+            hashValue?.let {
+                if (it.length > 6) {
+                    viewModel.timeOpen.value = date[hashKey]?.substring(0, 6)
+                    viewModel.timeClose.value = date[hashKey]?.substring(7)
+                }
+            }
+
             binding.viewModel = viewModel
             binding.viewHolder = this
 

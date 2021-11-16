@@ -23,8 +23,7 @@ class MenuViewModel(
     val selectedShop: Shop,
     private val repository: ShakeItRepository,
     val otherUserId: String?,
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _productList = MutableLiveData<List<Menu>>()
     val productList: LiveData<List<Menu>>
@@ -96,7 +95,8 @@ class MenuViewModel(
 
     private fun shareOrderToLINE() {
         mOrder.order_Id = myId
-        val lineUrl = "https://line.me/R/msg/text/https://com.smalltsai.shakeit/${mOrder.order_Id}"
+        val lineUrl = "https://line.me/R/msg/text/快來跟我一起喝${selectedShop.name}吧！" +
+                "https://com.smalltsai.shakeit/${mOrder.order_Id}"
         val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
         _shareOrder.value = sendIntent
         _shareOrder.value = null

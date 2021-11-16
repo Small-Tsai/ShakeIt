@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.databinding.AddMenuItemBtnBinding
 import com.tsai.shakeit.databinding.AddMenuItemRowBinding
 import com.tsai.shakeit.databinding.AddMenuItemTitleBinding
+import com.tsai.shakeit.util.Logger
 
 class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
     ListAdapter<AddMenuItem, RecyclerView.ViewHolder>(DiffCallback) {
@@ -35,8 +36,17 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
             binding.viewModel = viewModel
             binding.type = type
             binding.textView32.text = adapterPosition.toString()
-            viewModel.content.value = ""
-            viewModel.price.value = ""
+
+            if (content.keys.isNotEmpty()) {
+                Logger.d("content is Notempty")
+                viewModel.content.value = content.keys.first()
+                viewModel.price.value = content[content.keys.first()].toString()
+            } else {
+                Logger.d("content is empty")
+                viewModel.content.value = ""
+                viewModel.price.value = ""
+            }
+
             binding.executePendingBindings()
         }
     }
@@ -47,6 +57,7 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(type: Int) {
+            Logger.d("type =$type")
             binding.type = type
             binding.viewModel = viewModel
             binding.position = adapterPosition

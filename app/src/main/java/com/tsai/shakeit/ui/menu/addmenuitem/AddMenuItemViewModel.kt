@@ -27,20 +27,32 @@ class AddMenuItemViewModel(
     val shop: Shop?
 ) : ViewModel() {
 
-    private val _addCapacityListLiveData = MutableLiveData<List<AddMenuItem>>()
-    val addCapacityListLiveData: LiveData<List<AddMenuItem>>
+    private val _addCapacityListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
+        value =
+            mutableListOf()
+    }
+    val addCapacityListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addCapacityListLiveData
 
-    private val _addIceListLiveData = MutableLiveData<List<AddMenuItem>>()
-    val addIceListLiveData: LiveData<List<AddMenuItem>>
+    private val _addIceListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
+        value =
+            mutableListOf()
+    }
+    val addIceListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addIceListLiveData
 
-    private val _addSugarListLiveData = MutableLiveData<List<AddMenuItem>>()
-    val addSugarListLiveData: LiveData<List<AddMenuItem>>
+    private val _addSugarListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
+        value =
+            mutableListOf()
+    }
+    val addSugarListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addSugarListLiveData
 
-    private val _addOtherListLiveData = MutableLiveData<List<AddMenuItem>>()
-    val addOtherListLiveData: LiveData<List<AddMenuItem>>
+    private val _addOtherListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
+        value =
+            mutableListOf()
+    }
+    val addOtherListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addOtherListLiveData
 
     private val _productFireBaseImageUri = MutableLiveData<String>()
@@ -70,6 +82,11 @@ class AddMenuItemViewModel(
     private val _sugarList = MutableLiveData<HashMap<String, Int>>()
     private val _others = MutableLiveData<HashMap<String, Int>>()
 
+    private var addCapacityList = mutableListOf<AddMenuItem>()
+    private var addIceList = mutableListOf<AddMenuItem>()
+    private var addSugarList = mutableListOf<AddMenuItem>()
+    private var addOtherList = mutableListOf<AddMenuItem>()
+
     init {
         _capacityList.value = hashMapOf()
         _iceList.value = hashMapOf()
@@ -77,30 +94,41 @@ class AddMenuItemViewModel(
         _others.value = hashMapOf()
     }
 
-    private var addCapacityList = mutableListOf<AddMenuItem>()
-    private var addIceList = mutableListOf<AddMenuItem>()
-    private var addSugarList = mutableListOf<AddMenuItem>()
-    private var addOtherList = mutableListOf<AddMenuItem>()
-
     // type 0->capacity , 1->ice , 2->sugar , 3->other
     fun initSelectItem() {
-        addCapacityList.add(AddMenuItem.Title("容量選項"))
-        addCapacityList.add(AddMenuItem.Detail(hashMapOf(), 0))
-        addCapacityList.add(AddMenuItem.Button(0))
-        addIceList.add(AddMenuItem.Title("冰量選項"))
-        addIceList.add(AddMenuItem.Detail(hashMapOf(), 1))
-        addIceList.add(AddMenuItem.Button(1))
-        addSugarList.add(AddMenuItem.Title("甜度選項"))
-        addSugarList.add(AddMenuItem.Detail(hashMapOf(), 2))
-        addSugarList.add(AddMenuItem.Button(2))
-        addOtherList.add(AddMenuItem.Title("加料選項"))
-        addOtherList.add(AddMenuItem.Detail(hashMapOf(), 3))
-        addOtherList.add(AddMenuItem.Button(3))
+
+        addCapacityList = mutableListOf(
+            AddMenuItem.Title("容量選項"),
+            AddMenuItem.Detail(hashMapOf(), 0),
+            AddMenuItem.Button(0)
+        )
+
+        addIceList = mutableListOf(
+            AddMenuItem.Title("冰量選項"),
+            AddMenuItem.Detail(hashMapOf(), 1),
+            AddMenuItem.Button(1)
+        )
+
+        addSugarList =
+            mutableListOf(
+                AddMenuItem.Title("甜度選項"),
+                AddMenuItem.Detail(hashMapOf(), 2),
+                AddMenuItem.Button(2)
+            )
+
+        addOtherList =
+            mutableListOf(
+                AddMenuItem.Title("加料選項"),
+                AddMenuItem.Detail(hashMapOf(), 3),
+                AddMenuItem.Button(3)
+            )
+
         _addCapacityListLiveData.value = addCapacityList
         _addIceListLiveData.value = addIceList
         _addSugarListLiveData.value = addSugarList
         _addOtherListLiveData.value = addOtherList
     }
+
 
     var currentSelectedPostion = -1
     fun recordCurrentSelectedPosition(positon: Int) {
@@ -113,22 +141,48 @@ class AddMenuItemViewModel(
     }
 
     //record editText content
-    private val userCapaContentList = hashMapOf<Int, String>()
-    private val userIceContentList = hashMapOf<Int, String>()
-    private val userSugarContentList = hashMapOf<Int, String>()
-    private val userOtherContentList = hashMapOf<Int, String>()
+    private val userCapaContentList = hashMapOf<Int, String?>()
+    private val userIceContentList = hashMapOf<Int, String?>()
+    private val userSugarContentList = hashMapOf<Int, String?>()
+    private val userOtherContentList = hashMapOf<Int, String?>()
+
     fun setListContent(contnet: String) {
-        if (contnet.isNotEmpty()) {
-            when (currentSelectedType) {
-                0 -> userCapaContentList[currentSelectedPostion] = contnet
-                1 -> {
-                    userIceContentList[currentSelectedPostion] = contnet
-                    Logger.d("$userIceContentList")
+
+        when (currentSelectedType) {
+            0 -> {
+                if (contnet.isNotEmpty()) {
+                    userCapaContentList[currentSelectedPostion] = contnet
+                } else {
+                    userCapaContentList[currentSelectedPostion] = null
                 }
-                2 -> userSugarContentList[currentSelectedPostion] = contnet
-                3 -> userOtherContentList[currentSelectedPostion] = contnet
+                Logger.d("userCapaContentList = $userCapaContentList")
+            }
+            1 -> {
+                if (contnet.isNotEmpty()) {
+                    userIceContentList[currentSelectedPostion] = contnet
+                } else {
+                    userIceContentList[currentSelectedPostion] = null
+                }
+                Logger.d("userIceContentList = $userIceContentList")
+            }
+            2 -> {
+                if (contnet.isNotEmpty()) {
+                    userSugarContentList[currentSelectedPostion] = contnet
+                } else {
+                    userSugarContentList[currentSelectedPostion] = null
+                }
+                Logger.d("userSugarContentList = $userSugarContentList")
+            }
+            3 -> {
+                if (contnet.isNotEmpty()) {
+                    userOtherContentList[currentSelectedPostion] = contnet
+                } else {
+                    userOtherContentList[currentSelectedPostion] = null
+                }
+                Logger.d("userOtherContentList = $userOtherContentList")
             }
         }
+
     }
 
     //record editText price
@@ -141,6 +195,71 @@ class AddMenuItemViewModel(
                 3 -> userOtherPriceList[currentSelectedPostion] = price
             }
         }
+    }
+
+    fun implementUsuallySet() {
+
+        addCapacityList.clear()
+        addIceList.clear()
+        addSugarList.clear()
+        addOtherList.clear()
+        userCapaContentList.clear()
+        userIceContentList.clear()
+        userSugarContentList.clear()
+        userOtherContentList.clear()
+
+        addCapacityList = mutableListOf(
+            AddMenuItem.Title("容量選項"),
+            AddMenuItem.Detail(hashMapOf("大" to 0), 0),
+            AddMenuItem.Button(0)
+        )
+
+        addIceList =
+            mutableListOf(
+                AddMenuItem.Title("冰量選項"),
+                AddMenuItem.Detail(hashMapOf("正常冰" to 0), 1),
+                AddMenuItem.Detail(hashMapOf("少冰" to 0), 1),
+                AddMenuItem.Detail(hashMapOf("微冰" to 0), 1),
+                AddMenuItem.Detail(hashMapOf("去冰" to 0), 1),
+                AddMenuItem.Detail(hashMapOf("常溫" to 0), 1),
+                AddMenuItem.Button(1)
+            )
+
+        addSugarList =
+            mutableListOf(
+                AddMenuItem.Title("甜度選項"),
+                AddMenuItem.Detail(hashMapOf("全糖" to 0), 2),
+                AddMenuItem.Detail(hashMapOf("7分糖" to 0), 2),
+                AddMenuItem.Detail(hashMapOf("5分糖" to 0), 2),
+                AddMenuItem.Detail(hashMapOf("3分糖" to 0), 2),
+                AddMenuItem.Detail(hashMapOf("1分糖" to 0), 2),
+                AddMenuItem.Detail(hashMapOf("無糖" to 0), 2),
+                AddMenuItem.Button(2)
+            )
+
+        addOtherList =
+            mutableListOf(
+                AddMenuItem.Title("加料選項"),
+                AddMenuItem.Detail(hashMapOf(), 3),
+                AddMenuItem.Button(3)
+            )
+
+        userCapaContentList[1] = "大"
+        userIceContentList[1] = "正常冰"
+        userIceContentList[2] = "少冰"
+        userIceContentList[3] = "微冰"
+        userIceContentList[4] = "去冰"
+        userSugarContentList[1] = "全糖"
+        userSugarContentList[2] = "7分糖"
+        userSugarContentList[3] = "5分糖"
+        userSugarContentList[4] = "3分糖"
+        userSugarContentList[5] = "1分糖"
+        userSugarContentList[6] = "無糖"
+
+        _addCapacityListLiveData.value = addCapacityList
+        _addIceListLiveData.value = addIceList
+        _addSugarListLiveData.value = addSugarList
+        _addOtherListLiveData.value = addOtherList
     }
 
     //merge content and price
@@ -164,26 +283,33 @@ class AddMenuItemViewModel(
                 postImgUriToFireBase()
 
                 userCapaContentList.keys.forEach {
-                    if (!userCapaPriceList[it].isNullOrEmpty()) {
+                    if (!userCapaContentList[it].isNullOrEmpty()) {
                         _capacityList.value?.set(
                             userCapaContentList[it] ?: "",
                             userCapaPriceList[it]?.toInt() ?: 0
                         )
                     }
                 }
+
                 userIceContentList.keys.forEach {
-                    _iceList.value?.set(
-                        userIceContentList[it] ?: "",
-                        0
-                    )
+                    if (!userIceContentList[it].isNullOrEmpty()) {
+                        _iceList.value?.set(
+                            userIceContentList[it] ?: "",
+                            0
+                        )
+                    }
                 }
+
                 userSugarContentList.keys.forEach {
-                    _sugarList.value?.set(
-                        userSugarContentList[it] ?: "", 0
-                    )
+                    if (!userSugarContentList[it].isNullOrEmpty()) {
+                        _sugarList.value?.set(
+                            userSugarContentList[it] ?: "", 0
+                        )
+                    }
                 }
+
                 userOtherContentList.keys.forEach {
-                    if (!userOtherPriceList[it].isNullOrEmpty())
+                    if (!userOtherContentList[it].isNullOrEmpty())
                         _others.value?.set(
                             userOtherContentList[it] ?: "",
                             userOtherPriceList[it]?.toInt() ?: 0
@@ -192,7 +318,7 @@ class AddMenuItemViewModel(
 
                 //set product data
                 val product = Product(
-                    name = name.replace(" ",""),
+                    name = name.replace(" ", ""),
                     content = dercription,
                     capacity = _capacityList.value!!,
                     ice = _iceList.value!!,
@@ -200,9 +326,9 @@ class AddMenuItemViewModel(
                     others = _others.value!!,
                     shopId = shop!!.shop_Id,
                     shopAddress = shop.address,
-                    shop_Name = shop.name.replace(" ",""),
-                    branch = shop.branch.replace(" ",""),
-                    type = type.replace(" ",""),
+                    shop_Name = shop.name.replace(" ", ""),
+                    branch = shop.branch.replace(" ", ""),
+                    type = type,
                     product_Img = _productFireBaseImageUri.value.toString()
                 )
                 Logger.d("product = $product")
@@ -258,10 +384,22 @@ class AddMenuItemViewModel(
     // when onclick addBtn add new list for user to set product data
     fun onClick(type: Int, positon: Int) {
         when (type) {
-            0 -> addCapacityList.add(1, AddMenuItem.Detail(hashMapOf(), 0))
-            1 -> addIceList.add(1, AddMenuItem.Detail(hashMapOf(), 1))
-            2 -> addSugarList.add(1, AddMenuItem.Detail(hashMapOf(), 2))
-            3 -> addOtherList.add(1, AddMenuItem.Detail(hashMapOf(), 3))
+            0 -> {
+                currentSelectedPostion = addCapacityList.lastIndex
+                addCapacityList.add(addCapacityList.lastIndex, AddMenuItem.Detail(hashMapOf(), 0))
+            }
+            1 -> {
+                currentSelectedPostion = addIceList.lastIndex
+                addIceList.add(addIceList.lastIndex, AddMenuItem.Detail(hashMapOf(), 1))
+            }
+            2 -> {
+                currentSelectedPostion = addSugarList.lastIndex
+                addSugarList.add(addSugarList.lastIndex, AddMenuItem.Detail(hashMapOf(), 2))
+            }
+            3 -> {
+                currentSelectedPostion = addOtherList.lastIndex
+                addOtherList.add(addOtherList.lastIndex, AddMenuItem.Detail(hashMapOf(), 3))
+            }
         }
         _addCapacityListLiveData.value = addCapacityList
         _addIceListLiveData.value = addIceList

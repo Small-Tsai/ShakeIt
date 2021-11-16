@@ -22,6 +22,8 @@ import kotlinx.coroutines.withContext
 
 class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
+    val dateList = listOf<String>("星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日")
+
     private val _isDateOpen = MutableLiveData<Boolean>()
     val isDateOpen: LiveData<Boolean>
         get() = _isDateOpen
@@ -99,10 +101,12 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
             mToast(Util.getString(R.string.internet_not_connected))
         } else if (name.isEmpty() || branch.isEmpty() || address.isEmpty()) {
             mToast("店家名、分店名、店家地址不可空白喔！")
+        } else if (shopImageUri.value == null || menuImageUri.value == null) {
+            mToast("未上傳封面圖片或菜單圖片")
         } else {
             viewModelScope.async {
-                _status.value = LoadApiStatus.LOADING
                 shopImageUri.value?.let {
+                    _status.value = LoadApiStatus.LOADING
                     when (val result = withContext(Dispatchers.IO) {
                         repository.postImage(it)
                     }) {
@@ -136,6 +140,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     }
 
     fun setTimeListByAutoComplete(periods: MutableList<Period>) {
+        _timeHashList.value?.clear()
         periods.forEach {
             val openHour = it.open.time.hours
             val closeHour = it.close.time.hours
@@ -181,15 +186,29 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         Logger.d("timeList = ${_timeList.value}")
     }
 
+    fun setTimeListWhenAutoCompleteFail() {
+        _timeHashList.value?.addAll(
+            listOf(
+                hashMapOf("星期日" to ""),
+                hashMapOf("星期一" to ""),
+                hashMapOf("星期二" to ""),
+                hashMapOf("星期三" to ""),
+                hashMapOf("星期四" to ""),
+                hashMapOf("星期五" to ""),
+                hashMapOf("星期六" to "")
+            )
+        )
+    }
+
     fun setTimeList(timeOpen: String, timeClose: String, position: Int) {
         _timeList.value?.let {
             when (position) {
-                6 -> it["星期一"] = "$timeOpen-$timeClose"
-                1 -> it["星期二"] = "$timeOpen-$timeClose"
-                2 -> it["星期三"] = "$timeOpen-$timeClose"
-                3 -> it["星期四"] = "$timeOpen-$timeClose"
-                4 -> it["星期五"] = "$timeOpen-$timeClose"
-                5 -> it["星期六"] = "$timeOpen-$timeClose"
+                1 -> it["星期一"] = "$timeOpen-$timeClose"
+                2 -> it["星期二"] = "$timeOpen-$timeClose"
+                3 -> it["星期三"] = "$timeOpen-$timeClose"
+                4 -> it["星期四"] = "$timeOpen-$timeClose"
+                5 -> it["星期五"] = "$timeOpen-$timeClose"
+                6 -> it["星期六"] = "$timeOpen-$timeClose"
                 0 -> it["星期日"] = "$timeOpen-$timeClose"
             }
         }
@@ -204,7 +223,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
             _shopFireBaseImageUri.value?.let {
                 _menuFireBaseImageUri.value?.let { menu ->
                     val shop = Shop(
-                        name = name.replace(" ",""),
+                        name = name.replace(" ", ""),
                         branch = branch,
                         address = address,
                         tel = tel,
@@ -215,7 +234,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         time = _timeList.value,
                         menu_Img = menu,
                     )
-                    when (val result = withContext(Dispatchers.IO){
+                    when (val result = withContext(Dispatchers.IO) {
                         repository.postShopInfo(shop)
                     }) {
                         is Result.Success -> {

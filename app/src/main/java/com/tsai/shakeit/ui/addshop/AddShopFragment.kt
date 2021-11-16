@@ -45,8 +45,8 @@ class AddShopFragment : Fragment() {
         val adapter = AddShopAdapter(viewModel)
 
         viewModel.timeHashList.observe(viewLifecycleOwner, {
-            Logger.d("$it")
             adapter.submitList(it)
+            adapter.notifyDataSetChanged()
         })
 
         binding.viewModel = viewModel
@@ -109,11 +109,22 @@ class AddShopFragment : Fragment() {
                         data?.let {
                             val place = Autocomplete.getPlaceFromIntent(it)
                             binding.addressEdt.setText(place.address)
-                            binding.telEdt.setText("0${place.phoneNumber.toString().substring(4)}")
+
+                            place.phoneNumber?.let { phoneNumber->
+                                binding.telEdt.setText("0${phoneNumber.substring(4)}")
+                                viewModel.tel = "0${phoneNumber.substring(4)}"
+                            }
+
+
+                            if (place.openingHours == null){
+                                viewModel.setTimeListWhenAutoCompleteFail()
+                            }else{
+                                viewModel.setTimeListByAutoComplete(place.openingHours.periods)
+                            }
+
                             viewModel.lat = place.latLng.latitude
                             viewModel.lon = place.latLng.longitude
-                            viewModel.tel = "0${place.phoneNumber.toString().substring(4)}"
-                            viewModel.setTimeListByAutoComplete(place.openingHours.periods)
+
                         }
                     }
 

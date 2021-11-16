@@ -33,9 +33,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val shopLiveData: LiveData<List<Shop>>
         get() = _shopLiveData
 
-    private var _Favorite = MutableLiveData<List<Favorite>>()
-    val Favorite: LiveData<List<Favorite>>
-        get() = _Favorite
+    private var _favorite = MutableLiveData<List<Favorite>>()
+    val favorite: LiveData<List<Favorite>>
+        get() = _favorite
 
     private val _snippet = MutableLiveData<String?>()
     val snippet: LiveData<String?>
@@ -103,7 +103,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             if (type == "search") {
                 // do search animation
             } else {
-              loading()
+                loading()
             }
 
             when (mode.value) {
@@ -117,9 +117,11 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 repository.getAllShop(center, distance)
             }) {
                 is Result.Success -> {
-                    _shopLiveData.value = result.data!!
-                    _isfilterShopBtnClickable.value = true
-                    _status.value = LoadApiStatus.DONE
+                    result.data.let {
+                        _shopLiveData.value = it
+                        _isfilterShopBtnClickable.value = true
+                        _status.value = LoadApiStatus.DONE
+                    }
                 }
                 is Result.Fail -> {
                     mToast(result.error, "long")
@@ -129,7 +131,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    fun loading(){
+    fun loading() {
         _status.value = LoadApiStatus.LOADING
     }
 
@@ -148,7 +150,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     // use to check has favorite or not
     private fun getMyFavorite() {
         viewModelScope.launch {
-            _Favorite = withContext(viewModelScope.coroutineContext) {
+            _favorite = withContext(viewModelScope.coroutineContext) {
                 withContext(Dispatchers.Main) {
                     repository.getFavorite(UserInfo.userId)
                 }
@@ -158,7 +160,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     var mShopId: String? = null
     fun checkHasFavorite() {
-        _isInserted.value = _Favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
+        _isInserted.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
     //nav to setting page
@@ -182,8 +184,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //delete favorite
     fun deleteFavorite(shopId: String) {
         viewModelScope.launch {
-            when (val result = repository.deleteFavorite(shopId)) {
+            when (repository.deleteFavorite(shopId)) {
                 is Result.Success -> checkHasFavorite()
+                else -> Logger.d("delete favorite fail ")
             }
         }
     }
@@ -199,7 +202,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     mToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
                 }
                 is Result.Fail -> mToast("加入收藏失敗")
-                is Result.Error -> Logger.d("postFavorite Error")
+                is Result.Error -> Logger.e(result.exception.toString())
             }
         }
     }
@@ -317,7 +320,7 @@ private fun decode(points: String): List<LatLng> {
         var shift = 0
         var b: Int
         do {
-            b = points[index++].toInt() - 63 - 1
+            b = points[index++].code - 63 - 1
             result += b shl shift
             shift += 5
         } while (b >= 0x1f)
@@ -325,7 +328,7 @@ private fun decode(points: String): List<LatLng> {
         result = 1
         shift = 0
         do {
-            b = points[index++].toInt() - 63 - 1
+            b = points[index++].code - 63 - 1
             result += b shl shift
             shift += 5
         } while (b >= 0x1f)

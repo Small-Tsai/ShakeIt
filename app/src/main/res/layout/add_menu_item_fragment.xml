@@ -219,16 +219,26 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/materialButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:onClick="@{()->viewModel.implementUsuallySet()}"
+                    android:text="套用常見配置"
+                    android:textColor="@color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/productDes_input_layout" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/product_capa_rev"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/productDes_input_layout"
+                    app:layout_constraintTop_toBottomOf="@+id/materialButton"
                     tools:itemCount="2"
                     tools:listitem="@layout/add_menu_item_row" />
 

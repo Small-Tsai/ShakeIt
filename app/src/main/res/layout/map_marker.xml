@@ -14,9 +14,9 @@
 
         <ImageView
             android:id="@+id/mapIcon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/location64"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/locationbrown2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -24,19 +24,19 @@
 
         <TextView
             android:id="@+id/marker_shop"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_marginTop="4dp"
             android:background="@drawable/circleicon"
             android:orientation="horizontal"
-            android:paddingStart="3dp"
+            android:paddingStart="3.5dp"
             android:shadowColor="@color/white"
             android:shadowRadius="0.2"
             android:paddingTop="1dp"
             android:singleLine="true"
             android:text="可"
             android:textColor="@color/grey2"
-            android:textSize="10sp"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="@+id/mapIcon"
             app:layout_constraintStart_toStartOf="@+id/mapIcon"
             app:layout_constraintTop_toTopOf="@+id/mapIcon" />
@@ -53,7 +53,7 @@
             android:singleLine="true"
             android:text="台北市政店"
             android:textColor="@color/grey2"
-            android:textSize="10sp"
+            android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="@+id/mapIcon"
             app:layout_constraintStart_toStartOf="@+id/mapIcon"
             app:layout_constraintTop_toBottomOf="@+id/mapIcon" />

@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -36,13 +37,16 @@ import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Favorite
+import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.permission.AppPermissions
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
+import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
 import kotlin.properties.Delegates
@@ -66,7 +70,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var selectedShop: Shop
     private lateinit var polyLine: Polyline
     private lateinit var mContext: Context
+    private lateinit var result: List<Product>
+    private lateinit var allShopName: List<String>
 
+    private var queryShopName: String = ""
     private var lat by Delegates.notNull<Double>()
     private var lon by Delegates.notNull<Double>()
     private val vAnimator = ValueAnimator()
@@ -161,6 +168,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         toolbarVisible()
                     }
                 CurrentFragmentType.HOME_NAV -> toolbarGone()
+                else -> {
+                }
             }
         })
 
@@ -205,7 +214,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //addMarker to map
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
-
+            allShopName = shopData.map { it.name }.distinct()
             // observe when get currentPosition
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
 
@@ -220,33 +229,25 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     }
                 })
             }
+
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
 
                 //if nav From Order
                 if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                     viewModel.getCurrentPosition(LatLng(lat, lon))
                 }
-
+                setSearchBar(shopData, dbList)
                 mMap.clear()
                 vAnimator.pause()
-                shopData.forEach { shop ->
-                    if (!dbList.contains(shop.name)) {
-                        val newPosition = LatLng(shop.lat, shop.lon)
-                        mMap.addMarker(
-                            MarkerOptions().position(newPosition).snippet(shop.shop_Id)
-                                .icon(
-                                    BitmapDescriptorFactory.fromBitmap(
-                                        getMarkerIconWithLabel(
-                                            shop.name.substring(
-                                                0,
-                                                1
-                                            ), shop.branch
-                                        )
-                                    )
-                                )
-                        )
-                    }
+
+                if (queryShopName.isEmpty()) {
+                    addMapMarker(shopData, dbList)
+                } else {
+                    addMapMarker(
+                        shopData,
+                        allShopName.filter { it != queryShopName })
                 }
+
             })
         })
 
@@ -320,6 +321,30 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    private fun addMapMarker(
+        shopData: List<Shop>,
+        dbList: List<String>
+    ) {
+        shopData.forEach { shop ->
+            if (!dbList.contains(shop.name)) {
+                val newPosition = LatLng(shop.lat, shop.lon)
+                mMap.addMarker(
+                    MarkerOptions().position(newPosition).snippet(shop.shop_Id)
+                        .icon(
+                            BitmapDescriptorFactory.fromBitmap(
+                                getMarkerIconWithLabel(
+                                    shop.name.substring(
+                                        0,
+                                        1
+                                    ), shop.branch
+                                )
+                            )
+                        )
+                )
+            }
+        }
+    }
+
     //set backPressed behavior
     private fun setBackPressedBehavior() {
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -367,6 +392,89 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 )
             )
         }
+    }
+
+    //set searchBar
+    private fun setSearchBar(shopData: List<Shop>, dbList: List<String>) {
+
+        val listAdapter = SearchAdapter()
+        var listForFilter = listOf<Product>()
+
+        viewModel.allproduct.observe(viewLifecycleOwner, { list ->
+            listForFilter = list
+            listAdapter.submitList(list.sortedBy { it.type })
+        })
+
+        binding.searchView.setOnQueryTextFocusChangeListener { view, b ->
+            if (b) {
+                binding.searchList.visibility(1)
+            } else {
+                binding.searchList.visibility(0)
+            }
+        }
+
+        val clearButton: ImageView =
+            binding.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
+
+        clearButton.setOnClickListener {
+            if (binding.searchView.query.isEmpty()) {
+                binding.searchView.isIconified = true
+            } else {
+                mMap.clear()
+                addMapMarker(shopData, dbList)
+                queryShopName = ""
+                binding.searchView.setQuery("", false)
+            }
+        }
+
+        binding.searchList.visibility(0)
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+
+                queryShopName = result.first().shop_Name
+                binding.searchView.setQuery(result.first().name, false)
+
+                mToast("正在搜尋附近含有 - ${result.first().name} 的店家 ")
+
+                if (!allShopName.isNullOrEmpty()) {
+                    if (result.isNotEmpty() && queryShopName.isNotEmpty()) {
+                        val searchName = allShopName.filter { it != queryShopName }
+                        mMap.clear()
+                        addMapMarker(shopData, searchName)
+                    }
+                }
+
+                binding.searchView.clearFocus()
+                binding.searchList.visibility(0)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { text ->
+
+                    result = listForFilter.filter { it.type.contains(text) }
+                        .toMutableList().sortedBy { it.type }
+
+                    listAdapter.submitList(result)
+
+                    if (result.isEmpty()) {
+                        result = listForFilter.filter { it.shop_Name.contains(text) }
+                            .toMutableList().sortedBy { it.type }
+                        listAdapter.submitList(result)
+                    }
+
+                    if (result.isEmpty()) {
+                        result = listForFilter.filter { it.name.contains(text) }
+                            .toMutableList().sortedBy { it.type }
+                        listAdapter.submitList(result)
+                    }
+
+                }
+                return false
+            }
+        })
+        binding.searchList.adapter = listAdapter
     }
 
     // custom BottomSheetUI
@@ -505,7 +613,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private fun setMapUI() {
         mMap.uiSettings.isMyLocationButtonEnabled = false
-        mMap.uiSettings.isMapToolbarEnabled = false
+        mMap.uiSettings.isMapToolbarEnabled = true
         mMap.isMyLocationEnabled = true
     }
 

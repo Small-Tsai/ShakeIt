@@ -140,8 +140,8 @@
                     android:src="@{viewModel.mode == AppConstantKt.WALKING? @drawable/walkingselect : @drawable/walking }"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/editText"
-                    app:layout_constraintStart_toStartOf="@+id/idSearchView"
-                    app:layout_constraintTop_toBottomOf="@+id/idSearchView"
+                    app:layout_constraintStart_toStartOf="@+id/searchView"
+                    app:layout_constraintTop_toBottomOf="@+id/searchList"
                     app:shapeAppearanceOverlay="@style/homeIconCorner" />
 
 
@@ -166,7 +166,7 @@
                     app:shapeAppearanceOverlay="@style/homeIconCorner" />
 
                 <androidx.appcompat.widget.SearchView
-                    android:id="@+id/idSearchView"
+                    android:id="@+id/searchView"
                     android:layout_width="0dp"
                     android:layout_height="35dp"
                     android:layout_marginStart="16dp"
@@ -192,9 +192,9 @@
                     android:foregroundTint="@color/darkgrey"
                     android:onClick="@{()-> viewModel.navToSetting()}"
                     android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="@+id/idSearchView"
+                    app:layout_constraintBottom_toBottomOf="@+id/searchView"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/idSearchView" />
+                    app:layout_constraintTop_toTopOf="@+id/searchView" />
 
                 <EditText
                     android:id="@+id/editText"
@@ -212,6 +212,16 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/shapeableImageView3"
                     app:layout_constraintTop_toTopOf="@+id/shapeableImageView3" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/searchList"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    android:paddingHorizontal="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/searchView"
+                    app:layout_constraintStart_toStartOf="@+id/searchView"
+                    app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

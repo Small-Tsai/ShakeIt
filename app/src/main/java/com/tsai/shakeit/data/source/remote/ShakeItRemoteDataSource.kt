@@ -59,7 +59,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         suspendCoroutine { continuation ->
 
             val myId = order.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
-            var otherId = ""
+            val otherId: String
             val orders = FirebaseFirestore.getInstance().collection(ORDERS)
             var document = orders.document(myId)
 
@@ -289,8 +289,8 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val matchingDocs: MutableList<Shop> = mutableListOf()
-                        for (task in tasks) {
-                            val snap = task.result
+                        for (mTask in tasks) {
+                            val snap = mTask.result
                             for (doc in snap.documents) {
                                 val lat = doc.getDouble("lat")!!
                                 val lon = doc.getDouble("lon")!!
@@ -359,7 +359,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         suspendCoroutine { continuation ->
 
             val myId = shopId.substring(0, 10) + UserInfo.userId.substring(0, 10)
-            var otherId = ""
+            val otherId: String
             val order = FirebaseFirestore.getInstance().collection(ORDERS)
             var document = order.document(myId)
 
@@ -574,6 +574,22 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     }
                 }
         }
+
+    override suspend fun getAllProduct(): Result<List<Product>> = suspendCoroutine { continuation ->
+        val product = FirebaseFirestore.getInstance().collection(PRODUCT)
+        product
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val productData = task.result.toObjects(Product::class.java)
+                    continuation.resume(Result.Success(productData))
+                } else {
+                    task.exception?.let {
+                        continuation.resume(Result.Fail("${it.message}"))
+                    }
+                }
+            }
+    }
 
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =

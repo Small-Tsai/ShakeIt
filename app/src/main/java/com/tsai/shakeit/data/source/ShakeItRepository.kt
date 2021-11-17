@@ -54,7 +54,7 @@ interface ShakeItRepository {
 
     suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>>
 
-    suspend fun getProduct(shopId: String): Result<List<Product>>
+    suspend fun getProduct(shopName: String): Result<List<Product>>
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
 
@@ -66,7 +66,9 @@ interface ShakeItRepository {
 
     suspend fun getDirection(url: String): Result<Direction>
 
-    suspend fun joinToOrder(orderId:String): Result<Boolean>
+    suspend fun joinToOrder(orderId: String): Result<Boolean>
+
+    suspend fun getAllProduct(): Result<List<Product>>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 

@@ -8,6 +8,7 @@ import com.google.android.libraries.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Favorite
+import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -80,6 +81,11 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val bottomStatus: LiveData<LoadApiStatus>
         get() = _bottomStatus
 
+    //LiveData of product
+    private val _allProduct = MutableLiveData<List<Product>>()
+    val allproduct: LiveData<List<Product>>
+        get() = _allProduct
+
     //record fragment type from home page
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
 
@@ -93,7 +99,25 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     var distance: Double = 0.0
 
     init {
+        getProduct()
         getMyFavorite()
+    }
+
+    //getProduct
+    private fun getProduct() {
+
+        viewModelScope.launch {
+
+            when (val result = withContext(Dispatchers.IO) {
+                repository.getAllProduct()
+            }) {
+                is Result.Success -> {
+                    result.data.let {
+                        _allProduct.value = it
+                    }
+                }
+            }
+        }
     }
 
     //getShop

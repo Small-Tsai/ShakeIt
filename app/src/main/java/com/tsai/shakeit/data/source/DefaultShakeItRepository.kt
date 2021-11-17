@@ -110,8 +110,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getAllShop(center, distance)
     }
 
-    override suspend fun getProduct(shopId: String): Result<List<Product>> {
-        return shakeItDataSource.getProduct(shopId)
+    override suspend fun getProduct(shopName: String): Result<List<Product>> {
+        return shakeItDataSource.getProduct(shopName)
     }
 
     override suspend fun getComment(shopId: String): Result<List<Comment>> {
@@ -136,6 +136,10 @@ class DefaultShakeItRepository(
 
     override suspend fun joinToOrder(orderId: String): Result<Boolean> {
         return shakeItDataSource.joinToOrder(orderId)
+    }
+
+    override suspend fun getAllProduct(): Result<List<Product>> {
+       return shakeItDataSource.getAllProduct()
     }
 
 }

@@ -1,13 +1,11 @@
 package com.tsai.shakeit.ui.menu
 
 import android.content.Intent
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
@@ -82,7 +80,7 @@ class MenuViewModel(
     private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
     private var otherId = ""
 
-    val mOrder = Order(
+    private val mOrder = Order(
         shop_Name = selectedShop.name,
         branch = selectedShop.branch,
         date = Timestamp.now(),
@@ -122,6 +120,9 @@ class MenuViewModel(
                     _showDialog.value = false
                     _status.value = LoadApiStatus.DONE
                 }
+                is Result.Fail -> {
+                    Logger.e(result.error)
+                }
             }
         }
     }
@@ -146,8 +147,11 @@ class MenuViewModel(
         viewModelScope.launch {
             otherUserId?.let {
                 when (val result =
-                    repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id, it)) {
-//                is Result.Success -> Log.d(TAG,"update total price")
+                    withContext(Dispatchers.IO) {
+                        repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id, it)
+                    }) {
+                    is Result.Success -> Logger.d("update Price")
+                    is Result.Fail -> Logger.e(result.error)
                 }
             }
         }
@@ -186,10 +190,14 @@ class MenuViewModel(
 
             _status.value = LoadApiStatus.LOADING
 
-            when (val result = repository.getProduct(selectedShop.name)) {
+            when (val result = withContext(Dispatchers.IO) {
+                repository.getProduct(selectedShop.name)
+            }) {
                 is Result.Success -> {
-                    _branchProduct.value = result.data!!
-                    _status.value = LoadApiStatus.DONE
+                    result.data.let {
+                        _branchProduct.value = it
+                        _status.value = LoadApiStatus.DONE
+                    }
                 }
                 is Result.Fail -> {
                     mToast("商品獲取失敗請檢查是否開啟網路", "long")

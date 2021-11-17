@@ -11,9 +11,6 @@ import com.tsai.shakeit.databinding.CommentBinding
 
 class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(Diff) {
 
-    private lateinit var context: Context
-
-
     companion object Diff : DiffUtil.ItemCallback<Comment>() {
         override fun areItemsTheSame(oldItem: Comment, newItem: Comment): Boolean {
             return oldItem === newItem
@@ -37,7 +34,7 @@ class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(Di
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        context = parent.context
+
         return CommentViewHolder(
             CommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )

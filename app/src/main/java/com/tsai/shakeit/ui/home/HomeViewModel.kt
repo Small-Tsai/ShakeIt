@@ -71,6 +71,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val moveCamera: LiveData<Boolean?>
         get() = _moveCamera
 
+    private val _userSearchProduct = MutableLiveData<Product>()
+    val userSearchProduct: LiveData<Product>
+        get() = _userSearchProduct
+
     // status: The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<LoadApiStatus>()
     val status: LiveData<LoadApiStatus>
@@ -89,13 +93,23 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //record fragment type from home page
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
 
-
+    //LiveData of path distance
     val distanceLiveData = MutableLiveData<String>().apply { value = "" }
+
+    //LiveData of path duration
     val trafficTimeLiveData = MutableLiveData<String>().apply { value = "" }
+
+    //LiveData use for decide display shop opening time or not by DataBinding
     val timeDisplay = MutableLiveData<Boolean>().apply { value = false }
-    val userSettingTime =
-        MutableLiveData<String>().apply { value = UserInfo.userCurrentSettingTrafficTime }
+
+    //LiveData of userSetting traffic time
+    val userSettingTime = MutableLiveData<String>().apply {
+        value = UserInfo.userCurrentSettingTrafficTime
+    }
+
+    //LiveData for record user selected shop
     val selectedShop = MutableLiveData<Shop>()
+
     var distance: Double = 0.0
 
     init {
@@ -105,9 +119,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     //getProduct
     private fun getProduct() {
-
         viewModelScope.launch {
-
             when (val result = withContext(Dispatchers.IO) {
                 repository.getAllProduct()
             }) {
@@ -118,6 +130,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 }
             }
         }
+    }
+
+    fun getUserSearchProduct(product: Product) {
+        _userSearchProduct.value = product
     }
 
     //getShop

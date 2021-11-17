@@ -7,11 +7,16 @@
         <variable
             name="product"
             type="com.tsai.shakeit.data.Product" />
+
+        <variable
+            name="viewModel"
+            type="com.tsai.shakeit.ui.home.HomeViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:onClick="@{()->viewModel.getUserSearchProduct(product)}"
         android:padding="4dp">
 
         <TextView
@@ -22,10 +27,10 @@
             android:backgroundTint="@color/yellow"
             android:gravity="center"
             android:padding="4dp"
-            android:textSize="14sp"
             android:singleLine="true"
             android:text="@{product.type}"
             android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -72,6 +72,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mContext: Context
     private lateinit var result: List<Product>
     private lateinit var allShopName: List<String>
+    private lateinit var allShopData: List<Shop>
+    private lateinit var allProductList: List<Product>
 
     private var queryShopName: String = ""
     private var lat by Delegates.notNull<Double>()
@@ -214,7 +216,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //addMarker to map
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
+
             allShopName = shopData.map { it.name }.distinct()
+            allShopData = shopData
+
             // observe when get currentPosition
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
 
@@ -236,20 +241,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                     viewModel.getCurrentPosition(LatLng(lat, lon))
                 }
-                setSearchBar(shopData, dbList)
-                mMap.clear()
-                vAnimator.pause()
+
+                setSearchBar(dbList)
 
                 if (queryShopName.isEmpty()) {
-                    addMapMarker(shopData, dbList)
+                    addMapMarker(dbList)
                 } else {
-                    addMapMarker(
-                        shopData,
-                        allShopName.filter { it != queryShopName })
+                    addMapMarker(allShopName.filter { it != queryShopName })
                 }
 
             })
         })
+
 
         //observe move camera
         viewModel.moveCamera.observe(viewLifecycleOwner, {
@@ -305,6 +308,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
+        //observe User Search Product
+        viewModel.userSearchProduct.observe(viewLifecycleOwner, { product ->
+            queryShopName = product.shop_Name
+            result = allProductList.filter { it.shop_Name.contains(queryShopName) }
+                .toMutableList().sortedBy { it.type }
+            doSearch()
+        })
+
         //traffic time editText action_done
         binding.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == IME_ACTION_DONE) {
@@ -322,10 +333,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun addMapMarker(
-        shopData: List<Shop>,
         dbList: List<String>
     ) {
-        shopData.forEach { shop ->
+        mMap.clear()
+        vAnimator.pause()
+        allShopData.forEach { shop ->
             if (!dbList.contains(shop.name)) {
                 val newPosition = LatLng(shop.lat, shop.lon)
                 mMap.addMarker(
@@ -395,13 +407,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     //set searchBar
-    private fun setSearchBar(shopData: List<Shop>, dbList: List<String>) {
+    private fun setSearchBar(dbList: List<String>) {
 
-        val listAdapter = SearchAdapter()
-        var listForFilter = listOf<Product>()
+        val listAdapter = SearchAdapter(viewModel)
 
         viewModel.allproduct.observe(viewLifecycleOwner, { list ->
-            listForFilter = list
+            allProductList = list
             listAdapter.submitList(list.sortedBy { it.type })
         })
 
@@ -420,8 +431,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             if (binding.searchView.query.isEmpty()) {
                 binding.searchView.isIconified = true
             } else {
-                mMap.clear()
-                addMapMarker(shopData, dbList)
+
+                addMapMarker(dbList)
                 queryShopName = ""
                 binding.searchView.setQuery("", false)
             }
@@ -430,42 +441,28 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.searchList.visibility(0)
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
             override fun onQueryTextSubmit(query: String?): Boolean {
-
-                queryShopName = result.first().shop_Name
-                binding.searchView.setQuery(result.first().name, false)
-
-                mToast("正在搜尋附近含有 - ${result.first().name} 的店家 ")
-
-                if (!allShopName.isNullOrEmpty()) {
-                    if (result.isNotEmpty() && queryShopName.isNotEmpty()) {
-                        val searchName = allShopName.filter { it != queryShopName }
-                        mMap.clear()
-                        addMapMarker(shopData, searchName)
-                    }
-                }
-
-                binding.searchView.clearFocus()
-                binding.searchList.visibility(0)
+                doSearch()
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let { text ->
 
-                    result = listForFilter.filter { it.type.contains(text) }
+                    result = allProductList.filter { it.type.contains(text) }
                         .toMutableList().sortedBy { it.type }
 
                     listAdapter.submitList(result)
 
                     if (result.isEmpty()) {
-                        result = listForFilter.filter { it.shop_Name.contains(text) }
+                        result = allProductList.filter { it.shop_Name.contains(text) }
                             .toMutableList().sortedBy { it.type }
                         listAdapter.submitList(result)
                     }
 
                     if (result.isEmpty()) {
-                        result = listForFilter.filter { it.name.contains(text) }
+                        result = allProductList.filter { it.name.contains(text) }
                             .toMutableList().sortedBy { it.type }
                         listAdapter.submitList(result)
                     }
@@ -475,6 +472,22 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
         binding.searchList.adapter = listAdapter
+    }
+
+    private fun doSearch() {
+        queryShopName = result.first().shop_Name
+        binding.searchView.setQuery(result.first().name, false)
+        mToast("正在搜尋附近含有 - ${result.first().name} 的店家 ")
+
+        if (!allShopName.isNullOrEmpty()) {
+            if (result.isNotEmpty() && queryShopName.isNotEmpty()) {
+                val searchName = allShopName.filter { it != queryShopName }
+                addMapMarker(searchName)
+            }
+        }
+
+        binding.searchView.clearFocus()
+        binding.searchList.visibility(0)
     }
 
     // custom BottomSheetUI

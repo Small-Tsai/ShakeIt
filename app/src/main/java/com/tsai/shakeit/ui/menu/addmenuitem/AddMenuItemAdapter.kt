@@ -92,7 +92,6 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
                 )
             }
 
-
             ITEM_VIEW_TYPE_CONTENT -> AddItemViewHolder(
                 AddMenuItemRowBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false

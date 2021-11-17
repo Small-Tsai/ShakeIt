@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.tsai.shakeit.R
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
@@ -133,23 +134,28 @@ class DrinksDetailViewModel(
                 isSugarSelected.value = true
             }
 
-            mOrderProduct?.let { mOrderProduct ->
-                otherUserId?.let { otherUserId ->
-                    hasOrder?.let { hasOrder ->
-                        _status.value = LoadApiStatus.LOADING
-                        when (val result = withContext(Dispatchers.IO) {
-                            repository.postOrderToFireBase(
-                                mOrder,
-                                mOrderProduct,
-                                otherUserId,
-                                hasOrder
-                            )
-                        }) {
-                            is Result.Success -> {
-                                closeDialog()
-                                popBack()
-                                mToast("加入訂單成功")
-                                _status.value = LoadApiStatus.DONE
+            if (!Util.isInternetConnected()) {
+                _status.value = LoadApiStatus.DONE
+                mToast(Util.getString(R.string.internet_not_connected))
+            } else {
+                mOrderProduct?.let { mOrderProduct ->
+                    otherUserId?.let { otherUserId ->
+                        hasOrder?.let { hasOrder ->
+                            _status.value = LoadApiStatus.LOADING
+                            when (val result = withContext(Dispatchers.IO) {
+                                repository.postOrderToFireBase(
+                                    mOrder,
+                                    mOrderProduct,
+                                    otherUserId,
+                                    hasOrder
+                                )
+                            }) {
+                                is Result.Success -> {
+                                    closeDialog()
+                                    popBack()
+                                    mToast("加入訂單成功")
+                                    _status.value = LoadApiStatus.DONE
+                                }
                             }
                         }
                     }

@@ -26,7 +26,6 @@ import java.util.*
 
 class CommentDialog : AppCompatDialogFragment() {
 
-
     private val viewModel by viewModels<CommentDialogViewModel> {
         getVmFactory(
             shopId = CommentDialogArgs.fromBundle(requireArguments()).shopId
@@ -58,7 +57,6 @@ class CommentDialog : AppCompatDialogFragment() {
         })
 
     setRatingBar()
-
     return binding.root
 }
 
@@ -94,6 +92,4 @@ private fun setRatingBar() {
         }
     }
 }
-
-
 }

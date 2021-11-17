@@ -9,6 +9,7 @@ import com.google.firebase.Timestamp
 import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.util.Util
 import com.tsai.shakeit.util.Util.getString
 import java.util.*
 

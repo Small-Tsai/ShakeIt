@@ -25,6 +25,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
@@ -49,6 +50,8 @@ import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
 
 
@@ -214,7 +217,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //addMarker to map
+        //Observe ShopData
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
 
             allShopName = shopData.map { it.name }.distinct()
@@ -276,7 +279,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 polyLine.remove()
             }
 
-            if (mainViewModel.currentFragmentType.value != CurrentFragmentType.MENU) {
+            if (mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG ||
+                mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
+            ) {
                 it?.let {
                     bottomSheetNavBehavior.isDraggable = false
                     bottomSheetBehavior.halfExpandedRatio = 0.0001f
@@ -336,7 +341,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         dbList: List<String>
     ) {
         mMap.clear()
-        vAnimator.pause()
         allShopData.forEach { shop ->
             if (!dbList.contains(shop.name)) {
                 val newPosition = LatLng(shop.lat, shop.lon)
@@ -355,6 +359,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 )
             }
         }
+        vAnimator.pause()
     }
 
     //set backPressed behavior
@@ -394,7 +399,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     //when nav from favorite move camera
     private fun moveCameraToSelectedShop() {
         if (this::selectedShop.isInitialized &&
-            mainViewModel.currentFragmentType.value != CurrentFragmentType.MENU
+            mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE
         ) {
             val position = LatLng(selectedShop.lat, selectedShop.lon)
             mMap.moveCamera(
@@ -431,14 +436,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             if (binding.searchView.query.isEmpty()) {
                 binding.searchView.isIconified = true
             } else {
-
                 addMapMarker(dbList)
                 queryShopName = ""
                 binding.searchView.setQuery("", false)
             }
         }
 
-        binding.searchList.visibility(0)
+
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
@@ -475,19 +479,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun doSearch() {
-        queryShopName = result.first().shop_Name
-        binding.searchView.setQuery(result.first().name, false)
-        mToast("正在搜尋附近含有 - ${result.first().name} 的店家 ")
+        if (result.isNotEmpty()) {
+            mapSearchAnimation(LatLng(lat, lon))
+            queryShopName = result.first().shop_Name
+            binding.searchView.setQuery(result.first().name, false)
+            mToast("正在搜尋附近含有 - ${result.first().name} 的店家 ")
 
-        if (!allShopName.isNullOrEmpty()) {
-            if (result.isNotEmpty() && queryShopName.isNotEmpty()) {
+            if (!allShopName.isNullOrEmpty()) {
                 val searchName = allShopName.filter { it != queryShopName }
                 addMapMarker(searchName)
             }
-        }
 
-        binding.searchView.clearFocus()
-        binding.searchList.visibility(0)
+            binding.searchView.clearFocus()
+            binding.searchList.visibility(0)
+        } else {
+            mToast("未搜尋到${binding.searchView.query}")
+            binding.searchView.clearFocus()
+            binding.searchList.visibility(0)
+        }
     }
 
     // custom BottomSheetUI
@@ -626,7 +635,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private fun setMapUI() {
         mMap.uiSettings.isMyLocationButtonEnabled = false
-        mMap.uiSettings.isMapToolbarEnabled = true
         mMap.isMyLocationEnabled = true
     }
 
@@ -642,21 +650,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     "&language=zh-TW"
 
             viewModel.getDirection(url, mode)
-
         }
     }
 
     //move camera
     private fun moveCameraToCurrentLocation() {
         val currentPosition = LatLng(lat, lon)
-
         mMap.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
                 currentPosition,
                 18F
             )
         )
-
     }
 
     //map search animation
@@ -676,15 +681,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         vAnimator.interpolator = AccelerateDecelerateInterpolator()
         vAnimator.addUpdateListener { valueAnimator ->
             val animatedFraction = valueAnimator.animatedFraction
-            circle.radius = (animatedFraction * viewModel.distance).toDouble()
+            circle.radius = (animatedFraction * viewModel.distance)
         }
         vAnimator.start()
     }
 
     private fun getMarkerIconWithLabel(label: String, branch: String): Bitmap {
         val iconGenerator = IconGenerator(mContext)
-        val markerView: View =
-            LayoutInflater.from(mContext).inflate(R.layout.map_marker, null)
+        val markerView: View = LayoutInflater.from(mContext).inflate(R.layout.map_marker, null)
         val imgMarker = markerView.findViewById<ImageView>(R.id.mapIcon)
         val tvLabel = markerView.findViewById<TextView>(R.id.marker_shop)
         val tvLabel2 = markerView.findViewById<TextView>(R.id.textView38)

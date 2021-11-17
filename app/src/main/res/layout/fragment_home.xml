@@ -179,7 +179,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/filter_bar"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:queryHint="Comming Soon" />
+                    app:queryHint="輸入店家、飲品類別或名稱" />
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/filter_bar"
@@ -217,6 +217,7 @@
                     android:id="@+id/searchList"
                     android:layout_width="match_parent"
                     android:layout_height="350dp"
+                    android:visibility="gone"
                     android:paddingHorizontal="16dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintEnd_toEndOf="@+id/searchView"

@@ -178,7 +178,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             val order = FirebaseFirestore.getInstance().collection(ORDERS)
             val document = order.document(orderId)
 
-
             document
                 .collection(ORDER_PRODUCT)
                 .get()
@@ -436,28 +435,30 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         order.order_Id = document.id
         document.set(order)
 
-        val last = orderProduct.last()
-        orderProduct.forEach {
-            val orderProductDocument = document.collection(ORDER_PRODUCT).document()
-            it.orderProduct_Id = orderProductDocument.id
-            orderProductDocument
-                .set(it)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        if (it == last) {
-                            continuation.resume(Result.Success(true))
+        if (!orderProduct.isNullOrEmpty()){
+            val last = orderProduct.last()
+            orderProduct.forEach {
+                val orderProductDocument = document.collection(ORDER_PRODUCT).document()
+                it.orderProduct_Id = orderProductDocument.id
+                orderProductDocument
+                    .set(it)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            if (it == last) {
+                                continuation.resume(Result.Success(true))
+                            }
+                        } else {
+                            task.exception?.let {
+                                Logger.w(
+                                    "[${this::class.simpleName}] Error post documents. ${it.message}"
+                                )
+                                continuation.resume(Result.Error(it))
+                                return@addOnCompleteListener
+                            }
+                            continuation.resume(Result.Fail("post orderProduct Failed"))
                         }
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error post documents. ${it.message}"
-                            )
-                            continuation.resume(Result.Error(it))
-                            return@addOnCompleteListener
-                        }
-                        continuation.resume(Result.Fail("post orderProduct Failed"))
                     }
-                }
+            }
         }
     }
 

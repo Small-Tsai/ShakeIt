@@ -6,12 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.tsai.shakeit.R
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
+import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,6 +100,7 @@ class MenuViewModel(
         val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
         _shareOrder.value = sendIntent
         _shareOrder.value = null
+        _status.value = LoadApiStatus.DONE
     }
 
     fun startShare() {
@@ -105,26 +108,32 @@ class MenuViewModel(
             _showDialog.value = true
             _showDialog.value = null
         } else {
+            _status.value = LoadApiStatus.LOADING
             shareOrderToLINE()
         }
     }
 
     fun addNewDocToFireBase() {
-        viewModelScope.launch {
-            _status.value = LoadApiStatus.LOADING
-            mOrder.order_Name = title.value.toString()
-            when (val result =
-                withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
-                is Result.Success -> {
-                    shareOrderToLINE()
-                    _showDialog.value = false
-                    _status.value = LoadApiStatus.DONE
-                }
-                is Result.Fail -> {
-                    Logger.e(result.error)
+        if (!Util.isInternetConnected()) {
+            _status.value = LoadApiStatus.ERROR
+            mToast(Util.getString(R.string.internet_not_connected))
+        } else {
+            viewModelScope.launch {
+                _status.value = LoadApiStatus.LOADING
+                mOrder.order_Name = title.value.toString()
+                when (val result =
+                    withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
+                    is Result.Success -> {
+                        shareOrderToLINE()
+                        _showDialog.value = false
+                    }
+                    is Result.Fail -> {
+                        Logger.e(result.error)
+                    }
                 }
             }
         }
+
     }
 
     fun hasOrderProduct() {

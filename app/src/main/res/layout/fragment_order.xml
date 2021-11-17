@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.tsai.shakeit.network.LoadApiStatus"/>
 
         <variable
             name="viewModel"
@@ -78,6 +79,7 @@
             app:lottie_url="REPLACE_JSON_URL" />
 
         <TextView
+            android:id="@+id/textView39"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -88,6 +90,29 @@
             app:layout_constraintBottom_toBottomOf="@+id/orderLottie"
             app:layout_constraintEnd_toEndOf="@+id/orderLottie"
             app:layout_constraintStart_toStartOf="@+id/orderLottie" />
+
+        <View
+            android:id="@+id/orderView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/translucent_white80"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING ? View.VISIBLE : View.GONE }" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/orderLottie2"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:background="@color/transparent"
+            android:scaleType="centerInside"
+            android:visibility="@{viewModel.status==LoadApiStatus.LOADING? View.VISIBLE : View.GONE }"
+            app:layout_constraintBottom_toBottomOf="@+id/order_rev"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loadingyellowcir"
+            app:lottie_url="REPLACE_JSON_URL" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

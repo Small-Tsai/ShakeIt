@@ -10,6 +10,7 @@ import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.LoadApiStatus
+import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -104,7 +105,8 @@ class DrinksDetailViewModel(
                                 user = User(
                                     user_Id = UserInfo.userId,
                                     user_Image = UserInfo.userImage,
-                                    user_Name = UserInfo.userName
+                                    user_Name = UserInfo.userName,
+                                    user_Token = MyFirebaseService.token.toString()
                                 ),
                             )
                         }

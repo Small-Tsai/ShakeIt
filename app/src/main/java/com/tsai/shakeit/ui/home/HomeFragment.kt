@@ -4,6 +4,9 @@ import android.Manifest.permission.*
 import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,8 +28,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.application.isradeleon.notify.Notify
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
 import com.google.android.libraries.maps.model.*
@@ -50,9 +53,8 @@ import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.properties.Delegates
+import kotlin.random.Random
 
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -624,6 +626,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             return@setOnMarkerClickListener true
         }
 
+
         //map onClick
         mMap.setOnMapClickListener {
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
@@ -688,6 +691,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         vAnimator.start()
     }
 
+    //make custom map marker
     private fun getMarkerIconWithLabel(label: String, branch: String): Bitmap {
         val iconGenerator = IconGenerator(mContext)
         val markerView: View = LayoutInflater.from(mContext).inflate(R.layout.map_marker, null)

@@ -18,4 +18,9 @@
     <string name="no">取消</string>
     <string name="explainSettingPermission">您需要到設定頁面手動開啟權限</string>
 
+    <string name="notify_channel_id" translatable="false">MyDefaultChannelID</string>
+    <string name="notify_channel_name" translatable="false">MyDefaultChannelName</string>
+    <string name="notify_channel_description" translatable="false">MyDefaultChannelDescription</string>
+
+
 </resources>

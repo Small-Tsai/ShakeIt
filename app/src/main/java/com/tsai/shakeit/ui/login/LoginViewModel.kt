@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.User
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,8 @@ class LoginViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     User(
                         user_Id = UserInfo.userId,
                         user_Name = UserInfo.userName,
-                        user_Image = UserInfo.userImage
+                        user_Image = UserInfo.userImage,
+                        user_Token = MyFirebaseService.token.toString()
                     )
                 )
             }

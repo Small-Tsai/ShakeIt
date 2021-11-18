@@ -1,5 +1,6 @@
 package com.tsai.shakeit.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,14 +14,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.tsai.shakeit.R
 import com.tsai.shakeit.databinding.LoginFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.service.MyFirebaseService
+import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
@@ -48,6 +53,19 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        MyFirebaseService.sharedPref =
+            requireActivity().getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Logger.w("Fetching FCM registration token failed ${task.exception}")
+                return@OnCompleteListener
+            }
+            MyFirebaseService.token = task.result
+        })
+
+        Logger.d(MyFirebaseService.token.toString())
+
         // Configure Google Sign In
         val gso = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -61,9 +79,9 @@ class LoginFragment : Fragment() {
             requireActivity().intent.data?.pathSegments?.get(0)?.let {
                 Logger.d(it)
                 orderId = it
+                FirebaseMessaging.getInstance().subscribeToTopic(TOPIC + it)
             }
         }
-
     }
 
     override fun onCreateView(

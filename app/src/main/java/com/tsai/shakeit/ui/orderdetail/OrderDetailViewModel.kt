@@ -4,14 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
+import com.squareup.moshi.Moshi
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.data.notification.NotificationData
+import com.tsai.shakeit.data.notification.PushNotification
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.network.ShakeItApi
+import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+const val TOPIC = "/topics/"
 
 class OrderDetailViewModel(
     val mOrder: Order?,
@@ -20,9 +31,9 @@ class OrderDetailViewModel(
 ) :
     ViewModel() {
 
-    private var _order = MutableLiveData<List<OrderProduct>>()
-    val order: LiveData<List<OrderProduct>>
-        get() = _order
+    private var _orderProduct = MutableLiveData<List<OrderProduct>>()
+    val orderProduct: LiveData<List<OrderProduct>>
+        get() = _orderProduct
 
     private val _totalPrice = MutableLiveData<Int>()
     val totalPrice: LiveData<Int>
@@ -37,10 +48,10 @@ class OrderDetailViewModel(
         get() = _navToHome
 
     init {
-        if (type =="history"){
+        if (type == "history") {
             Logger.d("orderId = ${mOrder?.order_Id}")
             getHistoryProduct()
-        }else{
+        } else {
             getOrderProduct()
         }
         getShopData()
@@ -50,14 +61,14 @@ class OrderDetailViewModel(
         _navToHome.value = shop
     }
 
-    private fun getHistoryProduct(){
+    private fun getHistoryProduct() {
         mOrder?.let {
             viewModelScope.launch {
-               when(val result = repository.getHistoryOrderProduct(it.order_Id)){
-                   is Result.Success->{
-                       _order.value = result.data!!
-                   }
-               }
+                when (val result = repository.getHistoryOrderProduct(it.order_Id)) {
+                    is Result.Success -> {
+                        _orderProduct.value = result.data!!
+                    }
+                }
             }
         }
     }
@@ -65,7 +76,7 @@ class OrderDetailViewModel(
     private fun getOrderProduct() {
         mOrder?.let {
             viewModelScope.launch {
-                _order = repository.getFireBaseOrderProduct(it.order_Id)
+                _orderProduct = repository.getFireBaseOrderProduct(it.order_Id)
             }
         }
     }
@@ -118,6 +129,59 @@ class OrderDetailViewModel(
     }
 
     fun notifyOrderChange() {
-        _order.value = _order.value
+        _orderProduct.value = _orderProduct.value
+    }
+
+
+    fun sendNotification() = viewModelScope.launch {
+
+        _orderProduct.value?.let { orderProduct ->
+
+            val allToken = orderProduct.map { it.user.user_Token }.distinct()
+
+            for (token in allToken) {
+
+                val userProduct = _orderProduct.value?.filter { it.user.user_Token == token }
+                val userDrinks = userProduct?.map { it.name + it.price + " x${it.qty}" }
+                val totalPrice = userProduct?.sumOf { it.price * it.qty }
+
+                var notifyContent = "\n"
+
+                userDrinks?.forEach {
+                    notifyContent += "$it\n"
+                }
+
+                Logger.d("${_orderProduct.value}")
+                Logger.d("user = ${UserInfo.userId}")
+
+                val notification = PushNotification(
+                    to = token,
+                    data = NotificationData(
+                        "飲料到囉 ！",
+                        "你的飲料有" + "\n" +
+                                "-----------------------------" +
+                                notifyContent +
+                                "-----------------------------" + "\n" +
+                                "總共 $totalPrice 元"
+                    )
+                )
+
+                withContext(Dispatchers.IO) {
+                    try {
+                        val response = ShakeItApi.firebaseService.postNotification(notification)
+                        if (response.isSuccessful) {
+                            Logger.d(response.message())
+                        } else {
+                            Logger.e(response.errorBody().toString())
+                        }
+                    } catch (e: Exception) {
+                        Logger.e(e.toString())
+                    }
+                }
+
+            }
+        }
+
+
     }
 }

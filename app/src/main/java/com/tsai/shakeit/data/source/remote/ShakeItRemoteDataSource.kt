@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.maps.model.LatLng
 import com.google.firebase.firestore.*
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
 import com.tsai.shakeit.R
@@ -17,6 +18,7 @@ import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.ShakeItApi
+import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.*
 import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlin.coroutines.resume
@@ -66,12 +68,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             if (otherUserId.isNotEmpty() && otherUserId != UserInfo.userId) {
                 otherId = order.shop_Id.substring(0, 10) + otherUserId.substring(0, 10)
                 document = orders.document(otherId)
+                FirebaseMessaging.getInstance().subscribeToTopic(TOPIC + otherId)
                 document
                     .set(order, SetOptions.mergeFields("order_Price"))
             } else {
                 if (!hasOrder) {
                     order.order_Id = myId
                     document.set(order)
+                    FirebaseMessaging.getInstance().subscribeToTopic(TOPIC + myId)
                 }
             }
 
@@ -435,7 +439,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         order.order_Id = document.id
         document.set(order)
 
-        if (!orderProduct.isNullOrEmpty()){
+        if (!orderProduct.isNullOrEmpty()) {
             val last = orderProduct.last()
             orderProduct.forEach {
                 val orderProductDocument = document.collection(ORDER_PRODUCT).document()

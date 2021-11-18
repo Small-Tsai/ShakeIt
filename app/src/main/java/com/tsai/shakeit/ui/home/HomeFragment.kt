@@ -61,7 +61,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         getVmFactory()
     }
 
-    // Declare a variable for the cluster manager.
     private lateinit var telUri: Uri
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mMap: GoogleMap
@@ -77,7 +76,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var allShopName: List<String>
     private lateinit var allShopData: List<Shop>
     private lateinit var allProductList: List<Product>
-
     private var queryShopName: String = ""
     private var lat by Delegates.notNull<Double>()
     private var lon by Delegates.notNull<Double>()
@@ -111,9 +109,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        appPermission = AppPermissions()
+    }
+
     override fun onStart() {
         super.onStart()
         binding.mainViewModel = mainViewModel
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setBackPressedBehavior()
+        mContext = binding.root.context
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+        bottomSheetNavBehavior = BottomSheetBehavior.from(binding.bottomSheetNav)
     }
 
     override fun onCreateView(
@@ -122,15 +134,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
 
-        appPermission = AppPermissions()
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel.binding = binding
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
-        bottomSheetNavBehavior = BottomSheetBehavior.from(binding.bottomSheetNav)
-        bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        mContext = binding.root.context
 
         //get map
         val mapFragment =
@@ -238,6 +244,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 })
             }
 
+            //observe mainViewModel shopFilteredList from firebase
             mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, { dbList ->
 
                 //if nav From Order
@@ -245,14 +252,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     viewModel.getCurrentPosition(LatLng(lat, lon))
                 }
 
+                //set Search bar
                 setSearchBar(dbList)
 
+                //do if else when user isSearch for something in search bar
                 if (queryShopName.isEmpty()) {
                     addMapMarker(dbList)
                 } else {
                     addMapMarker(allShopName.filter { it != queryShopName })
                 }
-
             })
         })
 
@@ -262,12 +270,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { moveCameraToCurrentLocation() }
         })
 
-        //obseve userSetting traffic time
+        //observe userSetting traffic time
         viewModel.userSettingTime.observe(viewLifecycleOwner, {
             UserInfo.userCurrentSettingTrafficTime = it
         })
 
-        //navBtn onclick
+        //set navBtn onClickListrner
         binding.navBtn.setOnClickListener {
             viewModel.drawPolyLine()
         }
@@ -303,7 +311,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //when change traffic mode getDirection
+        //observe mode change for getDirection from walk or driving
         viewModel.mode.observe(viewLifecycleOwner, {
             if (locationPermissionGranted) {
                 Logger.d("mode observe $it")
@@ -315,10 +323,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //observe User Search Product
         viewModel.userSearchProduct.observe(viewLifecycleOwner, { product ->
-            queryShopName = product.shop_Name
-            result = allProductList.filter { it.shop_Name.contains(queryShopName) }
-                .toMutableList().sortedBy { it.type }
-            doSearch()
+            doSearch(product)
         })
 
         //traffic time editText action_done
@@ -331,12 +336,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             false
         }
 
-        setBackPressedBehavior()
-        binding.addShopFab.isExtended = false
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
+        viewModel.isSearchBarFocus.observe(viewLifecycleOwner, {
+            if (it == false) {
+                binding.searchView.clearFocus()
+            }
+        })
+
         return binding.root
     }
 
+    //Add Marker On Map
     private fun addMapMarker(
         dbList: List<String>
     ) {
@@ -392,8 +401,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         appPermission.askPermission(this)
-        moveCameraToSelectedShop()
         setBottomSheetBehavior()
+        moveCameraToSelectedShop()
     }
 
     //when nav from favorite move camera
@@ -422,11 +431,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
 
         binding.searchView.setOnQueryTextFocusChangeListener { view, b ->
-            if (b) {
-                binding.searchList.visibility(1)
-            } else {
-                binding.searchList.visibility(0)
-            }
+            viewModel.isSearchBarFocus.value = b
         }
 
         val clearButton: ImageView =
@@ -442,12 +447,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-
-
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                doSearch()
+                if (result.isNotEmpty()) {
+                    doSearch(result.first())
+                } else {
+                    mToast("未搜尋到${binding.searchView.query}")
+                    viewModel.isSearchBarFocus.value = false
+                }
                 return false
             }
 
@@ -478,29 +486,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.searchList.adapter = listAdapter
     }
 
-    private fun doSearch() {
-        if (result.isNotEmpty()) {
-            mapSearchAnimation(LatLng(lat, lon))
-            queryShopName = result.first().shop_Name
-            binding.searchView.setQuery(result.first().name, false)
-            mToast("正在搜尋附近含有 - ${result.first().name} 的店家 ")
+    private fun doSearch(product: Product) {
+        mapSearchAnimation(LatLng(lat, lon))
+        queryShopName = product.shop_Name
+        binding.searchView.setQuery(product.name, false)
+        mToast("正在搜尋附近含有 - ${product.name} 的店家 ")
 
-            if (!allShopName.isNullOrEmpty()) {
-                val searchName = allShopName.filter { it != queryShopName }
-                addMapMarker(searchName)
-            }
-
-            binding.searchView.clearFocus()
-            binding.searchList.visibility(0)
-        } else {
-            mToast("未搜尋到${binding.searchView.query}")
-            binding.searchView.clearFocus()
-            binding.searchList.visibility(0)
+        if (!allShopName.isNullOrEmpty()) {
+            val searchName = allShopName.filter { it != queryShopName }
+            addMapMarker(searchName)
         }
+        binding.searchView.clearFocus()
+        binding.searchList.visibility(0)
     }
 
     // custom BottomSheetUI
     private fun setBottomSheetBehavior() {
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         // update total comment qty on bottomSheet
         mainViewModel.commentSize.observe(viewLifecycleOwner, {
@@ -518,41 +521,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        //marker onClick
-        mMap.setOnMarkerClickListener {
-            if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
-                viewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
-                viewModel.getSelectedShopSnippet(it.snippet)
-                getDirection("${viewModel.mode.value}")
-            }
-            return@setOnMarkerClickListener true
-        }
-
-        //map onClick
-        mMap.setOnMapClickListener {
-            if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            }
-        }
-
-        //map camera move listner
-        mMap.setOnCameraMoveListener {
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                bottomSheetBehavior.halfExpandedRatio = 0.14f
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-            }
-        }
-
         //bottomSheet CallBack
         var x = 0
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
+                Logger.d("$newState")
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
@@ -636,6 +611,33 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private fun setMapUI() {
         mMap.uiSettings.isMyLocationButtonEnabled = false
         mMap.isMyLocationEnabled = true
+
+        //marker onClick
+        mMap.setOnMarkerClickListener {
+            if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
+                viewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
+                viewModel.getSelectedShopSnippet(it.snippet)
+                getDirection("${viewModel.mode.value}")
+            }
+            return@setOnMarkerClickListener true
+        }
+
+        //map onClick
+        mMap.setOnMapClickListener {
+            if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            }
+        }
+
+        //map camera move listner
+        mMap.setOnCameraMoveListener {
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                bottomSheetBehavior.halfExpandedRatio = 0.14f
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+            }
+        }
     }
 
     //getDirection

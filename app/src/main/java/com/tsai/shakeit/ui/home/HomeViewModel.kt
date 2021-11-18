@@ -20,7 +20,6 @@ import kotlinx.coroutines.*
 
 
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
-    var binding: FragmentHomeBinding? = null
 
     private val _navToMenu = MutableLiveData<Shop?>()
     val navToMenu: LiveData<Shop?>
@@ -107,6 +106,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         value = UserInfo.userCurrentSettingTrafficTime
     }
 
+    //LiveData for detect search focus
+    val isSearchBarFocus = MutableLiveData<Boolean>().apply { value = false }
+
     //LiveData for record user selected shop
     val selectedShop = MutableLiveData<Shop>()
 
@@ -115,6 +117,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     init {
         getProduct()
         getMyFavorite()
+    }
+
+    fun searchBarClearFocus(){
+        isSearchBarFocus.value = false
     }
 
     //getProduct
@@ -336,12 +342,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 }
 
                 is Result.Fail -> {
-                    binding?.root?.let {
-                        Snackbar.make(
-                            it, result.error,
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                    }
+                    Logger.e(result.error)
                 }
             }
         }

@@ -47,8 +47,11 @@ class OrderDetailViewModel(
     val navToHome: LiveData<Shop>
         get() = _navToHome
 
+    val isNotifyBtnVisible = MutableLiveData<Boolean>().apply { value = true }
+
     init {
         if (type == "history") {
+            isNotifyBtnVisible.value = false
             Logger.d("orderId = ${mOrder?.order_Id}")
             getHistoryProduct()
         } else {

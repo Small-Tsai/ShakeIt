@@ -74,7 +74,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view"
             app:lottie_autoPlay="true"
-            app:lottie_loop="true"
+            app:lottie_loop="false"
             app:lottie_rawRes="@raw/empty_order_blue"
             app:lottie_url="REPLACE_JSON_URL" />
 

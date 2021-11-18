@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <variable
             name="viewModel"
             type="com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel" />
@@ -143,11 +145,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/friends_rev" />
 
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/notifyButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:background="@drawable/corner_radius2"
+            android:backgroundTint="@color/gery"
+            android:elevation="10dp"
+            android:visibility="@{viewModel.isNotifyBtnVisible? View.VISIBLE : View.GONE}"
+            android:foreground="?android:attr/selectableItemBackground"
             android:onClick="@{()->viewModel.sendNotification()}"
+            android:padding="8dp"
             android:src="@drawable/notifications"
             app:layout_constraintBottom_toBottomOf="@+id/orderPage_title"
             app:layout_constraintEnd_toEndOf="parent"

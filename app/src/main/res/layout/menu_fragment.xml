@@ -23,6 +23,25 @@
         android:layout_height="match_parent"
         tools:context=".ui.menu.MenuFragment">
 
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabMode="scrollable"
+            android:elevation="5dp"
+            android:padding="2dp"
+            android:background="@drawable/menu_top_corner"
+            android:backgroundTint="@color/grey2"
+            app:tabIndicatorColor="@color/light_yellow"
+            app:tabIndicatorHeight="3dp"
+            app:tabIndicatorFullWidth="false"
+            app:tabIndicator="@drawable/shape_indicator"
+            app:tabSelectedTextColor="@color/light_yellow"
+            app:tabTextColor="@color/orange"
+
+            app:layout_constraintTop_toBottomOf="@+id/addOrder_img" />
+
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/invite_fab"
             fabAnimation="@{true}"
@@ -105,14 +124,15 @@
             android:id="@+id/recyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="8dp"
             android:background="#0C000000"
+            android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.GONE : View.VISIBLE }"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/appCompatButton"
             app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.GONE : View.VISIBLE }"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addOrder_img"
+            app:layout_constraintTop_toTopOf="@+id/tableLayout"
             tools:listitem="@layout/menu_product_row" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -148,7 +168,7 @@
             app:layout_constraintTop_toTopOf="@+id/appCompatButton" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/menu_popBack"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"

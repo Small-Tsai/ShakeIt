@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ShareCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
@@ -22,7 +18,11 @@ import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
-import com.tsai.shakeit.util.Logger
+import androidx.recyclerview.widget.LinearSmoothScroller
+
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller
+import com.google.android.material.tabs.TabLayout
+
 
 class MenuFragment : Fragment() {
 
@@ -63,10 +63,19 @@ class MenuFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = MenuAdapter(viewModel)
+        val adapter = MenuAdapter(viewModel, binding)
 
-        viewModel.productList.observe(viewLifecycleOwner, {
-            adapter.submitList(it)
+        viewModel.productList.observe(viewLifecycleOwner, { list ->
+            adapter.submitList(list)
+            var x = 0
+            list.forEach {
+                x++
+                if (it is Menu.Title) {
+                    binding.tableLayout.addTab(
+                        binding.tableLayout.newTab().setText(it.type).setTag(x-1)
+                    )
+                }
+            }
         })
 
         viewModel.navToDetail.observe(viewLifecycleOwner, {
@@ -137,6 +146,29 @@ class MenuFragment : Fragment() {
             if (it.isEmpty()) viewModel.noOrder()
             else viewModel.hasOrder()
         })
+
+        val smoothScroller: SmoothScroller = object : LinearSmoothScroller(context) {
+            override fun getVerticalSnapPreference(): Int {
+                return SNAP_TO_START
+            }
+        }
+
+        binding.tableLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                smoothScroller.targetPosition = tab?.tag as Int
+                binding.recyclerView.layoutManager?.startSmoothScroll(smoothScroller)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // TODO("Handle tab unselect")
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // TODO("Handle tab reselect")
+            }
+        })
+
+
 
         dialogBinding?.viewModel = viewModel
         dialogBinding?.lifecycleOwner = viewLifecycleOwner

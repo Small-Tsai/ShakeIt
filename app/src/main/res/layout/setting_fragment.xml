@@ -22,7 +22,7 @@
         tools:context=".ui.setting.SettingFragment">
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/menu_popBack"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="14dp"

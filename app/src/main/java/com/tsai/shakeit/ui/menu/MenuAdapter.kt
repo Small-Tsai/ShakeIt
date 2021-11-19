@@ -6,10 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Product
+import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.databinding.MenuProductRowBinding
 import com.tsai.shakeit.databinding.MenuTitleRowBinding
 
-class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
+class MenuAdapter(val viewModel: MenuViewModel, private val menuBinding: MenuFragmentBinding) :
+    ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
 
     inner class ProductViewHolder(private var binding: MenuProductRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -24,6 +26,7 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
         RecyclerView.ViewHolder(binding.root) {
         fun bind(title: String) {
             binding.typeTitle.text = title
+
             binding.executePendingBindings()
         }
     }
@@ -60,10 +63,11 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ProductViewHolder -> {
-                holder.bind((getItem(position) as Menu.MenuProduct).product , viewModel)
+                holder.bind((getItem(position) as Menu.MenuProduct).product, viewModel)
             }
             is TitleViewHolder -> {
-                holder.bind((getItem(position) as Menu.Title).type)
+                val title = (getItem(position) as Menu.Title).type
+                holder.bind(title)
             }
         }
     }
@@ -77,7 +81,7 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
     }
 }
 
-sealed class Menu{
-    data class Title (val type: String):Menu()
-    data class MenuProduct (val product: Product):Menu()
+sealed class Menu {
+    data class Title(val type: String) : Menu()
+    data class MenuProduct(val product: Product) : Menu()
 }

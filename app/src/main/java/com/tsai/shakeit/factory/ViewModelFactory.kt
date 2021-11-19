@@ -35,7 +35,7 @@ class ViewModelFactory(
     private val type: String? = null
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>) =
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
         with(modelClass) {
             when {
                 isAssignableFrom(MainViewModel::class.java) ->

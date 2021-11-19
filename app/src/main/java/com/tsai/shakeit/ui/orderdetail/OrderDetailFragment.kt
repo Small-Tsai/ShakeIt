@@ -83,9 +83,7 @@ class OrderDetailFragment : Fragment() {
 
             OrderProductList?.let { list ->
                 val orderProduct = mutableListOf<OrderDetail>()
-
                 list.forEach { orderProduct.add(OrderDetail.MyOrderProduct(it)) }
-
                 orderProduct.add(OrderDetail.AddProductBtn(""))
                 adapter.submitList(orderProduct)
                 friendsAdapter.submitList(user)

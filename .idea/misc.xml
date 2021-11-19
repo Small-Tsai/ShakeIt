@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.2515625" />
         <entry key="app/src/main/res/drawable-v24/login_icon_google.xml" value="0.13802083333333334" />
         <entry key="app/src/main/res/drawable-v24/menu_icon.xml" value="0.12708333333333333" />
+        <entry key="app/src/main/res/drawable-v24/menu_top_corner.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable-v24/navigate.xml" value="0.13802083333333334" />
         <entry key="app/src/main/res/drawable-v24/order_selector.xml" value="0.41770833333333335" />
         <entry key="app/src/main/res/drawable-v24/ride.xml" value="0.12708333333333333" />
@@ -40,6 +41,7 @@
         <entry key="app/src/main/res/drawable/nav_selector.xml" value="0.39814814814814814" />
         <entry key="app/src/main/res/drawable/one_side_border.xml" value="0.13802083333333334" />
         <entry key="app/src/main/res/drawable/sendcomment_background.xml" value="0.13802083333333334" />
+        <entry key="app/src/main/res/drawable/shape_indicator.xml" value="0.32916666666666666" />
         <entry key="app/src/main/res/drawable/stroke_corner_radius.xml" value="0.14322916666666666" />
         <entry key="app/src/main/res/drawable/walking_icon.xml" value="0.26145833333333335" />
         <entry key="app/src/main/res/drawable/whitecircle.xml" value="0.13802083333333334" />
@@ -71,6 +73,7 @@
         <entry key="app/src/main/res/layout/map_marker.xml" value="0.43142406726221755" />
         <entry key="app/src/main/res/layout/menu_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/menu_product_row.xml" value="0.18177083333333333" />
+        <entry key="app/src/main/res/layout/menu_title_row.xml" value="0.2509057971014493" />
         <entry key="app/src/main/res/layout/order_detail_fragment.xml" value="0.375" />
         <entry key="app/src/main/res/layout/order_detail_row.xml" value="0.25" />
         <entry key="app/src/main/res/layout/order_detail_row_btn.xml" value="0.4015625" />

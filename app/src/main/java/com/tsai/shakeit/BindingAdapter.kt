@@ -63,6 +63,7 @@ fun bindDisplayFormatTime(textView: TextView, time: Timestamp?) {
 
 @BindingAdapter("mRadioButton", "viewModel", "position")
 fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, position: Int) {
+//    Logger.d("$position = ${viewModel.selectedPositionList.distinct().contains(position)}")
     isChecked = when (viewModel.selectedPositionList.distinct().contains(position)) {
         true -> true
         false -> false

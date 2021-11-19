@@ -2,6 +2,9 @@ package com.tsai.shakeit.ui.menu.detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +16,7 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
 
     inner class ContentViewHolder(private var binding: DrinksSelectRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(content: HashMap<String, Int>, viewModel: DrinksDetailViewModel) {
             binding.viewModel = viewModel
             binding.viewHolder = this
@@ -21,6 +25,7 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
             binding.price = content[key]!!
             binding.executePendingBindings()
         }
+
     }
 
     inner class TitleViewHolder(private var binding: DrinksSelectTitleBinding) :

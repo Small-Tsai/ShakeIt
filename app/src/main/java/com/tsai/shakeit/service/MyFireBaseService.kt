@@ -5,7 +5,6 @@ import com.application.isradeleon.notify.Notify
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 
 class MyFirebaseService : FirebaseMessagingService() {
 

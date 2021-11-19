@@ -66,7 +66,6 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:elevation="5dp"
-                    android:src="@drawable/kebuke"
                     app:cardCornerRadius="15dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/order_title">

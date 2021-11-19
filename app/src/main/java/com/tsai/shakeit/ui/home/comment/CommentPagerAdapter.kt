@@ -15,7 +15,7 @@ class CommentPagerAdapter(fragmentManager: FragmentManager, private val shopId: 
     override fun getCount() = MapBottomSheetTypeFilter.values().size
 
     override fun getItem(position: Int): Fragment {
-        Logger.d("$shopId")
+//        Logger.d("$shopId")
         return CommentFragment(shopId)
     }
 

@@ -23,36 +23,29 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content , price)}"
         android:layout_height="wrap_content">
 
-        <RadioGroup
-            android:id="@+id/radio_group"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
+        <RadioButton
+            android:id="@+id/select_content"
+            mRadioButton="@{content}"
+            position="@{viewHolder.absoluteAdapterPosition}"
+            viewModel="@{viewModel}"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
+            android:buttonTint="@color/black"
+            android:gravity="center_vertical"
+            android:onClick="@{()->viewModel.doSelect(viewHolder.absoluteAdapterPosition , content , price)}"
+            android:text=""
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/textView40"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <RadioButton
-                android:id="@+id/select_content"
-                mRadioButton="@{content}"
-                position="@{viewHolder.adapterPosition}"
-                viewModel="@{viewModel}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{()->viewModel.doSelect(viewHolder.adapterPosition , content , price)}"
-                android:buttonTint="@color/black"
-                android:gravity="center_vertical"
-                android:text="大"
-                android:textSize="14dp" />
-
-        </RadioGroup>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/textView40"
             content="@{content}"
             price="@{price}"
             android:layout_width="wrap_content"

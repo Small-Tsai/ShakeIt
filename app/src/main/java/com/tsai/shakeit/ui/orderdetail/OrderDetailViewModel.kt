@@ -4,9 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.gson.Gson
-import com.squareup.moshi.Moshi
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
@@ -14,10 +11,9 @@ import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.notification.NotificationData
 import com.tsai.shakeit.data.notification.PushNotification
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.ShakeItApi
-import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,8 +24,7 @@ class OrderDetailViewModel(
     val mOrder: Order?,
     private val repository: ShakeItRepository,
     val type: String?
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private var _orderProduct = MutableLiveData<List<OrderProduct>>()
     val orderProduct: LiveData<List<OrderProduct>>
@@ -47,12 +42,15 @@ class OrderDetailViewModel(
     val navToHome: LiveData<Shop>
         get() = _navToHome
 
+    private val _navToMenu = MutableLiveData<Shop?>()
+    val navToMenu: LiveData<Shop?>
+        get() = _navToMenu
+
     val isNotifyBtnVisible = MutableLiveData<Boolean>().apply { value = true }
 
     init {
         if (type == "history") {
             isNotifyBtnVisible.value = false
-            Logger.d("orderId = ${mOrder?.order_Id}")
             getHistoryProduct()
         } else {
             getOrderProduct()
@@ -96,10 +94,6 @@ class OrderDetailViewModel(
         }
     }
 
-    private val _navToMenu = MutableLiveData<Shop?>()
-    val navToMenu: LiveData<Shop?>
-        get() = _navToMenu
-
     fun navToMenu() {
         mOrder?.let { order ->
             shop.value?.let { shop ->
@@ -135,41 +129,43 @@ class OrderDetailViewModel(
         _orderProduct.value = _orderProduct.value
     }
 
-
     fun sendNotification() = viewModelScope.launch {
 
-        _orderProduct.value?.let { orderProduct ->
+        withContext(Dispatchers.IO) {
+            _orderProduct.value?.let { orderProduct ->
 
-            val allToken = orderProduct.map { it.user.user_Token }.distinct()
+                val allToken =
+                    orderProduct
+                        .map { it.user.user_Token }
+//                        .filter { it != MyFirebaseService.token }
+                        .distinct()
 
-            for (token in allToken) {
+                for (token in allToken) {
+                    val userProduct = _orderProduct.value?.filter { it.user.user_Token == token }
+                    val userDrinks = userProduct?.map { it.name + it.price + " x${it.qty}" }
+                    val totalPrice = userProduct?.sumOf { it.price * it.qty }
+                    var notifyContent = "\n"
 
-                val userProduct = _orderProduct.value?.filter { it.user.user_Token == token }
-                val userDrinks = userProduct?.map { it.name + it.price + " x${it.qty}" }
-                val totalPrice = userProduct?.sumOf { it.price * it.qty }
+                    userDrinks?.forEach {
+                        notifyContent += "$it\n"
+                    }
 
-                var notifyContent = "\n"
-
-                userDrinks?.forEach {
-                    notifyContent += "$it\n"
-                }
-
-                Logger.d("${_orderProduct.value}")
-                Logger.d("user = ${UserInfo.userId}")
-
-                val notification = PushNotification(
-                    to = token,
-                    data = NotificationData(
-                        "飲料到囉 ！",
-                        "你的飲料有" + "\n" +
-                                "-----------------------------" +
-                                notifyContent +
-                                "-----------------------------" + "\n" +
-                                "總共 $totalPrice 元"
+                    val notification = PushNotification(
+                        to = token,
+                        data = NotificationData(
+                            "飲料到囉 ！",
+                            "你的飲料有" + "\n" +
+                                    "-----------------------------" +
+                                    notifyContent +
+                                    "-----------------------------" + "\n" +
+                                    "總共 $totalPrice 元"
+                        )
                     )
-                )
 
-                withContext(Dispatchers.IO) {
+                    withContext(Dispatchers.Main) {
+                        mToast("已發送商品抵達推播給所有成員")
+                    }
+
                     try {
                         val response = ShakeItApi.firebaseService.postNotification(notification)
                         if (response.isSuccessful) {
@@ -181,10 +177,7 @@ class OrderDetailViewModel(
                         Logger.e(e.toString())
                     }
                 }
-
             }
         }
-
-
     }
 }

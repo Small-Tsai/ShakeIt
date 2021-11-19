@@ -62,7 +62,7 @@
                     android:layout_height="80dp"
                     android:elevation="5dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/img"
+                    tools:src="@drawable/placedrink"
                     tools:layout_editor_absoluteX="15dp"
                     tools:layout_editor_absoluteY="17dp" />
             </androidx.cardview.widget.CardView>

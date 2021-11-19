@@ -22,7 +22,7 @@ class CommentViewModel(private val repository: ShakeItRepository, private val sh
 
     fun getComment() {
         viewModelScope.launch {
-            Logger.d("get comment from $shopId")
+//            Logger.d("get comment from $shopId")
             when (val result = shopId?.let { repository.getComment(it) }) {
                 is Result.Success -> {
                     _comment.value = result.data!!

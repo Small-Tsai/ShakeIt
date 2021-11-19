@@ -5,18 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.maps.model.*
-import com.google.android.material.snackbar.Snackbar
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
@@ -49,9 +50,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToSetting: LiveData<Boolean?>
         get() = _navToSetting
 
-    private val _isfilterShopBtnClickable = MutableLiveData<Boolean>()
-    val isfilterShopClickable: LiveData<Boolean>
-        get() = _isfilterShopBtnClickable
+    private val _isFilterShopBtnClickable = MutableLiveData<Boolean>()
+    val isFilterShopClickable: LiveData<Boolean>
+        get() = _isFilterShopBtnClickable
 
     private val _mode =
         MutableLiveData<String>().apply { value = UserInfo.userCurrentSelectTraffic }
@@ -119,7 +120,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         getMyFavorite()
     }
 
-    fun searchBarClearFocus(){
+    fun searchBarClearFocus() {
         isSearchBarFocus.value = false
     }
 
@@ -157,7 +158,16 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt() }
             }
 
-            _isfilterShopBtnClickable.value = false
+            when (mode.value) {
+                WALKING -> {
+                    mToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
+                }
+                DRIVING -> {
+                    mToast("正在搜尋騎車${userSettingTime.value}分鐘內的店家")
+                }
+            }
+
+            _isFilterShopBtnClickable.value = false
 
             when (val result = withContext(Dispatchers.IO) {
                 repository.getAllShop(center, distance)
@@ -165,7 +175,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 is Result.Success -> {
                     result.data.let {
                         _shopLiveData.value = it
-                        _isfilterShopBtnClickable.value = true
+                        _isFilterShopBtnClickable.value = true
                         _status.value = LoadApiStatus.DONE
                     }
                 }
@@ -348,7 +358,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 }
-
 
 private fun decode(points: String): List<LatLng> {
     val len = points.length

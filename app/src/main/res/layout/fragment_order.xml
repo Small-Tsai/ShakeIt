@@ -68,7 +68,7 @@
             android:id="@+id/orderLottie"
             android:layout_width="0dp"
             android:layout_height="350dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="50dp"
             android:visibility="@{viewModel.hasOrder? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,14 +82,13 @@
             android:id="@+id/textView39"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
             android:fontFamily="@font/roboto"
             android:text="尚未有任何訂單"
             android:textSize="24sp"
             android:visibility="@{viewModel.hasOrder? View.GONE : View.VISIBLE}"
-            app:layout_constraintBottom_toBottomOf="@+id/orderLottie"
             app:layout_constraintEnd_toEndOf="@+id/orderLottie"
-            app:layout_constraintStart_toStartOf="@+id/orderLottie" />
+            app:layout_constraintStart_toStartOf="@+id/orderLottie"
+            app:layout_constraintTop_toBottomOf="@+id/orderLottie" />
 
         <View
             android:id="@+id/orderView"

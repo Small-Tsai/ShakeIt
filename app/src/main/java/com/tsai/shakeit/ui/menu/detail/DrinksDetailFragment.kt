@@ -68,14 +68,11 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
         val adapter = DrinksAdapter(viewModel)
         viewModel.product.observe(viewLifecycleOwner, {
             adapter.submitList(it)
+            adapter.notifyDataSetChanged()
         })
 
         viewModel.popBack.observe(viewLifecycleOwner, {
             it?.let { findNavController().popBackStack() }
-        })
-
-        viewModel.refresh.observe(viewLifecycleOwner, {
-            it?.let { adapter.notifyDataSetChanged() }
         })
 
         viewModel.showDialog.observe(viewLifecycleOwner, {

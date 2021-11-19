@@ -529,7 +529,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                Logger.d("$newState")
                 when (newState) {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
@@ -698,7 +697,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         val imgMarker = markerView.findViewById<ImageView>(R.id.mapIcon)
         val tvLabel = markerView.findViewById<TextView>(R.id.marker_shop)
         val tvLabel2 = markerView.findViewById<TextView>(R.id.textView38)
-        imgMarker.setImageResource(R.drawable.location64)
+        imgMarker.setImageResource(R.drawable.locationbrown2)
         tvLabel.text = label
         tvLabel2.text = branch
         iconGenerator.setContentView(markerView)

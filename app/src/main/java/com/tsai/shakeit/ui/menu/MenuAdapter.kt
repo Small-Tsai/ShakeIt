@@ -30,7 +30,7 @@ class MenuAdapter(val viewModel : MenuViewModel) : ListAdapter<Menu, RecyclerVie
 
     private companion object DiffCallback : DiffUtil.ItemCallback<Menu>() {
         override fun areItemsTheSame(oldItem: Menu, newItem: Menu): Boolean {
-            return oldItem === newItem
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: Menu, newItem: Menu): Boolean {

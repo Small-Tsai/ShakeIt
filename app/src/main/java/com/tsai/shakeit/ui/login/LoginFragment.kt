@@ -64,8 +64,6 @@ class LoginFragment : Fragment() {
             MyFirebaseService.token = task.result
         })
 
-        Logger.d(MyFirebaseService.token.toString())
-
         // Configure Google Sign In
         val gso = GoogleSignInOptions
             .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

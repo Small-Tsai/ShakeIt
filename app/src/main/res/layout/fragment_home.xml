@@ -187,7 +187,7 @@
                     android:layout_height="24dp"
                     android:layout_marginEnd="16dp"
                     android:backgroundTint="@color/transparent"
-                    android:clickable="@{viewModel.isfilterShopClickable}"
+                    android:clickable="@{viewModel.isFilterShopClickable}"
                     android:foreground="@{viewModel.isSearchBarFocus? @drawable/drop_up :@drawable/setting_lines}"
                     android:foregroundTint="@color/darkgrey"
                     android:onClick="@{()-> viewModel.isSearchBarFocus? viewModel.searchBarClearFocus() : viewModel.navToSetting()}"

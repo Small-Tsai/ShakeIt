@@ -17,8 +17,8 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/order_detail_userImage"
             circleimageUrl="@{userImg}"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"

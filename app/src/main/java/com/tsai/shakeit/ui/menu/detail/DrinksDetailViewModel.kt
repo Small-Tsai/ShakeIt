@@ -75,7 +75,7 @@ class DrinksDetailViewModel(
     fun addNewDocToFireBase() {
 
         val mOrder = Order(
-            shop_Name = data.shop_Name,
+            shop_Name = data.shop_Name.last(),
             branch = shop!!.branch,
             date = Timestamp.now(),
             order_Name = title.value!!,
@@ -191,7 +191,7 @@ class DrinksDetailViewModel(
             detailList.add(DrinksDetail.DetailTitle("甜度"))
             data.sugar.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         }
-        if (data.others.size>1){
+        if (data.others.size!=0){
             detailList.add(DrinksDetail.DetailTitle("加料"))
             data.others.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         }

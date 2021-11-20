@@ -52,7 +52,7 @@ class AddShopFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.menuPhoto.setOnClickChoosePhoto(fromMenu)
+        binding.menuPhoto.menuSetOnClickChoosePhoto(fromMenu)
         binding.shopPhoto.setOnClickChoosePhoto(fromShop)
         binding.dateRev.adapter = adapter
 
@@ -126,6 +126,11 @@ class AddShopFragment : Fragment() {
                                 viewModel.lat = latLng.latitude
                                 viewModel.lon = latLng.longitude
                             }
+                            place.name.let { name->
+                                Logger.d("$name")
+                                binding.shopNameEdt.setText(name)
+                                viewModel.name = name
+                            }
                         }
                     }
 
@@ -173,11 +178,22 @@ class AddShopFragment : Fragment() {
         }
 
     private fun MaterialButton.setOnClickChoosePhoto(buttonName: Int) {
-
         setOnClickListener {
             ImagePicker.with(fragment = this@AddShopFragment)
                 .galleryOnly()
                 .crop(16f, 9f)
+                .compress(1024)
+                .createIntent { intent ->
+                    startActivityForResult(intent,buttonName)
+                }
+        }
+    }
+
+    private fun MaterialButton.menuSetOnClickChoosePhoto(buttonName: Int) {
+        setOnClickListener {
+            ImagePicker.with(fragment = this@AddShopFragment)
+                .galleryOnly()
+                .crop()
                 .compress(1024)
                 .createIntent { intent ->
                     startActivityForResult(intent,buttonName)
@@ -195,7 +211,8 @@ class AddShopFragment : Fragment() {
                 Place.Field.ADDRESS,
                 Place.Field.LAT_LNG,
                 Place.Field.PHONE_NUMBER,
-                Place.Field.OPENING_HOURS
+                Place.Field.OPENING_HOURS,
+                Place.Field.NAME
             )
 
         // Start the autocomplete intent.

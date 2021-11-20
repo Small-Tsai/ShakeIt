@@ -23,6 +23,11 @@ import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
 
+@BindingAdapter("shopNameArray")
+fun TextView.bindShopNameArray(name: ArrayList<String>?) {
+    name?.let { text = "--${name.last()}" }
+}
+
 @BindingAdapter("shopName", "branch")
 fun TextView.bindShopName(name: String?, branch: String?) {
     name?.let { text = "$name $branch" }

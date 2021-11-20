@@ -40,9 +40,10 @@
                     android:id="@+id/addOrder_img"
                     imageUrl="@{viewModel.data.product_Img}"
                     android:layout_width="match_parent"
-                    android:layout_height="174dp"
+                    android:layout_height="210dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_placeholder"
+                    app:layout_constraintDimensionRatio="w,16:9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

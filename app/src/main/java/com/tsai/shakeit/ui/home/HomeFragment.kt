@@ -490,7 +490,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private fun doSearch(product: Product) {
         mapSearchAnimation(LatLng(lat, lon))
-        queryShopName = product.shop_Name
+        queryShopName = product.shop_Name.last()
         binding.searchView.setQuery(product.name, false)
         mToast("正在搜尋附近含有 - ${product.name} 的店家 ")
 

@@ -1,11 +1,15 @@
 package com.tsai.shakeit.ui.menu
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,6 +26,8 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 
 import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.google.android.material.tabs.TabLayout
+import java.lang.Exception
+import java.lang.reflect.Field
 
 
 class MenuFragment : Fragment() {
@@ -68,11 +74,12 @@ class MenuFragment : Fragment() {
         viewModel.productList.observe(viewLifecycleOwner, { list ->
             adapter.submitList(list)
             var x = 0
+            binding.tableLayout.removeAllTabs()
             list.forEach {
                 x++
                 if (it is Menu.Title) {
                     binding.tableLayout.addTab(
-                        binding.tableLayout.newTab().setText(it.type).setTag(x-1)
+                        binding.tableLayout.newTab().setText(it.type).setTag(x - 1)
                     )
                 }
             }

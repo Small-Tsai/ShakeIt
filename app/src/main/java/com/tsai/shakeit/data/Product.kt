@@ -15,7 +15,7 @@ data class Product(
     val shopId: String = "",
     val type: String = "",
     var id: String = "",
-    val shop_Name: String = "",
+    val shop_Name: ArrayList<String> = arrayListOf(),
     val shopAddress: String = "",
     val branch: String = "",
     val product_Img: String = "",

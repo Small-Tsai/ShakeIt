@@ -132,6 +132,7 @@ class AddMenuItemViewModel(
 
     var currentSelectedPostion = -1
     fun recordCurrentSelectedPosition(positon: Int) {
+        Logger.d("cu = $positon")
         currentSelectedPostion = positon
     }
 
@@ -199,6 +200,8 @@ class AddMenuItemViewModel(
 
     fun implementUsuallySet() {
 
+        currentSelectedPostion = -1
+
         addCapacityList.clear()
         addIceList.clear()
         addSugarList.clear()
@@ -256,6 +259,7 @@ class AddMenuItemViewModel(
         userSugarContentList[5] = "1分糖"
         userSugarContentList[6] = "無糖"
 
+
         _addCapacityListLiveData.value = addCapacityList
         _addIceListLiveData.value = addIceList
         _addSugarListLiveData.value = addSugarList
@@ -283,7 +287,7 @@ class AddMenuItemViewModel(
                 postImgUriToFireBase()
 
                 userCapaContentList.keys.forEach {
-                    if (!userCapaContentList[it].isNullOrEmpty()) {
+                    if (!userCapaContentList[it].isNullOrEmpty() && it > 0) {
                         _capacityList.value?.set(
                             userCapaContentList[it] ?: "",
                             userCapaPriceList[it]?.toInt() ?: 0
@@ -316,6 +320,14 @@ class AddMenuItemViewModel(
                         )
                 }
 
+                val mArray = arrayListOf<String>()
+                var mString = ""
+
+                for (i in shop!!.name.indices) {
+                    mString += shop.name[i].toString()
+                    mArray.add(mString)
+                }
+
                 //set product data
                 val product = Product(
                     name = name.replace(" ", ""),
@@ -326,7 +338,7 @@ class AddMenuItemViewModel(
                     others = _others.value!!,
                     shopId = shop!!.shop_Id,
                     shopAddress = shop.address,
-                    shop_Name = shop.name.replace(" ", ""),
+                    shop_Name = mArray,
                     branch = shop.branch.replace(" ", ""),
                     type = type,
                     product_Img = _productFireBaseImageUri.value.toString()

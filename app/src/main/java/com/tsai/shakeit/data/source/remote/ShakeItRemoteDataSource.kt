@@ -287,7 +287,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 tasks.add(shop.get())
             }
 
-            // Collect all the query results together into a single list
+//             Collect all the query results together into a single list
             Tasks.whenAllComplete(tasks)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -331,8 +331,27 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
 
+//            branchProduct.get().addOnCompleteListener {
+//                if (it.isSuccessful) {
+//                    val product = it.result.toObjects(Product::class.java)
+//                    product.forEach { mProduct ->
+//                        val mArray = arrayListOf<String>()
+//                        var mString = ""
+////                        Logger.d("mshop = ${myShop.name}")
+//                        for (i in mProduct.shop_Name.indices) {
+////                           Logger.d("${myShop.name[i]}")
+//                            mString += mProduct.shop_Name[i].toString()
+//                            mArray.add(mString)
+//                        }
+//                        branchProduct.document(mProduct.id).update("shop_Name", mArray)
+//                        Logger.d("arr = $mArray")
+//                    }
+//                }
+//            }
+
+            Logger.d(shopName)
             branchProduct
-                .whereEqualTo("shop_Name", shopName)
+                .whereArrayContains("shop_Name", shopName)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

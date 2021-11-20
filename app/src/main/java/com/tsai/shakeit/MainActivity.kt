@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavController(navView: MeowBottomNavigation) {
         findNavController(R.id.nav_host_fragment_activity_main).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
             viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
+
                 R.id.loginFragment -> CurrentFragmentType.LOGIN
 
                 R.id.navigation_home -> {
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                     return@addOnDestinationChangedListener
                 }
 
-                R.id.menuFragment -> { CurrentFragmentType.MENU }
+                R.id.menuFragment ->  CurrentFragmentType.MENU
                 R.id.addShopFragment -> CurrentFragmentType.ADD_SHOP
                 R.id.drinksDetailFragment -> CurrentFragmentType.DRINKS_DETAIL
                 R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL

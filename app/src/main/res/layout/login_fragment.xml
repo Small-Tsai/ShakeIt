@@ -17,7 +17,7 @@
         tools:context=".ui.login.LoginFragment">
 
         <View
-            android:layout_width="300dp"
+            android:layout_width="400dp"
             android:layout_height="3dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="150dp"
@@ -32,7 +32,7 @@
             app:strokeWidth="3dp" />
 
         <View
-            android:layout_width="300dp"
+            android:layout_width="400dp"
             android:layout_height="3dp"
             android:layout_marginStart="200dp"
             android:layout_marginTop="150dp"
@@ -45,14 +45,15 @@
             app:strokeColor="@color/white"
             app:strokeWidth="3dp" />
 
-        <TextView
+        <ImageView
             android:id="@+id/imageView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:text="報茗牌"
-            android:textColor="@color/white"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:fontFamily="@font/roboto"
+            android:src="@drawable/logo"
+            android:paddingBottom="5dp"
+            android:paddingEnd="5dp"
+            android:textColor="@color/white"
             android:textSize="45sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/shapeableImageView2"

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.databinding.AddMenuItemFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
@@ -114,13 +115,13 @@ class AddMenuItemFragment : Fragment() {
     private fun MaterialButton.setOnClickChoosePhoto(buttonName: Int) {
 
         setOnClickListener {
-
-            // open storage
-            val intent = Intent(Intent.ACTION_PICK)
-
-            // only display image
-            intent.type = "image/*"
-            startActivityForResult(intent, buttonName)
+            ImagePicker.with(fragment = this@AddMenuItemFragment)
+                .galleryOnly()
+                .crop(16f, 9f)
+                .compress(1024)
+                .createIntent { intent ->
+                    startActivityForResult(intent,buttonName)
+                }
         }
     }
 }

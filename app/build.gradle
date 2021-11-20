@@ -48,8 +48,11 @@ android {
 
 dependencies {
 
-    implementation 'com.github.isradeleon:Notify-Android:1.0.4'
+    //image picker
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 
+    //notification
+    implementation 'com.github.isradeleon:Notify-Android:1.0.4'
 
     //lottie
     def lottieVersion = "4.1.0"

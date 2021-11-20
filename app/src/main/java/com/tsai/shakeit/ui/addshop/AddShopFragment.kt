@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
@@ -110,21 +111,21 @@ class AddShopFragment : Fragment() {
                             val place = Autocomplete.getPlaceFromIntent(it)
                             binding.addressEdt.setText(place.address)
 
-                            place.phoneNumber?.let { phoneNumber->
+                            place.phoneNumber?.let { phoneNumber ->
                                 binding.telEdt.setText("0${phoneNumber.substring(4)}")
                                 viewModel.tel = "0${phoneNumber.substring(4)}"
                             }
 
 
-                            if (place.openingHours == null){
+                            if (place.openingHours == null) {
                                 viewModel.setTimeListWhenAutoCompleteFail()
-                            }else{
-                                viewModel.setTimeListByAutoComplete(place.openingHours.periods)
+                            } else {
+                                viewModel.setTimeListByAutoComplete(place.openingHours!!.periods)
                             }
-
-                            viewModel.lat = place.latLng.latitude
-                            viewModel.lon = place.latLng.longitude
-
+                            place.latLng?.let { latLng ->
+                                viewModel.lat = latLng.latitude
+                                viewModel.lon = latLng.longitude
+                            }
                         }
                     }
 
@@ -145,13 +146,9 @@ class AddShopFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     data.data?.let { uri ->
 
-                        // 將照片顯示
                         val bitmap =
                             MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
-
                         binding.shopPhoto.foreground = ((BitmapDrawable(bitmap)))
-
-                        //傳Uri到viewModel
                         viewModel.shopImageUri.value = uri
                     }
                 }
@@ -160,13 +157,8 @@ class AddShopFragment : Fragment() {
             fromMenu -> {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     data.data?.let { uri ->
-
-                        // 將照片顯示
                         val bitmap = getBitmapFromUri(uri)
-
                         binding.menuPhoto.foreground = ((BitmapDrawable(bitmap)))
-
-                        //傳Uri到viewModel
                         viewModel.menuImageUri.value = uri
                     }
                 }
@@ -183,13 +175,13 @@ class AddShopFragment : Fragment() {
     private fun MaterialButton.setOnClickChoosePhoto(buttonName: Int) {
 
         setOnClickListener {
-
-            // open storage
-            val intent = Intent(Intent.ACTION_PICK)
-
-            // only display image
-            intent.type = "image/*"
-            startActivityForResult(intent, buttonName)
+            ImagePicker.with(fragment = this@AddShopFragment)
+                .galleryOnly()
+                .crop(16f, 9f)
+                .compress(1024)
+                .createIntent { intent ->
+                    startActivityForResult(intent,buttonName)
+                }
         }
     }
 

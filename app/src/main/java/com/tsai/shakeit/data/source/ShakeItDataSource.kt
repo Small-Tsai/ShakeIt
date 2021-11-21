@@ -51,7 +51,7 @@ interface ShakeItDataSource {
 
     suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>>
 
-    suspend fun getProduct(shopName: String): Result<List<Product>>
+    suspend fun getProduct(shop: Shop): Result<List<Product>>
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
 

@@ -34,7 +34,7 @@ class SettingFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         val adapter = SettingAdapter(viewModel, mainViewModel)
 
@@ -43,7 +43,7 @@ class SettingFragment : Fragment() {
         })
 
         viewModel.doCheck.observe(viewLifecycleOwner, {
-            Logger.d("docheckAll = $it")
+            Logger.d("checkAll = $it")
 
             if (it.isNotEmpty()) {
                 viewModel.filterShop(it, mainViewModel)

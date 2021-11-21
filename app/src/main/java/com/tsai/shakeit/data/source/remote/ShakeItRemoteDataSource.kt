@@ -326,10 +326,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getProduct(shopName: String): Result<List<Product>> =
+    override suspend fun getProduct(shop: Shop): Result<List<Product>> =
         suspendCoroutine { continuation ->
 
             val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
+            val dbShop = FirebaseFirestore.getInstance().collection(SHOP)
 
 //            branchProduct.get().addOnCompleteListener {
 //                if (it.isSuccessful) {
@@ -349,18 +350,36 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 //                }
 //            }
 
-            Logger.d(shopName)
+            Logger.d(shop.name)
             branchProduct
-                .whereArrayContains("shop_Name", shopName)
+                .whereArrayContains("shop_Name", shop.name)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObjects(Product::class.java)
+
+                        //update shopName to full name
+                        if (shopData.first().shop_Name.contains(shop.name) &&
+                            shop.name != shopData.first().shop_Name.last()
+                        ) {
+                            dbShop.document(shop.shop_Id)
+                                .update("name", shopData.first().shop_Name.last())
+                                .addOnCompleteListener {
+                                    if (task.isSuccessful){
+                                        Logger.d("update shopName success")
+                                    }else{
+                                        Logger.w("update shopName fail")
+
+                                    }
+                                }
+                        }
+
                         if (!isInternetConnected()) {
                             continuation.resume(Result.Fail(Util.getString(R.string.internet_not_connected)))
                         } else {
                             continuation.resume(Result.Success(shopData))
                         }
+
                     } else {
                         task.exception?.let {
                             Logger.w(

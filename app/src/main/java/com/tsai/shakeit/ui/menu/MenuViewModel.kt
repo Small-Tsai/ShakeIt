@@ -200,7 +200,7 @@ class MenuViewModel(
             _status.value = LoadApiStatus.LOADING
 
             when (val result = withContext(Dispatchers.IO) {
-                repository.getProduct(selectedShop.name)
+                repository.getProduct(selectedShop)
             }) {
                 is Result.Success -> {
                     result.data.let {

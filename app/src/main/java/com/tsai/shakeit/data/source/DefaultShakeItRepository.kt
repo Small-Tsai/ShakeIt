@@ -110,8 +110,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getAllShop(center, distance)
     }
 
-    override suspend fun getProduct(shopName: String): Result<List<Product>> {
-        return shakeItDataSource.getProduct(shopName)
+    override suspend fun getProduct(shop: Shop): Result<List<Product>> {
+        return shakeItDataSource.getProduct(shop)
     }
 
     override suspend fun getComment(shopId: String): Result<List<Comment>> {

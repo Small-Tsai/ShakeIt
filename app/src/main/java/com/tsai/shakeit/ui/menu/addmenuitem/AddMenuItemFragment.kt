@@ -117,7 +117,7 @@ class AddMenuItemFragment : Fragment() {
         setOnClickListener {
             ImagePicker.with(fragment = this@AddMenuItemFragment)
                 .galleryOnly()
-                .crop(16f, 9f)
+                .crop()
                 .compress(1024)
                 .createIntent { intent ->
                     startActivityForResult(intent,buttonName)

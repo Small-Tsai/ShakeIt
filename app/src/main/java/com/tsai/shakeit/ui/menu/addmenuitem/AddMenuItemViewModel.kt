@@ -243,7 +243,9 @@ class AddMenuItemViewModel(
         addOtherList =
             mutableListOf(
                 AddMenuItem.Title("加料選項"),
-                AddMenuItem.Detail(hashMapOf(), 3),
+                AddMenuItem.Detail(hashMapOf("珍珠" to 10), 3),
+                AddMenuItem.Detail(hashMapOf("蘆薈" to 10), 3),
+                AddMenuItem.Detail(hashMapOf("椰果" to 10), 3),
                 AddMenuItem.Button(3)
             )
 
@@ -258,6 +260,13 @@ class AddMenuItemViewModel(
         userSugarContentList[4] = "3分糖"
         userSugarContentList[5] = "1分糖"
         userSugarContentList[6] = "無糖"
+        userOtherContentList[1]="珍珠"
+        userOtherContentList[2]="蘆薈"
+        userOtherContentList[3]="椰果"
+        userOtherPriceList[1]="10"
+        userOtherPriceList[2]="10"
+        userOtherPriceList[3]="10"
+        type = "鮮調"
 
 
         _addCapacityListLiveData.value = addCapacityList

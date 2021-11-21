@@ -14,9 +14,13 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.google.android.libraries.places.api.Places
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.tsai.shakeit.BuildConfig.MAPS_API_KEY
 import com.tsai.shakeit.databinding.ActivityMainBinding
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.ui.favorite.FavoriteFragmentDirections
 import com.tsai.shakeit.ui.home.HomeFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
@@ -33,6 +37,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseApp.initializeApp(/*context=*/this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            SafetyNetAppCheckProviderFactory.getInstance()
+        )
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this

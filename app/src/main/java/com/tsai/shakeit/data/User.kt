@@ -9,6 +9,6 @@ data class User(
     val user_Id: String = "",
     val user_Name: String = "",
     val user_Image: String = "",
-    val user_Token: String = ""
+    var user_Token: String = ""
 ) : Parcelable {
 }

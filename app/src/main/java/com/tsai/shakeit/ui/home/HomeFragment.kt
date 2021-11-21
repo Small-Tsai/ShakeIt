@@ -49,6 +49,7 @@ import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.permission.AppPermissions
+import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
@@ -135,7 +136,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
+        Logger.d("token = ${MyFirebaseService.token.toString()}")
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner

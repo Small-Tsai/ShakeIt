@@ -13,7 +13,9 @@ import com.tsai.shakeit.data.notification.PushNotification
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.ShakeItApi
+import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.util.Logger
+import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

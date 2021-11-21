@@ -126,11 +126,6 @@ class AddShopFragment : Fragment() {
                                 viewModel.lat = latLng.latitude
                                 viewModel.lon = latLng.longitude
                             }
-                            place.name.let { name->
-                                Logger.d("$name")
-                                binding.shopNameEdt.setText(name)
-                                viewModel.name = name
-                            }
                         }
                     }
 
@@ -212,7 +207,6 @@ class AddShopFragment : Fragment() {
                 Place.Field.LAT_LNG,
                 Place.Field.PHONE_NUMBER,
                 Place.Field.OPENING_HOURS,
-                Place.Field.NAME
             )
 
         // Start the autocomplete intent.

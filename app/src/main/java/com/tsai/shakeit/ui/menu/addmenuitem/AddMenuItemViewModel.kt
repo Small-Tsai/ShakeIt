@@ -266,8 +266,6 @@ class AddMenuItemViewModel(
         userOtherPriceList[1]="10"
         userOtherPriceList[2]="10"
         userOtherPriceList[3]="10"
-        type = "鮮調"
-
 
         _addCapacityListLiveData.value = addCapacityList
         _addIceListLiveData.value = addIceList

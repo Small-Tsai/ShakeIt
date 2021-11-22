@@ -159,7 +159,7 @@ class LoginFragment : Fragment() {
             lifecycleScope.launch {
 
                 viewModel.uploadUser()
-
+                viewModel.updateFirebaseProductToken()
                 if (::orderId.isInitialized) {
                     viewModel.joinToOrder(orderId)
                 } else {

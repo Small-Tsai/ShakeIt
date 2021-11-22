@@ -37,7 +37,6 @@ class MyFirebaseService : FirebaseMessagingService() {
         super.onNewToken(newToken)
         token = newToken
         Logger.d("newToken = $newToken")
-        ShakeItApplication.instance.shakeItRepository.updateUserTokenOnFireBase(newToken)
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

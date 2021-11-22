@@ -537,6 +537,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             orderHistory
                 .whereEqualTo("user_Id", userId)
                 .limit(10)
+                .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

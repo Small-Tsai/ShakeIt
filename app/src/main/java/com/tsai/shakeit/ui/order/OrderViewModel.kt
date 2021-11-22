@@ -15,7 +15,6 @@ import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -41,6 +40,10 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val status: LiveData<LoadApiStatus?>
         get() = _status
 
+    private var _orderProduct = MutableLiveData<List<OrderProduct>>()
+    val orderProduct: LiveData<List<OrderProduct>>
+        get() = _orderProduct
+
     val hasOrder = MutableLiveData<Boolean>().apply { value = false }
 
     init {
@@ -51,12 +54,12 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _userOrderList = repository.getFireBaseOrder(UserInfo.userId)
     }
 
-    fun deleteOrder(orderId: String, isComepleteOrder: Boolean) {
+    fun deleteOrder(orderId: String, isOrderCompleted: Boolean) {
         _status.value = LoadApiStatus.LOADING
         viewModelScope.launch {
             when (val result = withContext(Dispatchers.IO) { repository.deleteOrder(orderId) }) {
                 is Result.Success -> {
-                    if (!isComepleteOrder) {
+                    if (!isOrderCompleted) {
                         _status.value = LoadApiStatus.DONE
                     }
                 }
@@ -72,9 +75,10 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _navToOrderDetail.value = null
     }
 
-    private var _orderProduct = MutableLiveData<List<OrderProduct>>()
-    val orderProduct: LiveData<List<OrderProduct>>
-        get() = _orderProduct
+    fun navToOrderHistory() {
+        _navToOrderHistory.value = true
+        _navToOrderHistory.value = null
+    }
 
     fun navToSendComment(order: Order) {
 
@@ -108,16 +112,10 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     }
                 } else {
                     _status.value = LoadApiStatus.DONE
-                    mToast("無任何商品無法完成訂單，如要移除請點選移除按鈕")
+                    mToast(Util.getString(R.string.noOrderProductDenyDetele))
                 }
             }
         }
-
-    }
-
-    fun navToOrderHistory() {
-        _navToOrderHistory.value = true
-        _navToOrderHistory.value = null
     }
 }
 

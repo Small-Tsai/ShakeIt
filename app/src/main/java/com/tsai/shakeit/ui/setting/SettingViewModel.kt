@@ -4,11 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tsai.shakeit.MainViewModel
-import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.Util
 
 class SettingViewModel(private val repository: ShakeItRepository, private val list: Array<Shop>) :
     ViewModel() {
@@ -19,19 +16,17 @@ class SettingViewModel(private val repository: ShakeItRepository, private val li
     val shopList: LiveData<List<String>>
         get() = _shopList
 
-    var filteredList = mutableListOf<String>()
+    var filteredShopList = mutableListOf<String>()
 
     var isAllChecked = MutableLiveData<Boolean>()
 
     fun filterShop(shopName: String, mainViewModel: MainViewModel) {
-
-        if (!filteredList.contains(shopName)) {
-            filteredList.add(shopName)
-            mainViewModel.shopFilterList.value = filteredList
-
+        if (!filteredShopList.contains(shopName)) {
+            filteredShopList.add(shopName)
+            mainViewModel.localShopFilteredList.value = filteredShopList
         } else {
-            filteredList.remove(shopName)
-            mainViewModel.shopFilterList.value = filteredList
+            filteredShopList.remove(shopName)
+            mainViewModel.localShopFilteredList.value = filteredShopList
         }
     }
 

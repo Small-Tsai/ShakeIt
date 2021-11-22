@@ -45,7 +45,6 @@ class MyFirebaseService : FirebaseMessagingService() {
                                 val mProduct = product.toObject(OrderProduct::class.java)
                                 val user = Firebase.auth.currentUser
                                 if (mProduct.user.user_Id == user?.uid) {
-                                    Logger.d("productId =${mProduct.orderProduct_Id}")
                                     order.document(doc.id).collection(ORDER_PRODUCT)
                                         .document(mProduct.orderProduct_Id).update(
                                             "user", User(
@@ -60,10 +59,36 @@ class MyFirebaseService : FirebaseMessagingService() {
                         }
                 }
             }
+
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+
+        val order = FirebaseFirestore.getInstance().collection(ORDERS)
+        FirebaseFirestore.getInstance().collection(ORDERS).get()
+            .addOnCompleteListener { task ->
+                for (doc in task.result) {
+                    order.document(doc.id).collection(ORDER_PRODUCT).get()
+                        .addOnCompleteListener { orderProduct ->
+                            for (product in orderProduct.result) {
+                                val mProduct = product.toObject(OrderProduct::class.java)
+                                val user = Firebase.auth.currentUser
+                                if (mProduct.user.user_Id == user?.uid) {
+                                    order.document(doc.id).collection(ORDER_PRODUCT)
+                                        .document(mProduct.orderProduct_Id).update(
+                                            "user", User(
+                                                user_Id = user.uid,
+                                                user_Name = user.displayName.toString(),
+                                                user_Image = user.photoUrl.toString(),
+                                                user_Token = token!!
+                                            )
+                                        )
+                                }
+                            }
+                        }
+                }
+            }
 
         message.data["title"]?.let {
             message.data["message"]?.let { it1 ->

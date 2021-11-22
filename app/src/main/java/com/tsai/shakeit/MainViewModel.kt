@@ -7,7 +7,6 @@ import com.tsai.shakeit.data.FilterShop
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.util.CurrentFragmentType
-import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
@@ -22,11 +21,14 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //use to display average rating
     val ratingAvg = MutableLiveData<Float>()
 
-    //use to filter shop
-    var shopFilterList = MutableLiveData<List<String>>()
+    //Record current filtered shop and update to firebase
+    var localShopFilteredList = MutableLiveData<List<String>>()
 
-    //use to navToHome from Favorite Page and move camera
+    //Record current selected shop
     val selectedShop = MutableLiveData<Shop>()
+
+    //liveData for observe firebaseFilteredShopList
+    var firebaseFilteredShopList = MutableLiveData<List<String>>()
 
     //use to update filterShopList on FireBase
     fun updateFilterShopList(list: List<String>) {
@@ -35,12 +37,10 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    //get filterShopList on FireBase
-    var dbFilterShopList = MutableLiveData<List<String>>()
-    fun getFilterList() {
-        if (dbFilterShopList.value.isNullOrEmpty()){
-            dbFilterShopList = repository.getFilteredShopList(UserInfo.userId)
+    //get FireBaseShopFilteredList on FireBase
+    fun getFireBaseFilteredShopList() {
+        if (firebaseFilteredShopList.value.isNullOrEmpty()) {
+            firebaseFilteredShopList = repository.getFilteredShopList(UserInfo.userId)
         }
     }
-
 }

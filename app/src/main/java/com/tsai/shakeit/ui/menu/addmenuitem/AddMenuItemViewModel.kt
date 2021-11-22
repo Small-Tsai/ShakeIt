@@ -426,7 +426,6 @@ class AddMenuItemViewModel(
         _addOtherListLiveData.value = addOtherList
     }
 
-
     fun popBack() {
         _popBack.value = true
         _popBack.value = null

@@ -5,20 +5,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
-import com.tsai.shakeit.ui.home.HomeViewModel
-import com.tsai.shakeit.ui.menu.MenuViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
@@ -126,7 +121,7 @@ fun SwitchMaterial.bindSwitch(
     shopName: String,
     viewModel: SettingViewModel
 ) {
-    isChecked = mainViewModel.dbFilterShopList.value?.contains(shopName) != true
+    isChecked = mainViewModel.firebaseFilteredShopList.value?.contains(shopName) != true
 }
 
 @BindingAdapter("fabAnimation")

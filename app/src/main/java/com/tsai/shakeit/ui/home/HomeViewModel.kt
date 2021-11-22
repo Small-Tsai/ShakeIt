@@ -147,15 +147,13 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun getShopData(center: LatLng, type: String? = null) {
         viewModelScope.launch {
 
-            if (type == "search") {
-                // do search animation
-            } else {
-                loading()
-            }
+            if (type != "search") { loading() }
 
-            when (mode.value) {
-                WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt() }
-                DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt() }
+            if (!userSettingTime.value.isNullOrEmpty()){
+                when (mode.value) {
+                    WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt() }
+                    DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt() }
+                }
             }
 
             when (mode.value) {
@@ -276,7 +274,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     fun selectWalk() {
-
         UserInfo.userCurrentSelectTraffic = WALKING
         _mode.value = UserInfo.userCurrentSelectTraffic
     }

@@ -1,14 +1,8 @@
 package com.tsai.shakeit
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
-import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
@@ -20,13 +14,11 @@ import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.tsai.shakeit.BuildConfig.MAPS_API_KEY
 import com.tsai.shakeit.databinding.ActivityMainBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.ui.favorite.FavoriteFragmentDirections
 import com.tsai.shakeit.ui.home.HomeFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.UserInfo
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,19 +46,16 @@ class MainActivity : AppCompatActivity() {
 
         setUpBottomNavigation(navView, navController)
 
-        viewModel.currentFragmentType.observe(this,{
+        viewModel.currentFragmentType.observe(this, {
             Logger.d("current fragment type = $it")
         })
 
-        viewModel.shopFilterList.observe(this, {
+        viewModel.localShopFilteredList.observe(this, {
             viewModel.updateFilterShopList(it)
         })
 
         // Initialize the SDK
         Places.initialize(applicationContext, MAPS_API_KEY)
-
-        // Create a new PlacesClient instance
-        val placesClient = Places.createClient(this)
 
         setupNavController(navView)
     }
@@ -98,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     return@addOnDestinationChangedListener
                 }
 
-                R.id.menuFragment ->  CurrentFragmentType.MENU
+                R.id.menuFragment -> CurrentFragmentType.MENU
                 R.id.addShopFragment -> CurrentFragmentType.ADD_SHOP
                 R.id.drinksDetailFragment -> CurrentFragmentType.DRINKS_DETAIL
                 R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL
@@ -113,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                     CurrentFragmentType.FAVORITE
                 }
 
-                R.id.orderHistoryFragment ->{
+                R.id.orderHistoryFragment -> {
                     CurrentFragmentType.ORDER_HISTORY
                 }
 

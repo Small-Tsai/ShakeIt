@@ -20,6 +20,8 @@
     <string name="notify_channel_id" translatable="false">MyDefaultChannelID</string>
     <string name="notify_channel_name" translatable="false">MyDefaultChannelName</string>
     <string name="notify_channel_description" translatable="false">MyDefaultChannelDescription</string>
+    <string name="noOrderProductDenyDetele">無任何商品無法完成訂單，如要移除請點選移除按鈕</string>
+    <string name="need_open_currentLocation">地圖功能需開啟定位</string>
 
 
 </resources>

@@ -43,25 +43,21 @@ class SettingFragment : Fragment() {
         })
 
         viewModel.doCheck.observe(viewLifecycleOwner, {
-            Logger.d("checkAll = $it")
-
             if (it.isNotEmpty()) {
                 viewModel.filterShop(it, mainViewModel)
             } else if (viewModel.isAllChecked.value == true) {
-
-                Logger.d("${viewModel.isAllChecked.value}")
-                mainViewModel.shopFilterList.value = viewModel.shopList.value?.distinct()
+                mainViewModel.localShopFilteredList.value = viewModel.shopList.value?.distinct()
             } else {
-                mainViewModel.shopFilterList.value = mutableListOf()
+                mainViewModel.localShopFilteredList.value = mutableListOf()
             }
         })
 
         binding.mainViewModel = mainViewModel
 
-        mainViewModel.dbFilterShopList.observe(viewLifecycleOwner, {
-            Logger.d("隱藏商家--->$it")
-            viewModel.filteredList = it as MutableList<String>
-            viewModel.isAllChecked.value = viewModel.filteredList.isEmpty()
+        mainViewModel.firebaseFilteredShopList.observe(viewLifecycleOwner, {
+            Logger.d("filteredShop--->$it")
+            viewModel.filteredShopList = it as MutableList<String>
+            viewModel.isAllChecked.value = viewModel.filteredShopList.isEmpty()
             adapter.notifyDataSetChanged()
         })
 

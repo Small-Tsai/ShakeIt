@@ -64,7 +64,7 @@ class AppPermissions {
                     }
 
                     if (!gpsEnabled && !networkEnabled) {
-                        mToast("地圖功能需開啟定位")
+                        mToast(Util.getString(R.string.need_open_currentLocation))
                     }
 
                 } else {

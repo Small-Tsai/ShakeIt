@@ -111,7 +111,7 @@ class OrderDetailFragment : Fragment() {
         })
 
         viewModel.navToHome.observe(viewLifecycleOwner, {
-            val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+            val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
             mainViewModel.selectedShop.value = it
             findNavController().navigate(FavoriteFragmentDirections.navToHome())
         })

@@ -56,33 +56,22 @@ class AddShopFragment : Fragment() {
         binding.shopPhoto.setOnClickChoosePhoto(fromShop)
         binding.dateRev.adapter = adapter
 
-//        adapter.submitList(viewModel.dateList)
-
         viewModel.popBack.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigateUp() }
         })
 
-        viewModel.timeOpen.observe(viewLifecycleOwner, {
-
-            viewModel.adapterPostion.value?.let { it1 ->
-                viewModel.timeClose.value?.let { it2 ->
-                    viewModel.setTimeList(
-                        it,
-                        it2,
-                        it1
-                    )
+        viewModel.timeOpen.observe(viewLifecycleOwner, { timeOpen ->
+            viewModel.adapterPostion.value?.let { adapterPosition ->
+                viewModel.timeClose.value?.let { timeClose ->
+                    viewModel.setTimeList(timeOpen, timeClose, adapterPosition)
                 }
             }
         })
 
-        viewModel.timeClose.observe(viewLifecycleOwner, {
-            viewModel.adapterPostion.value?.let { it1 ->
-                viewModel.timeOpen.value?.let { it2 ->
-                    viewModel.setTimeList(
-                        it2,
-                        it,
-                        it1
-                    )
+        viewModel.timeClose.observe(viewLifecycleOwner, { timeClose ->
+            viewModel.adapterPostion.value?.let { adapterPosition ->
+                viewModel.timeOpen.value?.let { timeOpen ->
+                    viewModel.setTimeList(timeOpen, timeClose, adapterPosition)
                 }
             }
         })
@@ -179,7 +168,7 @@ class AddShopFragment : Fragment() {
                 .crop(16f, 9f)
                 .compress(1024)
                 .createIntent { intent ->
-                    startActivityForResult(intent,buttonName)
+                    startActivityForResult(intent, buttonName)
                 }
         }
     }
@@ -191,7 +180,7 @@ class AddShopFragment : Fragment() {
                 .crop()
                 .compress(1024)
                 .createIntent { intent ->
-                    startActivityForResult(intent,buttonName)
+                    startActivityForResult(intent, buttonName)
                 }
         }
     }

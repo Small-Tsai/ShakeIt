@@ -37,7 +37,7 @@ class CommentFragment(private val shopId: String) : Fragment() {
 
         val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
-        viewModel.comment.observe(viewLifecycleOwner, Observer {
+        viewModel.comment.observe(viewLifecycleOwner, {
             adapter.submitList(it)
             mainViewModel.commentSize.value = it.size
             mainViewModel.ratingAvg.value = it.map { comment->comment.rating }.average().toFloat()

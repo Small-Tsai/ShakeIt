@@ -142,4 +142,8 @@ class DefaultShakeItRepository(
        return shakeItDataSource.getAllProduct()
     }
 
+    override fun updateUserTokenOnFireBase(newToken: String) {
+        return shakeItDataSource.updateUserTokenOnFireBase(newToken)
+    }
+
 }

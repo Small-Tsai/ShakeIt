@@ -79,4 +79,6 @@ interface ShakeItDataSource {
 
     fun getFavorite(userId: String): MutableLiveData<List<Favorite>>
 
+    fun updateUserTokenOnFireBase(newToken: String)
+
 }

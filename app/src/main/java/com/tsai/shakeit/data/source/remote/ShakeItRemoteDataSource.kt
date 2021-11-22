@@ -1,6 +1,7 @@
 package com.tsai.shakeit.data.source.remote
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
@@ -8,7 +9,9 @@ import com.firebase.geofire.GeoQueryBounds
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.maps.model.LatLng
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
@@ -365,9 +368,9 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                             dbShop.document(shop.shop_Id)
                                 .update("name", shopData.first().shop_Name.last())
                                 .addOnCompleteListener {
-                                    if (task.isSuccessful){
+                                    if (task.isSuccessful) {
                                         Logger.d("update shopName success")
-                                    }else{
+                                    } else {
                                         Logger.w("update shopName fail")
 
                                     }
@@ -872,5 +875,33 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 liveData.value = list
             }
         return liveData
+    }
+
+    override fun updateUserTokenOnFireBase(newToken: String) {
+        Log.d("tsai","$newToken")
+        val order = FirebaseFirestore.getInstance().collection(ORDERS)
+        FirebaseFirestore.getInstance().collection(ORDERS).get()
+            .addOnCompleteListener { task ->
+                for (doc in task.result) {
+                    order.document(doc.id).collection(ORDER_PRODUCT).get()
+                        .addOnCompleteListener { orderProduct ->
+                            for (product in orderProduct.result) {
+                                val mProduct = product.toObject(OrderProduct::class.java)
+                                val user = Firebase.auth.currentUser
+                                if (mProduct.user.user_Id == user?.uid) {
+                                    order.document(doc.id).collection(ORDER_PRODUCT)
+                                        .document(mProduct.orderProduct_Id).update(
+                                            "user", User(
+                                                user_Id = user.uid,
+                                                user_Name = user.displayName.toString(),
+                                                user_Image = user.photoUrl.toString(),
+                                                user_Token = newToken
+                                            )
+                                        )
+                                }
+                            }
+                        }
+                }
+            }
     }
 }

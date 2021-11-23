@@ -4,6 +4,7 @@ import android.animation.IntEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -32,6 +33,11 @@ object Util {
 
     fun getColor(resourceId: Int): Int {
         return ShakeItApplication.instance.getColor(resourceId)
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun getDrawable(resourceId: Int): Drawable? {
+        return ShakeItApplication.instance.resources.getDrawable(resourceId, null)
     }
 
     //map search animation

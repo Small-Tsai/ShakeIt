@@ -1,49 +1,49 @@
-package com.tsai.shakeit.util
+package com.tsai.shakeit
 
 import android.os.Looper
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.TextView
+import android.widget.*
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
-import com.tsai.shakeit.MainViewModel
-import com.tsai.shakeit.R
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
-import com.tsai.shakeit.ui.setting.SettingViewModel
+import com.tsai.shakeit.util.DRIVING
+import com.tsai.shakeit.util.WALKING
 
 @BindingAdapter("shopNameArray")
 fun TextView.bindShopNameArray(name: ArrayList<String>?) {
-    name?.let { text = "--${name.last()}" }
+    val shopName = "--${name?.last()}"
+    name?.let { text = shopName }
 }
 
 @BindingAdapter("shopName", "branch")
 fun TextView.bindShopName(name: String?, branch: String?) {
-    name?.let { text = "$name $branch" }
+    val shopFullName = "$name\t$branch"
+    name?.let { text = shopFullName }
 }
 
 @BindingAdapter("totalPrice")
 fun TextView.bindTotalPrice(totalPrice: Int) {
-    text = "訂單小計 $ $totalPrice"
+    val totalPriceText = "訂單小計\t$\t$totalPrice"
+    text = totalPriceText
 }
 
 @BindingAdapter("priceText")
 fun TextView.bindPrice(price: Int) {
-    text = "NT$ $price"
+    val priceText = "NT$\t$price"
+    text = priceText
 }
 
 @BindingAdapter("priceForCapacity")
 fun TextView.bindCapacityPrice(price: HashMap<String, Int>) {
-    if (price["大"] != null) {
-        text = "NT$ ${price["大"]}"
+    text = if (price["大"] != null) {
+        "NT$ ${price["大"]}"
     } else {
-        text = "NT$ ${price["中"]}"
+        "NT$ ${price["中"]}"
     }
 }
 
@@ -63,7 +63,6 @@ fun bindDisplayFormatTime(textView: TextView, time: Timestamp?) {
 
 @BindingAdapter("mRadioButton", "viewModel", "position")
 fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, position: Int) {
-//    Logger.d("$position = ${viewModel.selectedPositionList.distinct().contains(position)}")
     isChecked = when (viewModel.selectedPositionList.distinct().contains(position)) {
         true -> true
         false -> false
@@ -74,17 +73,17 @@ fun RadioButton.bindRadioBtn(content: String, viewModel: DrinksDetailViewModel, 
 @BindingAdapter("othersText")
 fun TextView.bindOthers(orderProduct: OrderProduct) {
     if (orderProduct.others.isEmpty()) {
-        text =
-            "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice}"
+        "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice}"
+            .also { text = it }
     } else {
-        text =
-            "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
+        "${orderProduct.capacity},${orderProduct.sugar},${orderProduct.ice},${orderProduct.others}"
+            .also { text = it }
     }
 }
 
 @BindingAdapter("qtyText")
 fun TextView.bindQty(qty: Int) {
-    text = "x$qty"
+    "x$qty".also { text = it }
 }
 
 @BindingAdapter("imageUrl")
@@ -115,51 +114,54 @@ fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
 }
 
 
-@BindingAdapter("mainViewModel", "shopName", "viewModel")
+@BindingAdapter("mainViewModel", "shopName")
 fun SwitchMaterial.bindSwitch(
     mainViewModel: MainViewModel,
     shopName: String,
-    viewModel: SettingViewModel
 ) {
     isChecked = mainViewModel.firebaseFilteredShopList.value?.contains(shopName) != true
 }
 
 @BindingAdapter("fabAnimation")
 fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
-    elevation = 10f
-    iconSize = 90
-    textSize = 18f
-    scaleX = 0.65f
-    scaleY = 0.65f
-    isExtended = false
-    val handler = android.os.Handler(Looper.getMainLooper())
-    handler.postDelayed({
-        extend()
+    if (start){
+        elevation = 10f
+        iconSize = 90
+        textSize = 18f
+        scaleX = 0.65f
+        scaleY = 0.65f
+        isExtended = false
+        val handler = android.os.Handler(Looper.getMainLooper())
         handler.postDelayed({
-            shrink()
-        }, 1000)
-    }, 1500)
+            extend()
+            handler.postDelayed({
+                shrink()
+            }, 1000)
+        }, 1500)
+    }
 }
 
 @BindingAdapter("fabAnimationBig")
 fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
-    isExtended = false
-    elevation = 10f
-    textSize = 18f
-    scaleX = 0.9f
-    scaleY = 0.9f
-    val handler = android.os.Handler(Looper.getMainLooper())
-    handler.postDelayed({
-        extend()
+    if (start){
+        isExtended = false
+        elevation = 10f
+        textSize = 18f
+        scaleX = 0.9f
+        scaleY = 0.9f
+        val handler = android.os.Handler(Looper.getMainLooper())
         handler.postDelayed({
-            shrink()
-        }, 1000)
-    }, 1500)
+            extend()
+            handler.postDelayed({
+                shrink()
+            }, 1000)
+        }, 1500)
+    }
 }
 
 @BindingAdapter("getCurrentType", "viewModel", "gerCurrentPosition")
 fun EditText.bindPosition(type: Int, viewModel: AddMenuItemViewModel, position: Int) {
-    setOnFocusChangeListener { view, b ->
+    setOnFocusChangeListener { _, b ->
         if (b) {
             viewModel.recordCurrentSelectedType(type)
             viewModel.recordCurrentSelectedPosition(position)

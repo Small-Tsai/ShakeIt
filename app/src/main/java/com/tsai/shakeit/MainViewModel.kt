@@ -16,7 +16,7 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
 
     //use to display total comment number
-    val commentSize = MutableLiveData<Int>()
+    val commentCount = MutableLiveData<Int>()
 
     //use to display average rating
     val ratingAvg = MutableLiveData<Float>()

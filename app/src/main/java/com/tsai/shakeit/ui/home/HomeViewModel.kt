@@ -1,9 +1,6 @@
 package com.tsai.shakeit.ui.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.google.android.libraries.maps.model.*
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Favorite
@@ -37,10 +34,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToSetting: LiveData<Boolean?>
         get() = _navToSetting
 
-    private val _isInserted = MutableLiveData<Boolean>()
-    val isInserted: LiveData<Boolean>
-        get() = _isInserted
-
     private val _shopLiveData = MutableLiveData<List<Shop>>()
     val shopLiveData: LiveData<List<Shop>>
         get() = _shopLiveData
@@ -48,6 +41,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private var _favorite = MutableLiveData<List<Favorite>>()
     val favorite: LiveData<List<Favorite>>
         get() = _favorite
+
+    private val _isInMyFavorite = MutableLiveData<Boolean>()
+    val isInMyFavorite: LiveData<Boolean>
+        get() = _isInMyFavorite
 
     private val _snippet = MutableLiveData<String?>()
     val snippet: LiveData<String?>
@@ -84,9 +81,14 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val bottomStatus: LiveData<LoadApiStatus>
         get() = _bottomStatus
 
+    // get shopName from shopLiveData
+    val allShopName: LiveData<List<String>> = Transformations.map(shopLiveData) { shop ->
+        shop.map { it.name }.distinct()
+    }
+
     //LiveData of product
     private val _allProduct = MutableLiveData<List<Product>>()
-    val allproduct: LiveData<List<Product>>
+    val allProduct: LiveData<List<Product>>
         get() = _allProduct
 
     //record fragment type from home page
@@ -219,7 +221,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     var mShopId: String? = null
     fun checkHasFavorite() {
-        _isInserted.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
+        _isInMyFavorite.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
     //nav to setting page
@@ -244,7 +246,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun deleteFavorite(shopId: String) {
         viewModelScope.launch {
             when (repository.deleteFavorite(shopId)) {
-                is Result.Success -> checkHasFavorite()
+                is Result.Success -> {
+                    checkHasFavorite()
+                }
                 else -> Logger.d("delete favorite fail ")
             }
         }

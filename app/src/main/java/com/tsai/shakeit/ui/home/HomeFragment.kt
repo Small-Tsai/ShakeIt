@@ -32,6 +32,7 @@ import com.tsai.shakeit.BuildConfig.DIRECTION_API_KEY
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.app.AppPermissions
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
@@ -41,8 +42,6 @@ import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.moveCamera
 import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
-import com.tsai.shakeit.app.AppPermissions
-import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
@@ -91,7 +90,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         if (mainViewModel.firebaseFilteredShopList.value.isNullOrEmpty()) {
             mainViewModel.getFireBaseFilteredShopList()
@@ -122,7 +121,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
 
-        Logger.d("token = ${MyFirebaseService.token.toString()}")
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
@@ -147,7 +145,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             viewModel.checkHasFavorite()
 
             binding.telBtn.setOnClickListener {
-                telUri = Uri.parse("tel:${shop.tel}");
+                telUri = Uri.parse("tel:${shop.tel}")
                 startActivity(Intent(Intent.ACTION_DIAL, telUri))
             }
 
@@ -214,13 +212,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         //Observe ShopData
         viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
 
-            allShopName = shopData.map { it.name }.distinct()
             allShopData = shopData
 
             // observe when get currentPosition
-            if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
-                viewModel.trafficMode.value?.let { mode -> getDirection(mode) }
+
+            viewModel.trafficMode.value?.let { mode ->
+                mainViewModel.currentFragmentType.value?.let { getDirection(mode, it) }
             }
+
 
             //observe mainViewModel shopFilteredList from firebase
             mainViewModel.firebaseFilteredShopList.observe(viewLifecycleOwner, { dbList ->
@@ -240,6 +239,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     addMarkerAfterClearMap(allShopName.filter { it != queryShopName })
                 }
             })
+        })
+
+        viewModel.allShopName.observe(viewLifecycleOwner, {
+            allShopName = it
         })
 
         //observe getDirectionDone
@@ -310,7 +313,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     vAnimator,
                     viewModel.distance
                 )
+
                 viewModel.getShopData(UserInfo.userCurrentLocation, "search")
+
+
+                it?.let {
+                    mainViewModel.currentFragmentType.value?.let { currentFragmentType ->
+                        getDirection(it, currentFragmentType)
+                    }
+                }
+
             }
         })
 
@@ -417,12 +429,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         val listAdapter = SearchAdapter(viewModel)
 
-        viewModel.allproduct.observe(viewLifecycleOwner, { list ->
+        viewModel.allProduct.observe(viewLifecycleOwner, { list ->
             allProductList = list
             listAdapter.submitList(list.sortedBy { it.type })
         })
 
-        binding.searchView.setOnQueryTextFocusChangeListener { view, b ->
+        binding.searchView.setOnQueryTextFocusChangeListener { _, b ->
             viewModel.isSearchBarFocus.value = b
         }
 
@@ -503,18 +515,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
         // update total comment qty on bottomSheet
-        mainViewModel.commentSize.observe(viewLifecycleOwner, {
-            binding.commentSize.text = "($it)"
+        mainViewModel.commentCount.observe(viewLifecycleOwner, { commentCount ->
+            "($commentCount)".also { binding.commentSize.text = it }
         })
 
         // calculate average rating
-        mainViewModel.ratingAvg.observe(viewLifecycleOwner, {
-            if (it.isNaN()) {
+        mainViewModel.ratingAvg.observe(viewLifecycleOwner, { ratingAvg ->
+            if (ratingAvg.isNaN()) {
                 binding.avgRating.text = "0"
-                binding.ratingBar.rating = it
+                binding.ratingBar.rating = ratingAvg
             } else {
-                binding.avgRating.text = "%.1f".format(it)
-                binding.ratingBar.rating = it
+                "%.1f".format(ratingAvg).also { binding.avgRating.text = it }
+                binding.ratingBar.rating = ratingAvg
             }
         })
 
@@ -586,12 +598,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //marker onClick
         mMap.setOnMarkerClickListener {
+
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
+
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
                 viewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
                 viewModel.getSelectedShopSnippet(it.snippet)
-                getDirection("${viewModel.trafficMode.value}")
+
+                getDirection(
+                    "${viewModel.trafficMode.value}",
+                    mainViewModel.currentFragmentType.value!!
+                )
+
             }
             return@setOnMarkerClickListener true
         }
@@ -613,18 +632,26 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     //getDirection
-    private fun getDirection(mode: String) {
+    private fun getDirection(mode: String, currentFragmentType: CurrentFragmentType) {
+
         Logger.d(appPermission.locationPermissionGranted.toString())
-        if (appPermission.locationPermissionGranted) {
 
-            val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                    "origin=" + UserInfo.userCurrentLat + "," + UserInfo.userCurrentLng +
-                    "&destination=" + selectedShop.lat + "," + selectedShop.lon +
-                    "&mode=" + mode +
-                    "&key=" + DIRECTION_API_KEY +
-                    "&language=zh-TW"
+        if (appPermission.locationPermissionGranted && this::selectedShop.isInitialized) {
+            if (currentFragmentType == CurrentFragmentType.HOME_DIALOG ||
+                currentFragmentType == CurrentFragmentType.ORDER_DETAIL
+            ) {
+                val url = "https://maps.googleapis.com/maps/api/directions/json?" +
+                        "origin=" + UserInfo.userCurrentLat + "," + UserInfo.userCurrentLng +
+                        "&destination=" + selectedShop.lat + "," + selectedShop.lon +
+                        "&mode=" + mode +
+                        "&key=" + DIRECTION_API_KEY +
+                        "&language=zh-TW"
 
-            viewModel.getDirection(url, mode)
+                viewModel.getDirection(url, mode)
+            }
+
+        } else {
+            Logger.e("locationPermission false or selectedShop isNotInitialized")
         }
     }
 

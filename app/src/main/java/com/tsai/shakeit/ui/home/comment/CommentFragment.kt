@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.databinding.CommentFragmentBinding
@@ -39,7 +38,7 @@ class CommentFragment(private val shopId: String) : Fragment() {
 
         viewModel.comment.observe(viewLifecycleOwner, {
             adapter.submitList(it)
-            mainViewModel.commentSize.value = it.size
+            mainViewModel.commentCount.value = it.size
             mainViewModel.ratingAvg.value = it.map { comment->comment.rating }.average().toFloat()
         })
 

@@ -36,7 +36,6 @@
             android:id="@+id/switch1"
             mainViewModel="@{mainViewModel}"
             shopName="@{shopName}"
-            viewModel="@{viewModel}"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_marginEnd="4dp"

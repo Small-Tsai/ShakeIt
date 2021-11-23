@@ -1,8 +1,8 @@
 package com.tsai.shakeit.data
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
 import com.google.firebase.Timestamp
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Comment(

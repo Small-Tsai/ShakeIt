@@ -10,6 +10,9 @@ import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
+import com.tsai.shakeit.data.directionPlaceModel.Distance
+import com.tsai.shakeit.data.directionPlaceModel.Duration
+import com.tsai.shakeit.data.directionPlaceModel.Leg
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.LoadApiStatus
@@ -25,6 +28,14 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private val _navToMenu = MutableLiveData<Shop?>()
     val navToMenu: LiveData<Shop?>
         get() = _navToMenu
+
+    private val _navToAddShop = MutableLiveData<Boolean?>()
+    val navToAddShop: LiveData<Boolean?>
+        get() = _navToAddShop
+
+    private val _navToSetting = MutableLiveData<Boolean?>()
+    val navToSetting: LiveData<Boolean?>
+        get() = _navToSetting
 
     private val _isInserted = MutableLiveData<Boolean>()
     val isInserted: LiveData<Boolean>
@@ -42,22 +53,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val snippet: LiveData<String?>
         get() = _snippet
 
-    private val _navToAddShop = MutableLiveData<Boolean?>()
-    val navToAddShop: LiveData<Boolean?>
-        get() = _navToAddShop
-
-    private val _navToSetting = MutableLiveData<Boolean?>()
-    val navToSetting: LiveData<Boolean?>
-        get() = _navToSetting
-
-    private val _isFilterShopBtnClickable = MutableLiveData<Boolean>()
-    val isFilterShopClickable: LiveData<Boolean>
-        get() = _isFilterShopBtnClickable
-
-    private val _mode =
+    private val _trafficMode =
         MutableLiveData<String>().apply { value = UserInfo.userCurrentSelectTraffic }
-    val mode: LiveData<String>
-        get() = _mode
+    val trafficMode: LiveData<String>
+        get() = _trafficMode
 
     private val _mapNavState = MutableLiveData<Boolean?>()
     val mapNavState: LiveData<Boolean?>
@@ -147,25 +146,12 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun getShopData(center: LatLng, type: String? = null) {
         viewModelScope.launch {
 
-            if (type != "search") { loading() }
-
-            if (!userSettingTime.value.isNullOrEmpty()){
-                when (mode.value) {
-                    WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt() }
-                    DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt() }
-                }
+            if (type != "search") {
+                loading()
             }
 
-            when (mode.value) {
-                WALKING -> {
-                    mToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
-                }
-                DRIVING -> {
-                    mToast("正在搜尋騎車${userSettingTime.value}分鐘內的店家")
-                }
-            }
-
-            _isFilterShopBtnClickable.value = false
+            calculateTrafficDistance()
+            showToastForTrafficModeChange()
 
             when (val result = withContext(Dispatchers.IO) {
                 repository.getAllShop(center, distance)
@@ -173,7 +159,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 is Result.Success -> {
                     result.data.let {
                         _shopLiveData.value = it
-                        _isFilterShopBtnClickable.value = true
                         _status.value = LoadApiStatus.DONE
                     }
                 }
@@ -181,6 +166,26 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     mToast(result.error, "long")
                     _status.value = LoadApiStatus.ERROR
                 }
+            }
+        }
+    }
+
+    private fun calculateTrafficDistance() {
+        if (!userSettingTime.value.isNullOrEmpty()) {
+            when (_trafficMode.value) {
+                WALKING -> userSettingTime.value?.let { distance = WALKING_SPEED_AVG * it.toInt() }
+                DRIVING -> userSettingTime.value?.let { distance = DRIVING_SPEED_AVG * it.toInt() }
+            }
+        }
+    }
+
+    private fun showToastForTrafficModeChange() {
+        when (trafficMode.value) {
+            WALKING -> {
+                mToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
+            }
+            DRIVING -> {
+                mToast("正在搜尋騎車${userSettingTime.value}分鐘內的店家")
             }
         }
     }
@@ -275,18 +280,18 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     fun selectWalk() {
         UserInfo.userCurrentSelectTraffic = WALKING
-        _mode.value = UserInfo.userCurrentSelectTraffic
+        _trafficMode.value = UserInfo.userCurrentSelectTraffic
     }
 
     fun selectDriving() {
         UserInfo.userCurrentSelectTraffic = DRIVING
-        _mode.value = UserInfo.userCurrentSelectTraffic
+        _trafficMode.value = UserInfo.userCurrentSelectTraffic
 
     }
 
     fun doNothing() {}
 
-    private val currentPositon = MutableLiveData<LatLng>()
+    private val currentPosition = MutableLiveData<LatLng>()
     val getDirectionDone = MutableLiveData<Boolean>()
     private var navOption = PolylineOptions()
 
@@ -295,7 +300,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     fun getCurrentPosition(currentPositon: LatLng) {
-        this.currentPositon.value = currentPositon
+        this.currentPosition.value = currentPositon
     }
 
     fun getDirection(url: String, mode: String) {
@@ -318,30 +323,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                         val directions = result.data
                         val route = directions.routes[0]
                         val leg = route.legs[0]
-                        val distance = leg.distance
-                        val duration = leg.duration
                         val stepList: MutableList<LatLng> = ArrayList()
-                        val pattern: List<PatternItem>
-
-                        distanceLiveData.value = distance.text
-                        trafficTimeLiveData.value = duration.text
-
-                        if (mode == WALKING) {
-                            pattern = listOf(Dot(), Gap(10f))
-                            navOption.jointType(JointType.ROUND)
-                        } else {
-                            pattern = listOf(Dash(20f))
-                        }
-
-                        navOption.pattern(pattern)
-
-                        for (stepModel in leg.steps) {
-                            val decodedList = decode(stepModel.polyline.points)
-                            for (latLng in decodedList) {
-                                stepList.add(LatLng(latLng.latitude, latLng.longitude))
-                            }
-                        }
-                        navOption.addAll(stepList)
+                        updateBottomSheetUI(leg.distance, leg.duration)
+                        setPolyLineData(mode, leg, stepList)
                     }.await()
 
                     getDirectionDone.value = true
@@ -354,33 +338,38 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             }
         }
     }
+
+    private fun setPolyLineData(
+        mode: String,
+        leg: Leg,
+        stepList: MutableList<LatLng>
+    ): PolylineOptions? {
+
+        val pattern: List<PatternItem>
+
+        when (mode) {
+            WALKING -> {
+                pattern = listOf(Dot(), Gap(10f))
+                navOption.jointType(JointType.ROUND)
+            }
+            else -> pattern = listOf(Dash(20f))
+        }
+
+        navOption.pattern(pattern)
+
+        for (stepModel in leg.steps) {
+            val decodedList = Util.decode(stepModel.polyline.points)
+            for (latLng in decodedList) {
+                stepList.add(LatLng(latLng.latitude, latLng.longitude))
+            }
+        }
+        return navOption.addAll(stepList)
+    }
+
+    private fun updateBottomSheetUI(distance: Distance, duration: Duration) {
+        distanceLiveData.value = distance.text
+        trafficTimeLiveData.value = duration.text
+    }
 }
 
-private fun decode(points: String): List<LatLng> {
-    val len = points.length
-    val path: MutableList<LatLng> = java.util.ArrayList(len / 2)
-    var index = 0
-    var lat = 0
-    var lng = 0
-    while (index < len) {
-        var result = 1
-        var shift = 0
-        var b: Int
-        do {
-            b = points[index++].code - 63 - 1
-            result += b shl shift
-            shift += 5
-        } while (b >= 0x1f)
-        lat += if (result and 1 != 0) (result shr 1).inv() else result shr 1
-        result = 1
-        shift = 0
-        do {
-            b = points[index++].code - 63 - 1
-            result += b shl shift
-            shift += 5
-        } while (b >= 0x1f)
-        lng += if (result and 1 != 0) (result shr 1).inv() else result shr 1
-        path.add(LatLng(lat * 1e-5, lng * 1e-5))
-    }
-    return path
-}
+

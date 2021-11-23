@@ -5,10 +5,14 @@ import android.icu.text.SimpleDateFormat
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.libraries.maps.CameraUpdateFactory
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.model.LatLng
 import com.google.firebase.Timestamp
 import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
+import com.tsai.shakeit.util.GoogleCameraMoveMode
 import com.tsai.shakeit.util.Util
 import com.tsai.shakeit.util.Util.getString
 import java.util.*
@@ -35,6 +39,24 @@ fun View.visibility(i: Int) {
         1 -> visibility = View.VISIBLE
         2 -> visibility = View.INVISIBLE
     }
+}
+
+fun GoogleMap.moveCamera(
+    latLng: LatLng,
+    zoomFloat: Float,
+    moveMode: GoogleCameraMoveMode
+) {
+    when (moveMode) {
+
+        GoogleCameraMoveMode.ANIMATE -> animateCamera(
+            CameraUpdateFactory.newLatLngZoom(latLng, zoomFloat)
+        )
+
+        GoogleCameraMoveMode.IMMEDIATELY -> moveCamera(
+            CameraUpdateFactory.newLatLngZoom(latLng, zoomFloat)
+        )
+    }
+
 }
 
 

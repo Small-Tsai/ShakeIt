@@ -316,13 +316,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 viewModel.getShopData(UserInfo.userCurrentLocation, "search")
 
-
                 it?.let {
                     mainViewModel.currentFragmentType.value?.let { currentFragmentType ->
                         getDirection(it, currentFragmentType)
                     }
                 }
-
             }
         })
 

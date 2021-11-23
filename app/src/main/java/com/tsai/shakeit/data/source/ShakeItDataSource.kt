@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.libraries.maps.model.LatLng
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
+import kotlinx.coroutines.flow.Flow
 
 interface ShakeItDataSource {
 
@@ -49,7 +50,7 @@ interface ShakeItDataSource {
 
     suspend fun getShopInfo(shopId: String): Result<Shop>
 
-    suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>>
+    suspend fun getAllShop(center: LatLng, distance: Double): Flow<Result<List<Shop>>>
 
     suspend fun getProduct(shop: Shop): Result<List<Product>>
 

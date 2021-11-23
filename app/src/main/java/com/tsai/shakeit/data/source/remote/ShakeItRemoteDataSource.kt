@@ -24,6 +24,10 @@ import com.tsai.shakeit.network.ShakeItApi
 import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.*
 import com.tsai.shakeit.util.Util.isInternetConnected
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -272,11 +276,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getAllShop(center: LatLng, distance: Double): Result<List<Shop>> =
-        suspendCoroutine { continuation ->
+    @ExperimentalCoroutinesApi
+    override suspend fun getAllShop(center: LatLng, distance: Double): Flow<Result<List<Shop>>> =
+        callbackFlow {
+
+            trySend(Result.Loading)
 
             val shop = FirebaseFirestore.getInstance().collection(SHOP)
-
             val centerGeo = GeoLocation(center.latitude, center.longitude)
             val bounds: List<GeoQueryBounds> =
                 GeoFireUtils.getGeoHashQueryBounds(centerGeo, distance)
@@ -290,11 +296,11 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 tasks.add(shop.get())
             }
 
-//             Collect all the query results together into a single list
+//            Collect all the query results together into a single list
             Tasks.whenAllComplete(tasks)
                 .addOnCompleteListener { task ->
+                    val matchingDocs: MutableList<Shop> = mutableListOf()
                     if (task.isSuccessful) {
-                        val matchingDocs: MutableList<Shop> = mutableListOf()
                         for (mTask in tasks) {
                             val snap = mTask.result
                             for (doc in snap.documents) {
@@ -313,11 +319,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                                 }
                             }
                         }
+
                         if (!isInternetConnected()) {
-                            continuation.resume(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                            trySend(Result.Fail(Util.getString(R.string.internet_not_connected))).
                         } else {
-                            continuation.resume(Result.Success(matchingDocs.distinct()))
+                            trySend(Result.Success(matchingDocs.distinct()))
                         }
+
                     } else {
                         task.exception?.let {
                             Logger.w(
@@ -327,31 +335,15 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         }
                     }
                 }
-        }
+            awaitClose { Logger.i("await close") }
+        }.flowOn(Dispatchers.IO)
+
 
     override suspend fun getProduct(shop: Shop): Result<List<Product>> =
         suspendCoroutine { continuation ->
 
             val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
             val dbShop = FirebaseFirestore.getInstance().collection(SHOP)
-
-//            branchProduct.get().addOnCompleteListener {
-//                if (it.isSuccessful) {
-//                    val product = it.result.toObjects(Product::class.java)
-//                    product.forEach { mProduct ->
-//                        val mArray = arrayListOf<String>()
-//                        var mString = ""
-////                        Logger.d("mshop = ${myShop.name}")
-//                        for (i in mProduct.shop_Name.indices) {
-////                           Logger.d("${myShop.name[i]}")
-//                            mString += mProduct.shop_Name[i].toString()
-//                            mArray.add(mString)
-//                        }
-//                        branchProduct.document(mProduct.id).update("shop_Name", mArray)
-//                        Logger.d("arr = $mArray")
-//                    }
-//                }
-//            }
 
             Logger.d(shop.name)
             branchProduct
@@ -844,7 +836,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 val list = mutableListOf<OrderProduct>()
 
                 for (document in snapshot!!) {
-//                    Log.d(TAG, document.data.toString())
                     val orderProduct = document.toObject(OrderProduct::class.java)
                     list.add(orderProduct)
 
@@ -867,7 +858,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
                 if (snapshot != null) {
                     for (document in snapshot) {
-//                        Log.d(TAG, "Current data: ${document.data}")
                         val shop = document.toObject(Favorite::class.java)
                         list.add(shop)
                     }

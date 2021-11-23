@@ -16,6 +16,7 @@ import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,10 +34,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private val _navToSetting = MutableLiveData<Boolean?>()
     val navToSetting: LiveData<Boolean?>
         get() = _navToSetting
-
-    private val _shopLiveData = MutableLiveData<List<Shop>>()
-    val shopLiveData: LiveData<List<Shop>>
-        get() = _shopLiveData
 
     private var _favorite = MutableLiveData<List<Favorite>>()
     val favorite: LiveData<List<Favorite>>
@@ -80,6 +77,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private val _bottomStatus = MutableLiveData<LoadApiStatus>()
     val bottomStatus: LiveData<LoadApiStatus>
         get() = _bottomStatus
+
+    private val _shopLiveData = MutableLiveData<List<Shop>>()
+    val shopLiveData: LiveData<List<Shop>>
+        get() = _shopLiveData
 
     // get shopName from shopLiveData
     val allShopName: LiveData<List<String>> = Transformations.map(shopLiveData) { shop ->
@@ -146,27 +147,23 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     //getShop
     fun getShopData(center: LatLng, type: String? = null) {
+        calculateTrafficDistance()
+        showToastForTrafficModeChange()
+
         viewModelScope.launch {
+            repository.getAllShop(center, distance).collect { allShop ->
+                when (allShop) {
+                    is Result.Loading -> if (type != "search") loading()
 
-            if (type != "search") {
-                loading()
-            }
-
-            calculateTrafficDistance()
-            showToastForTrafficModeChange()
-
-            when (val result = withContext(Dispatchers.IO) {
-                repository.getAllShop(center, distance)
-            }) {
-                is Result.Success -> {
-                    result.data.let {
-                        _shopLiveData.value = it
-                        _status.value = LoadApiStatus.DONE
+                    is Result.Success -> {
+                        allShop.data.let {
+                            _shopLiveData.value = it
+                            _status.value = LoadApiStatus.DONE
+                        }
                     }
-                }
-                is Result.Fail -> {
-                    mToast(result.error, "long")
-                    _status.value = LoadApiStatus.ERROR
+
+                    is Result.Fail -> _status.value = LoadApiStatus.ERROR
+                    is Result.Error -> allShop.exception.message?.let { Logger.e(it) }
                 }
             }
         }

@@ -8,8 +8,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +21,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.*
 import com.google.android.libraries.maps.*
@@ -44,13 +41,12 @@ import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.moveCamera
 import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
-import com.tsai.shakeit.permission.AppPermissions
+import com.tsai.shakeit.app.AppPermissions
 import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
-import kotlin.properties.Delegates
 
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -63,7 +59,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var mMap: GoogleMap
     private lateinit var appPermission: AppPermissions
-    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var bottomSheetNavBehavior: BottomSheetBehavior<View>
     private lateinit var mainViewModel: MainViewModel
@@ -74,11 +69,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var allShopName: List<String>
     private lateinit var allShopData: List<Shop>
     private lateinit var allProductList: List<Product>
-    var lat by Delegates.notNull<Double>()
-    var lon by Delegates.notNull<Double>()
+
     private var queryShopName: String = ""
     private val vAnimator = ValueAnimator()
-    var locationPermissionGranted = false
 
     private val fromTop: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
@@ -93,7 +86,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
         binding.mainViewModel = mainViewModel
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -187,7 +179,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.mapNavState.observe(viewLifecycleOwner, {
             it?.let {
                 stopMapNavigation()
-                moveCameraToCurrentLocation(LatLng(lat, lon))
+                moveCameraToCurrentLocation(
+                    UserInfo.userCurrentLocation,
+                    GoogleCameraMoveMode.ANIMATE
+                )
             }
         })
 
@@ -232,7 +227,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
                 //if nav From Order
                 if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
-                    viewModel.getCurrentPosition(LatLng(lat, lon))
+                    viewModel.getCurrentPosition(UserInfo.userCurrentLocation)
                 }
 
                 //set Search bar
@@ -259,7 +254,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //observe move camera
         viewModel.moveCamera.observe(viewLifecycleOwner, {
-            it?.let { moveCameraToCurrentLocation(LatLng(lat, lon)) }
+            it?.let {
+                moveCameraToCurrentLocation(
+                    UserInfo.userCurrentLocation, GoogleCameraMoveMode.ANIMATE
+                )
+            }
         })
 
         //observe userSetting traffic time
@@ -290,11 +289,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
                     bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-                    val currentPosition = LatLng(lat, lon)
-
                     mMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
-                            currentPosition,
+                            UserInfo.userCurrentLocation,
                             17F,
                         )
                     )
@@ -305,15 +302,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //observe mode change for getDirection from walk or driving
         viewModel.trafficMode.observe(viewLifecycleOwner, {
-            if (locationPermissionGranted) {
+            if (appPermission.locationPermissionGranted) {
                 Logger.d("mode observe $it")
                 Util.startSearchAnimationOnMap(
-                    LatLng(lat, lon),
+                    UserInfo.userCurrentLocation,
                     mMap,
                     vAnimator,
                     viewModel.distance
                 )
-                viewModel.getShopData(LatLng(lat, lon), "search")
+                viewModel.getShopData(UserInfo.userCurrentLocation, "search")
             }
         })
 
@@ -326,12 +323,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == IME_ACTION_DONE) {
                 Util.startSearchAnimationOnMap(
-                    LatLng(lat, lon),
+                    UserInfo.userCurrentLocation,
                     mMap,
                     vAnimator,
                     viewModel.distance
                 )
-                viewModel.getShopData(LatLng(lat, lon), "search")
+                viewModel.getShopData(UserInfo.userCurrentLocation, "search")
             }
             false
         }
@@ -400,8 +397,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     //map ready
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        appPermission.askPermission(this)
-
+        appPermission.askPermissionToGetDeviceLocation(this)
         setBottomSheetBehavior()
         moveCameraToSelectedShop()
     }
@@ -412,12 +408,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE
         ) {
             val position = LatLng(selectedShop.lat, selectedShop.lon)
-            mMap.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    position,
-                    20F
-                )
-            )
+            mMap.moveCamera(position, 20f, GoogleCameraMoveMode.IMMEDIATELY)
         }
     }
 
@@ -488,7 +479,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun doSearch(product: Product) {
-        Util.startSearchAnimationOnMap(LatLng(lat, lon), mMap, vAnimator, viewModel.distance)
+        Util.startSearchAnimationOnMap(
+            UserInfo.userCurrentLocation,
+            mMap,
+            vAnimator,
+            viewModel.distance
+        )
         queryShopName = product.shop_Name.last()
         binding.searchView.setQuery(product.name, false)
         mToast("正在搜尋附近含有 - ${product.name} 的店家 ")
@@ -571,40 +567,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.constraintLayout2.visibility(0)
     }
 
-    // get location
-    @SuppressLint("MissingPermission")
-    fun getDeviceLocation() {
-        try {
-            if (locationPermissionGranted) {
-                setMapUI()
-                val locationRequest = LocationRequest.create()
-                locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                mFusedLocationProviderClient.requestLocationUpdates(
-                    locationRequest,
-                    object : LocationCallback() {
-                        override fun onLocationResult(locationResult: LocationResult?) {
-                            locationResult ?: return
-                            lat = locationResult.lastLocation.latitude
-                            lon = locationResult.lastLocation.longitude
-                            viewModel.getShopData(LatLng(lat, lon))
-                            if (!::selectedShop.isInitialized) {
-                                mMap.moveCamera(
-                                    LatLng(lat, lon), 15f, GoogleCameraMoveMode.IMMEDIATELY
-                                )
-                            }
-                        }
-                    },
-                    Looper.getMainLooper()
-                )
-            }
-        } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
-        }
-    }
 
     //set google map UI
     @SuppressLint("MissingPermission")
     fun setMapUI() {
+
+        viewModel.getShopData(UserInfo.userCurrentLocation)
+
+        if (!::selectedShop.isInitialized) {
+            moveCameraToCurrentLocation(
+                UserInfo.userCurrentLocation,
+                GoogleCameraMoveMode.IMMEDIATELY
+            )
+        }
+
         mMap.uiSettings.isMyLocationButtonEnabled = false
         mMap.isMyLocationEnabled = true
 
@@ -638,9 +614,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     //getDirection
     private fun getDirection(mode: String) {
-        if (locationPermissionGranted) {
+        Logger.d(appPermission.locationPermissionGranted.toString())
+        if (appPermission.locationPermissionGranted) {
+
             val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                    "origin=" + lat + "," + lon +
+                    "origin=" + UserInfo.userCurrentLat + "," + UserInfo.userCurrentLng +
                     "&destination=" + selectedShop.lat + "," + selectedShop.lon +
                     "&mode=" + mode +
                     "&key=" + DIRECTION_API_KEY +
@@ -651,8 +629,22 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
     //move camera
-    private fun moveCameraToCurrentLocation(currentPosition: LatLng) {
-        mMap.moveCamera(currentPosition, 18f, GoogleCameraMoveMode.ANIMATE)
+    private fun moveCameraToCurrentLocation(
+        currentPosition: LatLng,
+        googleCameraMoveMode: GoogleCameraMoveMode
+    ) {
+        when (googleCameraMoveMode) {
+            GoogleCameraMoveMode.ANIMATE -> mMap.moveCamera(
+                currentPosition,
+                18f,
+                googleCameraMoveMode
+            )
+            GoogleCameraMoveMode.IMMEDIATELY -> mMap.moveCamera(
+                currentPosition,
+                18f,
+                googleCameraMoveMode
+            )
+        }
     }
 
     //make custom map marker

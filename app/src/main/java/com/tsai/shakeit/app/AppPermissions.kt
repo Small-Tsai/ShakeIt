@@ -1,4 +1,4 @@
-package com.tsai.shakeit.permission
+package com.tsai.shakeit.app
 
 import android.Manifest
 import android.content.Context
@@ -16,11 +16,15 @@ class AppPermissions {
 
     var lm =
         ShakeItApplication.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
     private var gpsEnabled = false
     private var networkEnabled = false
+    var locationPermissionGranted = false
 
     // require permission
-    fun askPermission(fragment: HomeFragment) {
+    fun askPermissionToGetDeviceLocation(fragment: HomeFragment) {
+
+        val device = AppDevice(fragment)
 
         PermissionX.init(fragment)
             .permissions(
@@ -48,8 +52,13 @@ class AppPermissions {
             }
             .request { allGranted, _, deniedList ->
                 if (allGranted) {
-                    fragment.locationPermissionGranted = true
-                    fragment.getDeviceLocation()
+
+                    try {
+                        locationPermissionGranted = true
+                        device.getDeviceLocation(locationPermissionGranted)
+                    } catch (e: Exception) {
+                        Logger.e("deviceLocation $e")
+                    }
 
                     try {
                         gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);

@@ -12,7 +12,6 @@ import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
-import com.tsai.shakeit.ui.menu.detail.OptionsType
 import com.tsai.shakeit.ui.menu.detail.OptionsType.*
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
@@ -132,44 +131,45 @@ class AddMenuItemViewModel(
     }
 
     //record editText content
-    private val capacityOptionContent = hashMapOf<Int, String?>()
-    private val iceOptionContent = hashMapOf<Int, String?>()
-    private val sugarOptionContent = hashMapOf<Int, String?>()
-    private val othersOptionContent = hashMapOf<Int, String?>()
+    private val capacityOptionsName = hashMapOf<Int, String?>()
+    private val iceOptionsName = hashMapOf<Int, String?>()
+    private val sugarOptionsName = hashMapOf<Int, String?>()
+    private val othersOptionsName = hashMapOf<Int, String?>()
 
-    fun setListContent(userImportContent: String) {
+    //Set option name when observe optionName change
+    fun setOptionName(userImportContent: String) {
         when (currentSelectedType) {
             0 -> {
                 if (userImportContent.isNotEmpty()) {
-                    capacityOptionContent[currentSelectedPostion] = userImportContent
+                    capacityOptionsName[currentSelectedPostion] = userImportContent
                 } else {
-                    capacityOptionContent[currentSelectedPostion] = null
+                    capacityOptionsName[currentSelectedPostion] = null
                 }
-                Logger.d("capacityOptionContent = $capacityOptionContent")
+                Logger.d("capacityOptionContent = $capacityOptionsName")
             }
             1 -> {
                 if (userImportContent.isNotEmpty()) {
-                    iceOptionContent[currentSelectedPostion] = userImportContent
+                    iceOptionsName[currentSelectedPostion] = userImportContent
                 } else {
-                    iceOptionContent[currentSelectedPostion] = null
+                    iceOptionsName[currentSelectedPostion] = null
                 }
-                Logger.d("iceOptionContent = $iceOptionContent")
+                Logger.d("iceOptionContent = $iceOptionsName")
             }
             2 -> {
                 if (userImportContent.isNotEmpty()) {
-                    sugarOptionContent[currentSelectedPostion] = userImportContent
+                    sugarOptionsName[currentSelectedPostion] = userImportContent
                 } else {
-                    sugarOptionContent[currentSelectedPostion] = null
+                    sugarOptionsName[currentSelectedPostion] = null
                 }
-                Logger.d("sugarOptionContent = $sugarOptionContent")
+                Logger.d("sugarOptionContent = $sugarOptionsName")
             }
             3 -> {
                 if (userImportContent.isNotEmpty()) {
-                    othersOptionContent[currentSelectedPostion] = userImportContent
+                    othersOptionsName[currentSelectedPostion] = userImportContent
                 } else {
-                    othersOptionContent[currentSelectedPostion] = null
+                    othersOptionsName[currentSelectedPostion] = null
                 }
-                Logger.d("othersOptionContent = $othersOptionContent")
+                Logger.d("othersOptionContent = $othersOptionsName")
             }
         }
     }
@@ -199,10 +199,10 @@ class AddMenuItemViewModel(
         iceList.clear()
         sugarList.clear()
         othersList.clear()
-        capacityOptionContent.clear()
-        iceOptionContent.clear()
-        sugarOptionContent.clear()
-        othersOptionContent.clear()
+        capacityOptionsName.clear()
+        iceOptionsName.clear()
+        sugarOptionsName.clear()
+        othersOptionsName.clear()
     }
 
     private fun setNewOptions() {
@@ -246,20 +246,20 @@ class AddMenuItemViewModel(
     }
 
     private fun setNewPostData() {
-        capacityOptionContent[1] = "大"
-        iceOptionContent[1] = "正常冰"
-        iceOptionContent[2] = "少冰"
-        iceOptionContent[3] = "微冰"
-        iceOptionContent[4] = "去冰"
-        sugarOptionContent[1] = "全糖"
-        sugarOptionContent[2] = "7分糖"
-        sugarOptionContent[3] = "5分糖"
-        sugarOptionContent[4] = "3分糖"
-        sugarOptionContent[5] = "1分糖"
-        sugarOptionContent[6] = "無糖"
-        othersOptionContent[1] = "珍珠"
-        othersOptionContent[2] = "蘆薈"
-        othersOptionContent[3] = "椰果"
+        capacityOptionsName[1] = "大"
+        iceOptionsName[1] = "正常冰"
+        iceOptionsName[2] = "少冰"
+        iceOptionsName[3] = "微冰"
+        iceOptionsName[4] = "去冰"
+        sugarOptionsName[1] = "全糖"
+        sugarOptionsName[2] = "7分糖"
+        sugarOptionsName[3] = "5分糖"
+        sugarOptionsName[4] = "3分糖"
+        sugarOptionsName[5] = "1分糖"
+        sugarOptionsName[6] = "無糖"
+        othersOptionsName[1] = "珍珠"
+        othersOptionsName[2] = "蘆薈"
+        othersOptionsName[3] = "椰果"
         othersOptionPrice[1] = "10"
         othersOptionPrice[2] = "10"
         othersOptionPrice[3] = "10"
@@ -272,11 +272,11 @@ class AddMenuItemViewModel(
         if (!Util.isInternetConnected()) {
             _status.value = LoadApiStatus.ERROR
             myToast(Util.getString(R.string.internet_not_connected))
-        } else if (capacityOptionContent.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
+        } else if (capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
             myToast("請至少填寫一組容量與價格選項")
-        } else if (iceOptionContent.isNullOrEmpty()) {
+        } else if (iceOptionsName.isNullOrEmpty()) {
             myToast("請至少填寫一組冰量選項")
-        } else if (sugarOptionContent.isNullOrEmpty()) {
+        } else if (sugarOptionsName.isNullOrEmpty()) {
             myToast("請至少填寫一組甜度選項")
         } else if (productName.isEmpty() || productType.isEmpty()) {
             myToast("商品名稱與類別不可留白喔")
@@ -286,36 +286,36 @@ class AddMenuItemViewModel(
                 //post image first
                 postImgUriToFireBase()
 
-                capacityOptionContent.keys.forEach {
-                    if (!capacityOptionContent[it].isNullOrEmpty() && it > 0) {
+                capacityOptionsName.keys.forEach {
+                    if (!capacityOptionsName[it].isNullOrEmpty() && it > 0) {
                         _capacityListForPost.value?.set(
-                            capacityOptionContent[it] ?: "",
+                            capacityOptionsName[it] ?: "",
                             capacityOptionPrice[it]?.toInt() ?: 0
                         )
                     }
                 }
 
-                iceOptionContent.keys.forEach {
-                    if (!iceOptionContent[it].isNullOrEmpty()) {
+                iceOptionsName.keys.forEach {
+                    if (!iceOptionsName[it].isNullOrEmpty()) {
                         _iceListForPost.value?.set(
-                            iceOptionContent[it] ?: "",
+                            iceOptionsName[it] ?: "",
                             0
                         )
                     }
                 }
 
-                sugarOptionContent.keys.forEach {
-                    if (!sugarOptionContent[it].isNullOrEmpty()) {
+                sugarOptionsName.keys.forEach {
+                    if (!sugarOptionsName[it].isNullOrEmpty()) {
                         _sugarListForPost.value?.set(
-                            sugarOptionContent[it] ?: "", 0
+                            sugarOptionsName[it] ?: "", 0
                         )
                     }
                 }
 
-                othersOptionContent.keys.forEach {
-                    if (!othersOptionContent[it].isNullOrEmpty())
+                othersOptionsName.keys.forEach {
+                    if (!othersOptionsName[it].isNullOrEmpty())
                         _othersListForPost.value?.set(
-                            othersOptionContent[it] ?: "",
+                            othersOptionsName[it] ?: "",
                             othersOptionPrice[it]?.toInt() ?: 0
                         )
                 }

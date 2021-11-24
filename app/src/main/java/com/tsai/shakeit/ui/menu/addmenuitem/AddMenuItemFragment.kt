@@ -63,7 +63,7 @@ class AddMenuItemFragment : Fragment() {
         })
 
         viewModel.optionName.observe(viewLifecycleOwner, {
-            it?.let { viewModel.setListContent(it) }
+            it?.let { viewModel.setOptionName(it) }
         })
 
         viewModel.optionPrice.observe(viewLifecycleOwner, {

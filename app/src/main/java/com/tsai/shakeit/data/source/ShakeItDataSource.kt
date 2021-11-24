@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ShakeItDataSource {
 
-    suspend fun deleteFavorite(shopId: String): Result<Boolean>
+    suspend fun deleteFavorite(shopId: String): Flow<Result<Boolean>>
 
     suspend fun deleteOrder(orderId: String): Result<Boolean>
 
@@ -27,7 +27,7 @@ interface ShakeItDataSource {
 
     suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
 
-    suspend fun postFavorite(favorite: Favorite): Result<Boolean>
+    suspend fun postFavorite(favorite: Favorite): Flow<Result<Boolean>>
 
     suspend fun postOrderToFireBase(
         order: Order,
@@ -52,7 +52,7 @@ interface ShakeItDataSource {
 
     suspend fun getAllShop(center: LatLng, distance: Double): Flow<Result<List<Shop>>>
 
-    suspend fun getProduct(shop: Shop): Result<List<Product>>
+    suspend fun getProduct(shop: Shop): Flow<Result<List<Product>>>
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
 
@@ -64,11 +64,11 @@ interface ShakeItDataSource {
 
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
-    suspend fun getDirection(url:String): Result<Direction>
+    suspend fun getDirection(url:String): Flow<Result<Direction>>
 
     suspend fun joinToOrder(orderId:String): Result<Boolean>
 
-    suspend fun getAllProduct(): Result<List<Product>>
+    suspend fun getAllProduct(): Flow<Result<List<Product>>>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 
@@ -78,7 +78,7 @@ interface ShakeItDataSource {
 
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
-    fun getFavorite(userId: String): MutableLiveData<List<Favorite>>
+    fun getFavorite(userId: String): kotlinx.coroutines.flow.Flow<Result<List<Favorite>>>
 
     fun updateUserTokenOnFireBase(newToken: String)
 

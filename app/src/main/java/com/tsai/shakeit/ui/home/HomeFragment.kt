@@ -130,11 +130,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        //check has favorite
-        viewModel.favorite.observe(viewLifecycleOwner, {
-            viewModel.mShopId?.let { viewModel.checkHasFavorite() }
-        })
-
         //when selected shop
         viewModel.selectedShop.observe(viewLifecycleOwner, { shop ->
             val favorite = Favorite(shop = shop, user_Id = UserInfo.userId)

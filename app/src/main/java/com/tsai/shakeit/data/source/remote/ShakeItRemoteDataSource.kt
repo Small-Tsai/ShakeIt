@@ -2,6 +2,7 @@ package com.tsai.shakeit.data.source.remote
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
@@ -20,6 +21,7 @@ import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.network.ShakeItApi
 import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.*
@@ -34,30 +36,13 @@ import kotlin.coroutines.suspendCoroutine
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
 
-    override suspend fun postFavorite(favorite: Favorite): Result<Boolean> =
-        suspendCoroutine { continuation ->
-
+    override suspend fun postFavorite(favorite: Favorite): Flow<Result<Boolean>> =
+        flow {
             val favoriteCollection = FirebaseFirestore.getInstance().collection(FAVORITE)
             val document = favoriteCollection.document(favorite.shop.shop_Id)
-
-            document
-                .set(favorite)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-//                        Logger.d("Publish: $favorite")
-                        continuation.resume(Result.Success(true))
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error getting documents. ${it.message}"
-                            )
-                            continuation.resume(Result.Error(it))
-                            return@addOnCompleteListener
-                        }
-                        continuation.resume(Result.Fail("postFavorite Failed"))
-                    }
-                }
-        }
+            document.set(favorite)
+            emit(Result.Success(true))
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun postOrderToFireBase(
         order: Order,
@@ -160,28 +145,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun deleteFavorite(shopId: String): Result<Boolean> =
-        suspendCoroutine { continuation ->
-
+    override suspend fun deleteFavorite(shopId: String): Flow<Result<Boolean>> =
+        flow {
             val favorite = FirebaseFirestore.getInstance().collection(FAVORITE)
             val document = favorite.document(shopId)
-
-            document
-                .delete()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        mToast("已移除此收藏")
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error delete documents. ${it.message}"
-                            )
-                            return@addOnCompleteListener
-                        }
-                        continuation.resume(Result.Fail("deleteFavorite Failed"))
-                    }
-                }
-        }
+            document.delete()
+            emit(Result.Success(true))
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun deleteOrder(orderId: String): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -276,9 +246,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    @ExperimentalCoroutinesApi
     override suspend fun getAllShop(center: LatLng, distance: Double): Flow<Result<List<Shop>>> =
         callbackFlow {
+
+            if (!isInternetConnected()) {
+                trySend(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                awaitClose()
+            }
 
             trySend(Result.Loading)
 
@@ -306,8 +280,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                             for (doc in snap.documents) {
                                 val lat = doc.getDouble("lat")!!
                                 val lon = doc.getDouble("lon")!!
-                                // We have to filter out a few false positives due to GeoHash
-                                // accuracy, but most will match
                                 val docLocation = GeoLocation(lat, lon)
                                 val distanceInM =
                                     GeoFireUtils.getDistanceBetween(docLocation, centerGeo)
@@ -319,72 +291,60 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                                 }
                             }
                         }
-
-                        if (!isInternetConnected()) {
-                            trySend(Result.Fail(Util.getString(R.string.internet_not_connected))).
-                        } else {
-                            trySend(Result.Success(matchingDocs.distinct()))
-                        }
-
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error get documents. ${it.message}"
-                            )
-                            return@addOnCompleteListener
-                        }
+                        trySend(Result.Success(matchingDocs.distinct()))
                     }
                 }
-            awaitClose { Logger.i("await close") }
-        }.flowOn(Dispatchers.IO)
+            awaitClose()
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
 
-    override suspend fun getProduct(shop: Shop): Result<List<Product>> =
-        suspendCoroutine { continuation ->
+    override suspend fun getProduct(shop: Shop): Flow<Result<List<Product>>> =
+        callbackFlow {
 
-            val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
-            val dbShop = FirebaseFirestore.getInstance().collection(SHOP)
+            trySend(Result.Loading)
+
+            if (!isInternetConnected()) {
+                trySend(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                awaitClose()
+            }
 
             Logger.d(shop.name)
+            val branchProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
+            val dbShop = FirebaseFirestore.getInstance().collection(SHOP)
             branchProduct
                 .whereArrayContains("shop_Name", shop.name)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObjects(Product::class.java)
-
                         //update shopName to full name
-                        if (shopData.first().shop_Name.contains(shop.name) &&
-                            shop.name != shopData.first().shop_Name.last()
-                        ) {
-                            dbShop.document(shop.shop_Id)
-                                .update("name", shopData.first().shop_Name.last())
-                                .addOnCompleteListener {
-                                    if (task.isSuccessful) {
-                                        Logger.d("update shopName success")
-                                    } else {
-                                        Logger.w("update shopName fail")
+                        updateShopName(shopData, shop, dbShop, task)
+                        trySend(Result.Success(shopData))
+                    }
+                }
+            awaitClose()
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
-                                    }
-                                }
-                        }
-
-                        if (!isInternetConnected()) {
-                            continuation.resume(Result.Fail(Util.getString(R.string.internet_not_connected)))
-                        } else {
-                            continuation.resume(Result.Success(shopData))
-                        }
-
+    private fun updateShopName(
+        shopData: List<Product>,
+        shop: Shop,
+        dbShop: CollectionReference,
+        task: Task<QuerySnapshot>
+    ) {
+        if (shopData.first().shop_Name.contains(shop.name) &&
+            shop.name != shopData.first().shop_Name.last()
+        ) {
+            dbShop.document(shop.shop_Id)
+                .update("name", shopData.first().shop_Name.last())
+                .addOnCompleteListener {
+                    if (task.isSuccessful) {
+                        Logger.d("update shopName success")
                     } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error get documents. ${it.message}"
-                            )
-                            return@addOnCompleteListener
-                        }
+                        Logger.w("update shopName fail")
                     }
                 }
         }
+    }
 
     override suspend fun updateOrderTotalPrice(
         totalPrice: Int,
@@ -568,28 +528,18 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getDirection(url: String): Result<Direction> {
-
-        if (!isInternetConnected()) {
-            return Result.Fail(Util.getString(R.string.internet_not_connected))
-        }
-
-        return try {
-
-            // this will run on a thread managed by Retrofit
-            val listResult = ShakeItApi.retrofitService.getDirection(url)
-
-            listResult.error?.let {
-                return Result.Fail(it)
+    override suspend fun getDirection(url: String): Flow<Result<Direction>> =
+        flow {
+            emit(Result.Loading)
+            if (!isInternetConnected()) {
+                emit(Result.Fail(Util.getString(R.string.internet_not_connected)))
             }
 
-            Result.Success(listResult)
+            val listResult = ShakeItApi.retrofitService.getDirection(url)
 
-        } catch (e: Exception) {
-            Logger.w("[${this::class.simpleName}] exception=${e.message}")
-            Result.Error(e)
-        }
-    }
+            emit(Result.Success(listResult))
+
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun joinToOrder(orderId: String): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -614,21 +564,19 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun getAllProduct(): Result<List<Product>> = suspendCoroutine { continuation ->
-        val product = FirebaseFirestore.getInstance().collection(PRODUCT)
-        product
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val productData = task.result.toObjects(Product::class.java)
-                    continuation.resume(Result.Success(productData))
-                } else {
-                    task.exception?.let {
-                        continuation.resume(Result.Fail("${it.message}"))
+    override suspend fun getAllProduct(): Flow<Result<List<Product>>> =
+        callbackFlow {
+            val product = FirebaseFirestore.getInstance().collection(PRODUCT)
+            product
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val productData = task.result.toObjects(Product::class.java)
+                        trySend(Result.Success(productData))
                     }
                 }
-            }
-    }
+            awaitClose()
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =
@@ -845,14 +793,12 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         return liveData
     }
 
-    override fun getFavorite(userId: String): MutableLiveData<List<Favorite>> {
-
-        val liveData = MutableLiveData<List<Favorite>>()
+    override fun getFavorite(userId: String): Flow<Result<List<Favorite>>> = callbackFlow {
 
         FirebaseFirestore.getInstance()
             .collection(FAVORITE)
             .whereEqualTo("user_Id", userId)
-            .addSnapshotListener { snapshot, e ->
+            .addSnapshotListener { snapshot, _ ->
 
                 val list = mutableListOf<Favorite>()
 
@@ -862,9 +808,9 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         list.add(shop)
                     }
                 }
-                liveData.value = list
+                trySend(Result.Success(list))
             }
-        return liveData
+        awaitClose { Logger.i("get favorite await close") }
     }
 
     override fun updateUserTokenOnFireBase(newToken: String) {

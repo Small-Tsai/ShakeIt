@@ -15,6 +15,7 @@ import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -196,21 +197,25 @@ class MenuViewModel(
 
     private fun getProduct() {
         viewModelScope.launch {
+            repository.getProduct(selectedShop).collect { result ->
+                Logger.d("get")
+                when (result) {
+                    is Result.Loading -> _status.value = LoadApiStatus.LOADING
 
-            _status.value = LoadApiStatus.LOADING
-
-            when (val result = withContext(Dispatchers.IO) {
-                repository.getProduct(selectedShop)
-            }) {
-                is Result.Success -> {
-                    result.data.let {
-                        _branchProduct.value = it
-                        _status.value = LoadApiStatus.DONE
+                    is Result.Success -> {
+                        Logger.d("data = ${result.data}")
+                        result.data.let {
+                            _branchProduct.value = it
+                            _status.value = LoadApiStatus.DONE
+                        }
                     }
-                }
-                is Result.Fail -> {
-                    mToast("商品獲取失敗請檢查是否開啟網路", "long")
-                    _status.value = LoadApiStatus.ERROR
+
+                    is Result.Fail -> {
+                        mToast(result.error, "long")
+                        _status.value = LoadApiStatus.ERROR
+                    }
+
+                    is Result.Error -> Logger.e(result.exception.message.toString())
                 }
             }
         }

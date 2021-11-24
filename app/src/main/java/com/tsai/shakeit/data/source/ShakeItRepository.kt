@@ -5,12 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.libraries.maps.model.LatLng
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
-import com.tsai.shakeit.data.directionPlaceModel.Distance
 import kotlinx.coroutines.flow.Flow
 
 interface ShakeItRepository {
 
-    suspend fun deleteFavorite(shopId: String): Result<Boolean>
+    suspend fun deleteFavorite(shopId: String): Flow<Result<Boolean>>
 
     suspend fun deleteOrder(orderId: String): Result<Boolean>
 
@@ -28,7 +27,7 @@ interface ShakeItRepository {
 
     suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean>
 
-    suspend fun postFavorite(favorite: Favorite): Result<Boolean>
+    suspend fun postFavorite(favorite: Favorite): Flow<Result<Boolean>>
 
     suspend fun postOrderToFireBase(
         order: Order,
@@ -55,7 +54,7 @@ interface ShakeItRepository {
 
     suspend fun getAllShop(center: LatLng, distance: Double): Flow<Result<List<Shop>>>
 
-    suspend fun getProduct(shop: Shop): Result<List<Product>>
+    suspend fun getProduct(shop: Shop): Flow<Result<List<Product>>>
 
     suspend fun getComment(shopId: String): Result<List<Comment>>
 
@@ -65,11 +64,11 @@ interface ShakeItRepository {
 
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
-    suspend fun getDirection(url: String): Result<Direction>
+    suspend fun getDirection(url: String): Flow<Result<Direction>>
 
     suspend fun joinToOrder(orderId: String): Result<Boolean>
 
-    suspend fun getAllProduct(): Result<List<Product>>
+    suspend fun getAllProduct(): Flow<Result<List<Product>>>
 
     fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
 
@@ -79,7 +78,7 @@ interface ShakeItRepository {
 
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
-    fun getFavorite(userId: String): MutableLiveData<List<Favorite>>
+    fun getFavorite(userId: String): Flow<Result<List<Favorite>>>
 
     fun updateUserTokenOnFireBase(newToken: String)
 

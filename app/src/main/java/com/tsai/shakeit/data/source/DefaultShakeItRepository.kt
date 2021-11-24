@@ -11,7 +11,7 @@ class DefaultShakeItRepository(
     private val shakeItDataSource: ShakeItDataSource
 ) : ShakeItRepository {
 
-    override suspend fun deleteFavorite(shopId: String): Result<Boolean> {
+    override suspend fun deleteFavorite(shopId: String): Flow<Result<Boolean>> {
         return shakeItDataSource.deleteFavorite(shopId)
     }
 
@@ -39,7 +39,7 @@ class DefaultShakeItRepository(
         return shakeItDataSource.updateFilteredShop(shopList)
     }
 
-    override suspend fun postFavorite(favorite: Favorite): Result<Boolean> {
+    override suspend fun postFavorite(favorite: Favorite): Flow<Result<Boolean>> {
         return shakeItDataSource.postFavorite(favorite)
     }
 
@@ -99,7 +99,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getFireBaseOrderProduct(orderId)
     }
 
-    override fun getFavorite(userId: String): MutableLiveData<List<Favorite>> {
+
+    override fun getFavorite(userId: String): Flow<Result<List<Favorite>>> {
         return shakeItDataSource.getFavorite(userId)
     }
 
@@ -111,7 +112,7 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getAllShop(center, distance)
     }
 
-    override suspend fun getProduct(shop: Shop): Result<List<Product>> {
+    override suspend fun getProduct(shop: Shop): Flow<Result<List<Product>>> {
         return shakeItDataSource.getProduct(shop)
     }
 
@@ -131,7 +132,7 @@ class DefaultShakeItRepository(
         return shakeItDataSource.getHistoryOrderProduct(orderId)
     }
 
-    override suspend fun getDirection(url: String): Result<Direction> {
+    override suspend fun getDirection(url: String): Flow<Result<Direction>> {
         return shakeItDataSource.getDirection(url)
     }
 
@@ -139,7 +140,7 @@ class DefaultShakeItRepository(
         return shakeItDataSource.joinToOrder(orderId)
     }
 
-    override suspend fun getAllProduct(): Result<List<Product>> {
+    override suspend fun getAllProduct(): Flow<Result<List<Product>>> {
        return shakeItDataSource.getAllProduct()
     }
 

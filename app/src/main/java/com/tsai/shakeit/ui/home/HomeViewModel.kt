@@ -14,13 +14,12 @@ import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
+@ExperimentalCoroutinesApi
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     private val _navToMenu = MutableLiveData<Shop?>()
@@ -38,10 +37,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private var _favorite = MutableLiveData<List<Favorite>>()
     val favorite: LiveData<List<Favorite>>
         get() = _favorite
-
-    private val _isInMyFavorite = MutableLiveData<Boolean>()
-    val isInMyFavorite: LiveData<Boolean>
-        get() = _isInMyFavorite
 
     private val _snippet = MutableLiveData<String?>()
     val snippet: LiveData<String?>
@@ -118,7 +113,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     var distance: Double = 0.0
 
     init {
-        getProduct()
+        getAllProduct()
         getMyFavorite()
     }
 
@@ -127,16 +122,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     //getProduct
-    private fun getProduct() {
+    private fun getAllProduct() {
         viewModelScope.launch {
-            when (val result = withContext(Dispatchers.IO) {
-                repository.getAllProduct()
-            }) {
-                is Result.Success -> {
-                    result.data.let {
-                        _allProduct.value = it
-                    }
-                }
+            repository.getAllProduct().collect { result ->
+                (result as Result.Success).also { _allProduct.value = result.data!! }
             }
         }
     }
@@ -147,26 +136,31 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     //getShop
     fun getShopData(center: LatLng, type: String? = null) {
+
         calculateTrafficDistance()
-        showToastForTrafficModeChange()
 
         viewModelScope.launch {
             repository.getAllShop(center, distance).collect { allShop ->
                 when (allShop) {
-                    is Result.Loading -> if (type != "search") loading()
-
+                    is Result.Loading -> {
+                        showIsSearchingToast()
+                        if (type != "search") loading()
+                    }
                     is Result.Success -> {
                         allShop.data.let {
                             _shopLiveData.value = it
                             _status.value = LoadApiStatus.DONE
                         }
                     }
-
-                    is Result.Fail -> _status.value = LoadApiStatus.ERROR
+                    is Result.Fail -> {
+                        _status.value = LoadApiStatus.ERROR
+                        mToast(allShop.error)
+                    }
                     is Result.Error -> allShop.exception.message?.let { Logger.e(it) }
                 }
             }
         }
+
     }
 
     private fun calculateTrafficDistance() {
@@ -178,7 +172,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    private fun showToastForTrafficModeChange() {
+    private fun showIsSearchingToast() {
         when (trafficMode.value) {
             WALKING -> {
                 mToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
@@ -205,20 +199,21 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _moveCamera.value = null
     }
 
+    val isInMyFavorite = MutableLiveData<Boolean>()
+
     // use to check has favorite or not
     private fun getMyFavorite() {
         viewModelScope.launch {
-            _favorite = withContext(viewModelScope.coroutineContext) {
-                withContext(Dispatchers.Main) {
-                    repository.getFavorite(UserInfo.userId)
-                }
+            repository.getFavorite(UserInfo.userId).collect {
+                (it as Result.Success).data.let { data -> _favorite.value = data }
+                checkHasFavorite()
             }
         }
     }
 
     var mShopId: String? = null
     fun checkHasFavorite() {
-        _isInMyFavorite.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
+        isInMyFavorite.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
     //nav to setting page
@@ -242,11 +237,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //delete favorite
     fun deleteFavorite(shopId: String) {
         viewModelScope.launch {
-            when (repository.deleteFavorite(shopId)) {
-                is Result.Success -> {
-                    checkHasFavorite()
+            repository.deleteFavorite(shopId).collect {
+                if (it is Result.Success) {
+                    mToast("已移除此收藏")
                 }
-                else -> Logger.d("delete favorite fail ")
             }
         }
     }
@@ -254,15 +248,16 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //upload favorite
     fun postMyFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            when (val result = withContext(Dispatchers.IO) {
-                repository.postFavorite(favorite)
-            }) {
-                is Result.Success -> {
-                    checkHasFavorite()
-                    mToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
+            repository.postFavorite(favorite).collect {
+                when (it) {
+                    is Result.Success -> {
+                        checkHasFavorite()
+                        mToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
+                    }
+                    else -> {
+                        Logger.e((it as Result.Fail).error)
+                    }
                 }
-                is Result.Fail -> mToast("加入收藏失敗")
-                is Result.Error -> Logger.e(result.exception.toString())
             }
         }
     }
@@ -307,8 +302,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun getDirection(url: String, mode: String) {
         viewModelScope.launch {
 
-            _bottomStatus.value = LoadApiStatus.LOADING
-
             navOption = PolylineOptions().apply {
                 width(20f)
                 color(Util.getColor(R.color.blue))
@@ -316,25 +309,24 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 visible(true)
             }
 
-            when (val result = withContext(Dispatchers.IO) {
-                repository.getDirection(url)
-            }) {
-                is Result.Success -> {
-                    async {
+            repository.getDirection(url).collect { result ->
+                when (result) {
+                    is Result.Loading -> _bottomStatus.value = LoadApiStatus.LOADING
+                    is Result.Success -> {
                         val directions = result.data
                         val route = directions.routes[0]
                         val leg = route.legs[0]
                         val stepList: MutableList<LatLng> = ArrayList()
                         updateBottomSheetUI(leg.distance, leg.duration)
                         setPolyLineData(mode, leg, stepList)
-                    }.await()
+                        getDirectionDone.value = true
+                        _bottomStatus.value = LoadApiStatus.DONE
+                    }
 
-                    getDirectionDone.value = true
-                    _bottomStatus.value = LoadApiStatus.DONE
-                }
-
-                is Result.Fail -> {
-                    Logger.e(result.error)
+                    is Result.Fail -> {
+                        mToast(result.error)
+                    }
+                    is Result.Error -> Logger.e(result.exception.toString())
                 }
             }
         }

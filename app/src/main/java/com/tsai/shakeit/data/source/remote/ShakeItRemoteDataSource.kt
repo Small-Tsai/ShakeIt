@@ -25,6 +25,7 @@ import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -613,11 +614,12 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
     override suspend fun postImage(imageUri: Uri): Flow<Result<String>> =
         callbackFlow {
-
             val storageRef = FirebaseStorage.getInstance().reference
             val imageRef = storageRef.child("images/${imageUri.lastPathSegment}")
 
-            trySend(Result.Loading)
+            withContext(Dispatchers.Main) {
+                myToast("上傳中")
+            }
 
             if (!isInternetConnected()) {
                 trySend(Result.Fail(Util.getString(R.string.internet_not_connected)))

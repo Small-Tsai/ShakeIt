@@ -99,7 +99,7 @@ class AddShopFragment : Fragment() {
                 result?.data.let { uri ->
                     val bitmap = uri?.let { getBitmapFromUri(it) }
                     binding.menuPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
-                    viewModel.shopImageUri.value = uri
+                    viewModel.menuImageUri.value = uri
                 }
             }
         }

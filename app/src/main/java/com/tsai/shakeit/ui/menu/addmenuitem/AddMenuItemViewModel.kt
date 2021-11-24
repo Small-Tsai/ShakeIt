@@ -17,6 +17,8 @@ import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.single
 
 class AddMenuItemViewModel(
     private val repository: ShakeItRepository,
@@ -46,6 +48,9 @@ class AddMenuItemViewModel(
     }
     val addOtherListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addOtherListLiveData
+
+    private val _productFireBaseImageUri = MutableLiveData<String>()
+
 
     private val _popBack = MutableLiveData<Boolean?>()
     val popBack: LiveData<Boolean?>
@@ -262,6 +267,7 @@ class AddMenuItemViewModel(
     }
 
     //merge content and price
+    @FlowPreview
     fun mergeAllList() {
 
         if (capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
@@ -274,80 +280,71 @@ class AddMenuItemViewModel(
             myToast("商品名稱與類別不可留白喔")
         } else {
             viewModelScope.launch {
-                //post image first
-                postImgUriToFireBase()
+
                 mergeOptionNameAndPrice()
-            }
-        }
-    }
 
-    //use to post product img
-    val productImageUri = MutableLiveData<Uri>()
+                if (productImageUri.value == null) {
+                    myToast("請上傳一張商品圖片")
+                } else {
+                    productImageUri.value?.let { uri ->
+                        _status.value = LoadApiStatus.LOADING
 
-    private suspend fun postImgUriToFireBase() {
-        if (productImageUri.value == null) {
-            myToast("請上傳一張商品圖片")
-        } else {
-            productImageUri.value?.let {
-                repository.postImage(it).collect { result ->
-                    when (result) {
-
-                        is Result.Loading -> {
-                            myToast("上傳中...")
-                            _status.value = LoadApiStatus.LOADING
-                        }
-
-                        is Result.Success -> {
-                            val shopNameArray = rebuildShopName(shop!!)
-                            //set product data
-                            val product = Product(
-                                name = productName.replace(" ", ""),
-                                content = productDescription,
-                                capacity = _capacityListForPost.value!!,
-                                ice = _iceListForPost.value!!,
-                                sugar = _sugarListForPost.value!!,
-                                others = _othersListForPost.value!!,
-                                shopId = shop.shop_Id,
-                                shopAddress = shop.address,
-                                shop_Name = shopNameArray,
-                                branch = shop.branch.replace(" ", ""),
-                                type = productType,
-                                product_Img = result.data!!
-                            )
-                            Logger.d("product = $product")
-                            postProduct(product)
-                        }
-
-                        is Result.Fail -> {
-                            myToast(result.error)
-                            _status.value = LoadApiStatus.ERROR
-                        }
-
-                        is Result.Error -> Logger.e(result.exception.toString())
+                        repository.postImage(uri)
+                            .flatMapConcat {
+                                val product = setProductData(shop!!, it)
+                                repository.postProduct(product)
+                            }.collect { result ->
+                                when (result) {
+                                    is Result.Loading -> _status.value = LoadApiStatus.LOADING
+                                    is Result.Success -> {
+                                        myToast("上傳商品成功", "long")
+                                        _status.value = LoadApiStatus.DONE
+                                        _navToMenu.value = true
+                                        _navToMenu.value = null
+                                    }
+                                    is Result.Fail -> _status.value = LoadApiStatus.ERROR
+                                    is Result.Error -> Logger.e(result.exception.toString())
+                                }
+                            }
                     }
                 }
             }
         }
     }
 
-    private suspend fun postProduct(product: Product) {
+    private fun setProductData(
+        shop: Shop,
+        it: Result<String>,
+    ): Product {
+        val mArray = arrayListOf<String>()
+        var mString = ""
 
-        //post product data to firebase
-        repository.postProduct(product).collect { result ->
-            when (result) {
-                is Result.Loading -> _status.value = LoadApiStatus.LOADING
-                is Result.Success -> {
-                    myToast("上傳商品成功", "long")
-                    _status.value = LoadApiStatus.DONE
-                    _navToMenu.value = true
-                    _navToMenu.value = null
-                }
-                is Result.Fail -> _status.value = LoadApiStatus.ERROR
-                is Result.Error -> Logger.e(result.exception.toString())
-            }
+        for (i in shop!!.name.indices) {
+            mString += shop.name[i].toString()
+            mArray.add(mString)
         }
 
+        //set product data
+        val product = Product(
+            name = productName.replace(" ", ""),
+            content = productDescription,
+            capacity = _capacityListForPost.value!!,
+            ice = _iceListForPost.value!!,
+            sugar = _sugarListForPost.value!!,
+            others = _othersListForPost.value!!,
+            shopId = shop.shop_Id,
+            shopAddress = shop.address,
+            shop_Name = mArray,
+            branch = shop.branch.replace(" ", ""),
+            type = productType,
+            product_Img = (it as Result.Success).data!!
+        )
+        Logger.d("product = $product")
+        return product
     }
+
+    //use to post product img
+    val productImageUri = MutableLiveData<Uri>()
 
     private fun mergeOptionNameAndPrice() {
         capacityOptionsName.keys.forEach {

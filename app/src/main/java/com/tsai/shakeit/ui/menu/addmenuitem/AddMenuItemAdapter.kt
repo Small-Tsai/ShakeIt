@@ -13,10 +13,9 @@ import com.tsai.shakeit.util.Logger
 class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
     ListAdapter<AddMenuItem, RecyclerView.ViewHolder>(DiffCallback) {
 
-
     class AddItemTitleViewHolder(
         private val binding: AddMenuItemTitleBinding,
-        private val viewModel: AddMenuItemViewModel
+        private val viewModel: AddMenuItemViewModel,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(title: String) {
@@ -28,21 +27,19 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
     class AddItemViewHolder(
         private val binding: AddMenuItemRowBinding,
-        private val viewModel: AddMenuItemViewModel
+        private val viewModel: AddMenuItemViewModel,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(content: HashMap<String, Int>, type: Int) {
-            binding.position = adapterPosition
+            binding.position = absoluteAdapterPosition
             binding.viewModel = viewModel
             binding.type = type
-            binding.textView32.text = adapterPosition.toString()
+            binding.optionsCount.text = absoluteAdapterPosition.toString()
 
             if (content.keys.isNotEmpty()) {
-                Logger.d("content is Notempty")
                 viewModel.optionName.value = content.keys.first()
                 viewModel.optionPrice.value = content[content.keys.first()].toString()
             } else {
-                Logger.d("content is empty")
                 viewModel.optionName.value = ""
                 viewModel.optionPrice.value = ""
             }
@@ -53,7 +50,7 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
     class AddItemBtnViewHolder(
         private val binding: AddMenuItemBtnBinding,
-        private val viewModel: AddMenuItemViewModel
+        private val viewModel: AddMenuItemViewModel,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(type: Int) {
@@ -66,9 +63,9 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
     }
 
     private companion object DiffCallback : DiffUtil.ItemCallback<AddMenuItem>() {
+
         override fun areItemsTheSame(oldItem: AddMenuItem, newItem: AddMenuItem): Boolean {
             return oldItem == newItem
-
         }
 
         override fun areContentsTheSame(oldItem: AddMenuItem, newItem: AddMenuItem): Boolean {
@@ -78,9 +75,7 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
         private const val ITEM_VIEW_TYPE_TITLE = 0x00
         private const val ITEM_VIEW_TYPE_CONTENT = 0x01
         private const val ITEM_VIEW_TYPE_BTN = 0x02
-
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {

@@ -17,6 +17,7 @@ import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -96,38 +97,44 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         } else if (shopImageUri.value == null || menuImageUri.value == null) {
             myToast("未上傳封面圖片或菜單圖片")
         } else {
-            viewModelScope.async {
-                shopImageUri.value?.let {
-                    _status.value = LoadApiStatus.LOADING
-                    when (val result = withContext(Dispatchers.IO) {
-                        repository.postImage(it)
-                    }) {
+            shopImageUri.value?.let {
+                repository.postImage(it).collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            myToast("上傳中...")
+                            _status.value = LoadApiStatus.LOADING
+                        }
                         is Result.Success -> {
                             _shopFireBaseImageUri.value = result.data!!
                         }
                         is Result.Fail -> {
-                            myToast(result.error, "long")
+                            myToast(result.error)
                             _status.value = LoadApiStatus.ERROR
                         }
+                        is Result.Error -> Logger.e(result.exception.toString())
                     }
                 }
             }
-            viewModelScope.async {
 
-                menuImageUri.value?.let {
-                    when (val result = withContext(Dispatchers.IO) {
-                        repository.postImage(it)
-                    }) {
+            menuImageUri.value?.let {
+
+                repository.postImage(it).collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            myToast("上傳中...")
+                            _status.value = LoadApiStatus.LOADING
+                        }
                         is Result.Success -> {
                             _menuFireBaseImageUri.value = result.data!!
                         }
                         is Result.Fail -> {
-                            myToast(result.error, "long")
+                            myToast(result.error)
                             _status.value = LoadApiStatus.ERROR
                         }
+                        is Result.Error -> Logger.e(result.exception.toString())
                     }
                 }
-            }.await()
+            }
         }
     }
 

@@ -34,15 +34,15 @@ interface ShakeItRepository {
         orderProduct: OrderProduct,
         otherUserId: String,
         hasOrder: Boolean
-    ): Result<Boolean>
+    ): Flow<Result<Boolean>>
 
-    suspend fun postProduct(product: Product): Result<Boolean>
+    suspend fun postProduct(product: Product): Flow<Result<Boolean>>
 
     suspend fun postComment(shopId: String, comment: Comment): Result<Boolean>
 
     suspend fun postShopInfo(shop: Shop): Result<Boolean>
 
-    suspend fun postImage(image: Uri): Result<String>
+    suspend fun postImage(imageUri: Uri):  Flow<Result<String>>
 
     suspend fun postUserInfo(user: User): Result<Boolean>
 

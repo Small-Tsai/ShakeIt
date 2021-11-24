@@ -5,18 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
-import com.tsai.shakeit.R
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.ui.menu.detail.OptionsType.*
+import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
-import com.tsai.shakeit.util.Util
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class DrinksDetailViewModel(
     val data: Product,
@@ -122,35 +120,30 @@ class DrinksDetailViewModel(
 
     private suspend fun postAfterInternetChecked(
         mOrderProduct: OrderProduct?,
-        mOrder: Order,
+        order: Order,
     ) {
-        if (!Util.isInternetConnected()) {
-            _status.value = LoadApiStatus.DONE
-            myToast(Util.getString(R.string.internet_not_connected))
-        } else if (
+        if (
             isIceSelected.value == true &&
             isCapacitySelected.value == true &&
             isSugarSelected.value == true
         ) {
-            mOrderProduct?.let { mOrderProduct ->
+            mOrderProduct?.let { orderProduct ->
                 otherUserId?.let { otherUserId ->
                     hasOrder?.let { hasOrder ->
-                        _status.value = LoadApiStatus.LOADING
-                        when (val result = withContext(Dispatchers.IO) {
-                            repository.postOrderToFireBase(
-                                mOrder,
-                                mOrderProduct,
-                                otherUserId,
-                                hasOrder
-                            )
-                        }) {
-                            is Result.Success -> {
-                                closeDialog()
-                                popBack()
-                                myToast("加入訂單成功")
-                                _status.value = LoadApiStatus.DONE
+                        repository.postOrderToFireBase(order, orderProduct, otherUserId, hasOrder)
+                            .collect { result ->
+                                when (result) {
+                                    is Result.Loading -> _status.value = LoadApiStatus.LOADING
+                                    is Result.Success -> {
+                                        closeDialog()
+                                        popBack()
+                                        myToast("加入訂單成功")
+                                        _status.value = LoadApiStatus.DONE
+                                    }
+                                    is Result.Fail -> myToast(result.error)
+                                    is Result.Error -> Logger.e(result.exception.toString())
+                                }
                             }
-                        }
                     }
                 }
             }

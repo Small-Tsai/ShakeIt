@@ -15,14 +15,12 @@ import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.ui.menu.detail.OptionsType.*
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 
 class AddMenuItemViewModel(
     private val repository: ShakeItRepository,
-    val shop: Shop?
+    val shop: Shop?,
 ) : ViewModel() {
 
     private val _addCapacityListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
@@ -48,8 +46,6 @@ class AddMenuItemViewModel(
     }
     val addOtherListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addOtherListLiveData
-
-    private val _productFireBaseImageUri = MutableLiveData<String>()
 
     private val _popBack = MutableLiveData<Boolean?>()
     val popBack: LiveData<Boolean?>
@@ -265,14 +261,10 @@ class AddMenuItemViewModel(
         othersOptionPrice[3] = "10"
     }
 
-
     //merge content and price
     fun mergeAllList() {
 
-        if (!Util.isInternetConnected()) {
-            _status.value = LoadApiStatus.ERROR
-            myToast(Util.getString(R.string.internet_not_connected))
-        } else if (capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
+        if (capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
             myToast("請至少填寫一組容量與價格選項")
         } else if (iceOptionsName.isNullOrEmpty()) {
             myToast("請至少填寫一組冰量選項")
@@ -282,85 +274,9 @@ class AddMenuItemViewModel(
             myToast("商品名稱與類別不可留白喔")
         } else {
             viewModelScope.launch {
-
                 //post image first
                 postImgUriToFireBase()
-
-                capacityOptionsName.keys.forEach {
-                    if (!capacityOptionsName[it].isNullOrEmpty() && it > 0) {
-                        _capacityListForPost.value?.set(
-                            capacityOptionsName[it] ?: "",
-                            capacityOptionPrice[it]?.toInt() ?: 0
-                        )
-                    }
-                }
-
-                iceOptionsName.keys.forEach {
-                    if (!iceOptionsName[it].isNullOrEmpty()) {
-                        _iceListForPost.value?.set(
-                            iceOptionsName[it] ?: "",
-                            0
-                        )
-                    }
-                }
-
-                sugarOptionsName.keys.forEach {
-                    if (!sugarOptionsName[it].isNullOrEmpty()) {
-                        _sugarListForPost.value?.set(
-                            sugarOptionsName[it] ?: "", 0
-                        )
-                    }
-                }
-
-                othersOptionsName.keys.forEach {
-                    if (!othersOptionsName[it].isNullOrEmpty())
-                        _othersListForPost.value?.set(
-                            othersOptionsName[it] ?: "",
-                            othersOptionPrice[it]?.toInt() ?: 0
-                        )
-                }
-
-                val mArray = arrayListOf<String>()
-                var mString = ""
-
-                for (i in shop!!.name.indices) {
-                    mString += shop.name[i].toString()
-                    mArray.add(mString)
-                }
-
-                //set product data
-                val product = Product(
-                    name = productName.replace(" ", ""),
-                    content = productDescription,
-                    capacity = _capacityListForPost.value!!,
-                    ice = _iceListForPost.value!!,
-                    sugar = _sugarListForPost.value!!,
-                    others = _othersListForPost.value!!,
-                    shopId = shop.shop_Id,
-                    shopAddress = shop.address,
-                    shop_Name = mArray,
-                    branch = shop.branch.replace(" ", ""),
-                    type = productType,
-                    product_Img = _productFireBaseImageUri.value.toString()
-                )
-                Logger.d("product = $product")
-
-                if (_productFireBaseImageUri.value != null) {
-                    //post product data to firebase
-                    when (val result = withContext(Dispatchers.IO) {
-                        repository.postProduct(product)
-                    }) {
-                        is Result.Success -> {
-                            myToast("上傳商品成功", "long")
-                            _status.value = LoadApiStatus.DONE
-                            _navToMenu.value = true
-                            _navToMenu.value = null
-                        }
-                        is Result.Fail -> {
-                            _status.value = LoadApiStatus.ERROR
-                        }
-                    }
-                }
+                mergeOptionNameAndPrice()
             }
         }
     }
@@ -369,28 +285,115 @@ class AddMenuItemViewModel(
     val productImageUri = MutableLiveData<Uri>()
 
     private suspend fun postImgUriToFireBase() {
+        if (productImageUri.value == null) {
+            myToast("請上傳一張商品圖片")
+        } else {
+            productImageUri.value?.let {
+                repository.postImage(it).collect { result ->
+                    when (result) {
 
-        viewModelScope.async {
-
-            if (productImageUri.value == null) {
-                myToast("請上傳一張商品圖片")
-            } else {
-                _status.value = LoadApiStatus.LOADING
-                productImageUri.value?.let {
-                    when (val result = withContext(Dispatchers.IO) {
-                        repository.postImage(it)
-                    }) {
-                        is Result.Success -> {
-                            _productFireBaseImageUri.value = result.data!!
+                        is Result.Loading -> {
+                            myToast("上傳中...")
+                            _status.value = LoadApiStatus.LOADING
                         }
+
+                        is Result.Success -> {
+                            val shopNameArray = rebuildShopName(shop!!)
+                            //set product data
+                            val product = Product(
+                                name = productName.replace(" ", ""),
+                                content = productDescription,
+                                capacity = _capacityListForPost.value!!,
+                                ice = _iceListForPost.value!!,
+                                sugar = _sugarListForPost.value!!,
+                                others = _othersListForPost.value!!,
+                                shopId = shop.shop_Id,
+                                shopAddress = shop.address,
+                                shop_Name = shopNameArray,
+                                branch = shop.branch.replace(" ", ""),
+                                type = productType,
+                                product_Img = result.data!!
+                            )
+                            Logger.d("product = $product")
+                            postProduct(product)
+                        }
+
                         is Result.Fail -> {
-                            myToast(result.error, "long")
+                            myToast(result.error)
                             _status.value = LoadApiStatus.ERROR
                         }
+
+                        is Result.Error -> Logger.e(result.exception.toString())
                     }
                 }
             }
-        }.await()
+        }
+    }
+
+    private suspend fun postProduct(product: Product) {
+
+        //post product data to firebase
+        repository.postProduct(product).collect { result ->
+            when (result) {
+                is Result.Loading -> _status.value = LoadApiStatus.LOADING
+                is Result.Success -> {
+                    myToast("上傳商品成功", "long")
+                    _status.value = LoadApiStatus.DONE
+                    _navToMenu.value = true
+                    _navToMenu.value = null
+                }
+                is Result.Fail -> _status.value = LoadApiStatus.ERROR
+                is Result.Error -> Logger.e(result.exception.toString())
+            }
+        }
+
+    }
+
+    private fun mergeOptionNameAndPrice() {
+        capacityOptionsName.keys.forEach {
+            if (!capacityOptionsName[it].isNullOrEmpty() && it > 0) {
+                _capacityListForPost.value?.set(
+                    capacityOptionsName[it] ?: "",
+                    capacityOptionPrice[it]?.toInt() ?: 0
+                )
+            }
+        }
+
+        iceOptionsName.keys.forEach {
+            if (!iceOptionsName[it].isNullOrEmpty()) {
+                _iceListForPost.value?.set(
+                    iceOptionsName[it] ?: "",
+                    0
+                )
+            }
+        }
+
+        sugarOptionsName.keys.forEach {
+            if (!sugarOptionsName[it].isNullOrEmpty()) {
+                _sugarListForPost.value?.set(
+                    sugarOptionsName[it] ?: "", 0
+                )
+            }
+        }
+
+        othersOptionsName.keys.forEach {
+            if (!othersOptionsName[it].isNullOrEmpty())
+                _othersListForPost.value?.set(
+                    othersOptionsName[it] ?: "",
+                    othersOptionPrice[it]?.toInt() ?: 0
+                )
+        }
+    }
+
+    private fun rebuildShopName(shop: Shop): ArrayList<String> {
+        val mArray = arrayListOf<String>()
+        var mString = ""
+
+        for (i in shop!!.name.indices) {
+            mString += shop.name[i].toString()
+            mArray.add(mString)
+        }
+        return mArray
     }
 
     // when onclick addBtn add new list for user to set product data

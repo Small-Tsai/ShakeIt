@@ -48,11 +48,11 @@ class DefaultShakeItRepository(
         orderProduct: OrderProduct,
         otherUserId: String,
         hasOrder: Boolean,
-    ): Result<Boolean> {
+    ): Flow<Result<Boolean>> {
         return shakeItDataSource.postOrderToFireBase(order, orderProduct, otherUserId, hasOrder)
     }
 
-    override suspend fun postProduct(product: Product): Result<Boolean> {
+    override suspend fun postProduct(product: Product): Flow<Result<Boolean>> {
         return shakeItDataSource.postProduct(product)
     }
 
@@ -64,8 +64,8 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postShopInfo(shop)
     }
 
-    override suspend fun postImage(image: Uri): Result<String> {
-        return shakeItDataSource.postImage(image)
+    override suspend fun postImage(imageUri: Uri):  Flow<Result<String>> {
+        return shakeItDataSource.postImage(imageUri)
     }
 
     override suspend fun postUserInfo(user: User): Result<Boolean> {

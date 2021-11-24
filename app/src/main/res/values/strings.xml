@@ -46,6 +46,19 @@
     <string name="add_new_product">新增商品</string>
     <string name="check_order">查看訂單</string>
     <string name="popback">popBack</string>
+    <string name="options">選項</string>
+    <string name="import_options">填入選項</string>
+    <string name="nt">NT＄</string>
+    <string name="zero">0</string>
+    <string name="arrow">arrow</string>
+    <string name="implement_common_set">套用常見配置</string>
+    <string name="product_description">商品描述</string>
+    <string name="product_type">商品類別</string>
+    <string name="product_name">商品名稱</string>
+    <string name="product_text">商品</string>
+    <string name="click_upload_productImg">點擊上傳商品圖片</string>
+    <string name="post_product">發佈商品</string>
+    <string name="addBtn">addBtn</string>
 
 
 </resources>

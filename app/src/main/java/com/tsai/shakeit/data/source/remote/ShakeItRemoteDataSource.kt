@@ -43,9 +43,16 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         order: Order,
         orderProduct: OrderProduct,
         otherUserId: String,
-        hasOrder: Boolean
-    ): Result<Boolean> =
-        suspendCoroutine { continuation ->
+        hasOrder: Boolean,
+    ): Flow<Result<Boolean>> =
+        callbackFlow {
+
+            if (!isInternetConnected()) {
+                trySend(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                awaitClose()
+            }
+
+            trySend(Result.Loading)
 
             val myId = order.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
             val otherId: String
@@ -73,48 +80,30 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(orderProduct)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        continuation.resume(Result.Success(true))
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error post documents. ${it.message}"
-                            )
-                            continuation.resume(Result.Error(it))
-                            return@addOnCompleteListener
-                        }
-                        continuation.resume(Result.Fail("orderProduct Failed"))
+                        trySend(Result.Success(true))
                     }
                 }
-        }
 
-    override suspend fun postProduct(product: Product): Result<Boolean> =
-        suspendCoroutine { continuation ->
+            awaitClose()
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
+
+    override suspend fun postProduct(product: Product): Flow<Result<Boolean>> =
+        flow {
+
+            if (!isInternetConnected()) {
+                emit(Result.Fail(Util.getString(R.string.internet_not_connected)))
+            }
+
+            emit(Result.Loading)
 
             val fireBaseProduct = FirebaseFirestore.getInstance().collection(PRODUCT)
             val document = fireBaseProduct.document()
-
             product.id = document.id
 
-            document
-                .set(product)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Logger.i("Product: $product")
-                        continuation.resume(Result.Success(true))
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "[${this::class.simpleName}] Error post documents. ${it.message}"
-                            )
-                            continuation.resume(Result.Error(it))
-                            return@addOnCompleteListener
-                        }
-                        continuation.resume(Result.Fail("Product Failed"))
-                    }
-                }
+            document.set(product)
+            emit(Result.Success(true))
 
-
-        }
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun postComment(shopId: String, comment: Comment): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -178,7 +167,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
     override suspend fun deleteOrderProduct(
         orderProductId: String,
         shopId: String,
-        otherUserId: String
+        otherUserId: String,
     ): Result<Boolean> =
         suspendCoroutine { continuation ->
 
@@ -324,7 +313,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         shopData: List<Product>,
         shop: Shop,
         dbShop: CollectionReference,
-        task: Task<QuerySnapshot>
+        task: Task<QuerySnapshot>,
     ) {
         if (shopData.first().shop_Name.contains(shop.name) &&
             shop.name != shopData.first().shop_Name.last()
@@ -344,7 +333,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
     override suspend fun updateOrderTotalPrice(
         totalPrice: Int,
         shopId: String,
-        otherUserId: String
+        otherUserId: String,
     ): Result<Boolean> =
 
         suspendCoroutine { continuation ->
@@ -418,7 +407,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
     override suspend fun postHistoryOrder(
         order: Order,
-        orderProduct: List<OrderProduct>
+        orderProduct: List<OrderProduct>,
     ): Result<Boolean> = suspendCoroutine { continuation ->
 
         val orderHistory = FirebaseFirestore.getInstance().collection(ORDER_HISTORY)
@@ -622,31 +611,30 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun postImage(image: Uri): Result<String> =
-        suspendCoroutine { continuation ->
+    override suspend fun postImage(imageUri: Uri): Flow<Result<String>> =
+        callbackFlow {
 
             val storageRef = FirebaseStorage.getInstance().reference
-            val imageRef = storageRef.child("images/${image.lastPathSegment}")
+            val imageRef = storageRef.child("images/${imageUri.lastPathSegment}")
+
+            trySend(Result.Loading)
+
+            if (!isInternetConnected()) {
+                trySend(Result.Fail(Util.getString(R.string.internet_not_connected)))
+                awaitClose()
+            }
 
             imageRef
-                .putFile(image)
+                .putFile(imageUri)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        myToast("上傳中...")
                         imageRef.downloadUrl.addOnSuccessListener {
-                            continuation.resume(Result.Success(it.toString()))
-                        }
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "Error updateFilterShop documents. ${it.message}"
-                            )
-                            continuation.resume(Result.Fail("上傳圖片失敗！"))
-                            return@addOnCompleteListener
+                            trySend(Result.Success(it.toString()))
                         }
                     }
                 }
-        }
+            awaitClose()
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun postUserInfo(user: User): Result<Boolean> =
         suspendCoroutine { continuation ->

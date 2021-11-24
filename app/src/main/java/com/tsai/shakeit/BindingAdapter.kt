@@ -2,6 +2,7 @@ package com.tsai.shakeit
 
 import android.os.Looper
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -124,7 +125,7 @@ fun SwitchMaterial.bindSwitch(
 
 @BindingAdapter("fabAnimation")
 fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
-    if (start){
+    if (start) {
         elevation = 10f
         iconSize = 90
         textSize = 18f
@@ -143,7 +144,7 @@ fun ExtendedFloatingActionButton.bindAnimate(start: Boolean) {
 
 @BindingAdapter("fabAnimationBig")
 fun ExtendedFloatingActionButton.bindAnimateBig(start: Boolean) {
-    if (start){
+    if (start) {
         isExtended = false
         elevation = 10f
         textSize = 18f
@@ -175,6 +176,11 @@ fun ImageView.bindTrafficIcon(mode: String) {
         WALKING -> setImageResource(R.drawable.ic_baseline_directions_walk_24)
         DRIVING -> setImageResource(R.drawable.ic_baseline_drive_eta_24)
     }
+}
+
+@BindingAdapter("bottomSheetBehavior")
+fun ConstraintLayout.bindBottomSheetBehavior() {
+
 }
 
 

@@ -198,7 +198,6 @@ class MenuViewModel(
     private fun getProduct() {
         viewModelScope.launch {
             repository.getProduct(selectedShop).collect { result ->
-                Logger.d("get")
                 when (result) {
                     is Result.Loading -> _status.value = LoadApiStatus.LOADING
 

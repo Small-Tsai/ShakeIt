@@ -216,7 +216,7 @@
             app:layout_constraintTop_toBottomOf="@+id/addOrder_img"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/noconnect"
+            app:lottie_rawRes="@raw/no_connect"
             app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

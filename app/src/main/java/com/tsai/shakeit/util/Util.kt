@@ -35,38 +35,6 @@ object Util {
         return ShakeItApplication.instance.getColor(resourceId)
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    fun getDrawable(resourceId: Int): Drawable? {
-        return ShakeItApplication.instance.resources.getDrawable(resourceId, null)
-    }
-
-    //map search animation
-    fun startSearchAnimationOnMap(
-        currentPosition: LatLng,
-        mMap: GoogleMap,
-        vAnimator: ValueAnimator,
-        distance: Double
-    ) {
-
-        val circle: Circle = mMap.addCircle(
-            CircleOptions().center(currentPosition)
-                .strokeColor(Util.getColor(R.color.blue)).radius(2000.0)
-        )
-
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentPosition, 14f))
-        vAnimator.repeatCount = ValueAnimator.INFINITE
-        vAnimator.repeatMode = ValueAnimator.RESTART /* PULSE */
-        vAnimator.setIntValues(0, 1000)
-        vAnimator.duration = 1200
-        vAnimator.setEvaluator(IntEvaluator())
-        vAnimator.interpolator = AccelerateDecelerateInterpolator()
-        vAnimator.addUpdateListener { valueAnimator ->
-            val animatedFraction = valueAnimator.animatedFraction
-            circle.radius = (animatedFraction * distance)
-        }
-        vAnimator.start()
-    }
-
     fun decode(points: String): List<LatLng> {
         val len = points.length
         val path: MutableList<LatLng> = java.util.ArrayList(len / 2)

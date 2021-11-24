@@ -11,8 +11,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
 import android.widget.ImageView
 import android.widget.TextView
@@ -31,7 +29,6 @@ import com.google.maps.android.ui.IconGenerator
 import com.tsai.shakeit.BuildConfig.DIRECTION_API_KEY
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.app.AppPermissions
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Product
@@ -71,11 +68,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     private var queryShopName: String = ""
     private val vAnimator = ValueAnimator()
-
-    private val fromTop: Animation =
-        AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
-    private val toTopGone: Animation =
-        AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,7 +150,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             when (it) {
                 CurrentFragmentType.HOME ->
                     if (viewModel.status.value != LoadApiStatus.LOADING &&
-                        binding.constraintLayout2.visibility != View.VISIBLE
+                        binding.toolbarConstraint.visibility != View.VISIBLE
                     ) {
                         toolbarVisible()
                     }
@@ -198,14 +190,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let {
                 findNavController().navigate(
                     HomeFragmentDirections.navToSetting(
-                        viewModel.shopLiveData.value!!.toTypedArray()
+                        viewModel.shopListLiveData.value!!.toTypedArray()
                     )
                 )
             }
         })
 
         //Observe ShopData
-        viewModel.shopLiveData.observe(viewLifecycleOwner, { shopData ->
+        viewModel.shopListLiveData.observe(viewLifecycleOwner, { shopData ->
 
             allShopData = shopData
 
@@ -218,11 +210,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
             //observe mainViewModel shopFilteredList from firebase
             mainViewModel.firebaseFilteredShopList.observe(viewLifecycleOwner, { dbList ->
-
-                //if nav From Order
-                if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
-                    viewModel.getCurrentPosition(UserInfo.userCurrentLocation)
-                }
 
                 //set Search bar
                 setSearchBar(dbList)
@@ -244,14 +231,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.getDirectionDone.observe(viewLifecycleOwner, {
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                 it?.let {
-                    viewModel.drawPolyLine()
+                    viewModel.startDrawPolyLine()
                     viewModel.getDirectionDone.value = null
                 }
             }
         })
 
         //observe move camera
-        viewModel.moveCamera.observe(viewLifecycleOwner, {
+        viewModel.isMoveCamera.observe(viewLifecycleOwner, {
             it?.let {
                 moveCameraToCurrentLocation(
                     UserInfo.userCurrentLocation, GoogleCameraMoveMode.ANIMATE
@@ -266,7 +253,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //set navBtn onClickListrner
         binding.navBtn.setOnClickListener {
-            viewModel.drawPolyLine()
+            viewModel.startDrawPolyLine()
         }
 
         // observe get google direction done
@@ -302,7 +289,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.trafficMode.observe(viewLifecycleOwner, {
             if (appPermission.locationPermissionGranted) {
                 Logger.d("mode observe $it")
-                Util.startSearchAnimationOnMap(
+                MyAnimation.startSearchAnimationOnMap(
                     UserInfo.userCurrentLocation,
                     mMap,
                     vAnimator,
@@ -320,14 +307,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
 
         //observe User Search Product
-        viewModel.userSearchProduct.observe(viewLifecycleOwner, { product ->
+        viewModel.userSearchingProduct.observe(viewLifecycleOwner, { product ->
             doSearch(product)
         })
 
         //traffic time editText action_done
-        binding.editText.setOnEditorActionListener { _, actionId, _ ->
+        binding.trafficTimeEdt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == IME_ACTION_DONE) {
-                Util.startSearchAnimationOnMap(
+                MyAnimation.startSearchAnimationOnMap(
                     UserInfo.userCurrentLocation,
                     mMap,
                     vAnimator,
@@ -480,11 +467,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 return false
             }
         })
-        binding.searchList.adapter = listAdapter
+        binding.searchRev.adapter = listAdapter
     }
 
     private fun doSearch(product: Product) {
-        Util.startSearchAnimationOnMap(
+        MyAnimation.startSearchAnimationOnMap(
             UserInfo.userCurrentLocation,
             mMap,
             vAnimator,
@@ -499,7 +486,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             addMarkerAfterClearMap(searchName)
         }
         binding.searchView.clearFocus()
-        binding.searchList.visibility(0)
+        binding.searchRev.visibility(0)
     }
 
     // custom BottomSheetUI
@@ -509,7 +496,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         // update total comment qty on bottomSheet
         mainViewModel.commentCount.observe(viewLifecycleOwner, { commentCount ->
-            "($commentCount)".also { binding.commentSize.text = it }
+            "($commentCount)".also { binding.commentCount.text = it }
         })
 
         // calculate average rating
@@ -562,16 +549,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     //set toolbar visibility
     private fun toolbarVisible() {
-        binding.constraintLayout2.startAnimation(fromTop)
-        binding.constraintLayout2.visibility(1)
+        binding.toolbarConstraint.startAnimation(MyAnimation.fromTop)
+        binding.toolbarConstraint.visibility(1)
     }
 
     //set toolbar visibility
     private fun toolbarGone() {
-        binding.constraintLayout2.startAnimation(toTopGone)
-        binding.constraintLayout2.visibility(0)
+        binding.toolbarConstraint.startAnimation(MyAnimation.toTopGone)
+        binding.toolbarConstraint.visibility(0)
     }
-
 
     //set google map UI
     @SuppressLint("MissingPermission")
@@ -581,8 +567,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         if (!::selectedShop.isInitialized) {
             moveCameraToCurrentLocation(
-                UserInfo.userCurrentLocation,
-                GoogleCameraMoveMode.IMMEDIATELY
+                UserInfo.userCurrentLocation, GoogleCameraMoveMode.IMMEDIATELY
             )
         }
 
@@ -627,7 +612,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     //getDirection
     private fun getDirection(mode: String, currentFragmentType: CurrentFragmentType) {
 
-        Logger.d(appPermission.locationPermissionGranted.toString())
+        Logger.i(appPermission.locationPermissionGranted.toString())
 
         if (appPermission.locationPermissionGranted && this::selectedShop.isInitialized) {
             if (currentFragmentType == CurrentFragmentType.HOME_DIALOG ||
@@ -640,11 +625,11 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         "&key=" + DIRECTION_API_KEY +
                         "&language=zh-TW"
 
-                viewModel.getDirection(url, mode)
+                viewModel.getDirection(url)
             }
 
         } else {
-            Logger.e("locationPermission false or selectedShop isNotInitialized")
+            Logger.e(getString(R.string.getDirectionFail))
         }
     }
 

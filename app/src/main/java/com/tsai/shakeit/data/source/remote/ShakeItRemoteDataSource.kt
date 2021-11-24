@@ -1,8 +1,6 @@
 package com.tsai.shakeit.data.source.remote
 
 import android.net.Uri
-import android.util.Log
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import com.firebase.geofire.GeoFireUtils
 import com.firebase.geofire.GeoLocation
@@ -10,9 +8,7 @@ import com.firebase.geofire.GeoQueryBounds
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.android.libraries.maps.model.LatLng
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
@@ -21,13 +17,11 @@ import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.mToast
-import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.network.ShakeItApi
 import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.*
 import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.resume

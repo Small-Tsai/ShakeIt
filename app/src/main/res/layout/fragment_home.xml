@@ -52,7 +52,7 @@
                 android:fontFamily="@font/roboto"
                 android:gravity="center_vertical"
                 android:onClick="@{()->viewModel.navToAddShop()}"
-                android:text="新增商家"
+                android:text="@string/add_new_shop"
                 android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV || mainViewModel.currentFragmentType == CurrentFragmentType.HOME_DIALOG? View.GONE : View.VISIBLE}"
                 app:elevation="5dp"
                 app:icon="@drawable/store"
@@ -87,7 +87,8 @@
                 app:mapId="@string/map_id"
                 tools:context=".MapsActivity"
                 tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="-36dp" />
+                tools:layout_editor_absoluteY="-36dp"
+                tools:ignore="FragmentTagUsage" />
 
             <View
                 android:layout_width="match_parent"
@@ -111,7 +112,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout2"
+                android:id="@+id/toolbar_constraint"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/home_top_corner"
@@ -124,7 +125,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/shapeableImageView3"
+                    android:id="@+id/walking_btn"
                     android:layout_width="0dp"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
@@ -139,14 +140,14 @@
                     android:paddingVertical="4dp"
                     android:src="@{viewModel.trafficMode == AppConstantKt.WALKING? @drawable/walkingselect : @drawable/walking }"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/editText"
+                    app:layout_constraintEnd_toStartOf="@+id/trafficTime_edt"
                     app:layout_constraintStart_toStartOf="@+id/searchView"
-                    app:layout_constraintTop_toBottomOf="@+id/searchList"
+                    app:layout_constraintTop_toBottomOf="@+id/search_rev"
                     app:shapeAppearanceOverlay="@style/homeIconCorner" />
 
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/shapeableImageView4"
+                    android:id="@+id/driving_brn"
                     android:layout_width="0dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="8dp"
@@ -158,11 +159,11 @@
                     android:padding="4dp"
                     android:src="@{viewModel.trafficMode == AppConstantKt.DRIVING? @drawable/motorselect : @drawable/motorcycle }"
                     app:chipIconSize="32dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView3"
+                    app:layout_constraintBottom_toBottomOf="@+id/walking_btn"
                     app:layout_constraintCircleRadius="10dp"
                     app:layout_constraintEnd_toEndOf="@+id/filter_bar"
-                    app:layout_constraintStart_toEndOf="@+id/editText"
-                    app:layout_constraintTop_toTopOf="@+id/shapeableImageView3"
+                    app:layout_constraintStart_toEndOf="@+id/trafficTime_edt"
+                    app:layout_constraintTop_toTopOf="@+id/walking_btn"
                     app:shapeAppearanceOverlay="@style/homeIconCorner" />
 
                 <androidx.appcompat.widget.SearchView
@@ -190,14 +191,14 @@
                     android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
                     android:foreground="@{viewModel.isSearchBarFocus? @drawable/drop_up :@drawable/setting_lines}"
                     android:foregroundTint="@color/darkgrey"
-                    android:onClick="@{()-> viewModel.isSearchBarFocus? viewModel.searchBarClearFocus() : viewModel.navToSetting()}"
+                    android:onClick="@{()-> viewModel.isSearchBarFocus? viewModel.clearSearchBarFocus() : viewModel.navToSetting()}"
                     android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="@+id/searchView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/searchView" />
 
                 <EditText
-                    android:id="@+id/editText"
+                    android:id="@+id/trafficTime_edt"
                     android:layout_width="60dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/corner_radius"
@@ -207,14 +208,16 @@
                     android:inputType="number"
                     android:text="@={viewModel.userSettingTime}"
                     android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType==CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
-                    app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView3"
-                    app:layout_constraintEnd_toStartOf="@+id/shapeableImageView4"
+                    app:layout_constraintBottom_toBottomOf="@+id/walking_btn"
+                    app:layout_constraintEnd_toStartOf="@+id/driving_brn"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/shapeableImageView3"
-                    app:layout_constraintTop_toTopOf="@+id/shapeableImageView3" />
+                    app:layout_constraintStart_toEndOf="@+id/walking_btn"
+                    app:layout_constraintTop_toTopOf="@+id/walking_btn"
+                    android:autofillHints="min"
+                    tools:ignore="LabelFor" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/searchList"
+                    android:id="@+id/search_rev"
                     android:layout_width="match_parent"
                     android:layout_height="350dp"
                     android:paddingHorizontal="16dp"
@@ -246,7 +249,7 @@
             tools:context=".ui.home.HomeDialogFragment">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/over_Btn"
+                android:id="@+id/nav_done_btn"
                 android:layout_width="76sp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
@@ -254,7 +257,7 @@
                 android:fontFamily="@font/roboto"
                 android:onClick="@{()->viewModel.mapNavDone()}"
                 android:padding="10dp"
-                android:text="結束"
+                android:text="@string/nav_done"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -267,7 +270,7 @@
                 app:srcCompat="@drawable/color_circle" />
 
             <TextView
-                android:id="@+id/textView35"
+                android:id="@+id/trafficTime_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
@@ -278,11 +281,12 @@
                 android:text="@{viewModel.trafficTimeLiveData}"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toStartOf="@+id/appCompatImageButton"
+                app:layout_constraintEnd_toStartOf="@+id/currentPosition_btn"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/distance_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -292,12 +296,12 @@
                 android:textColor="@color/grey2"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/appCompatImageButton"
-                app:layout_constraintStart_toStartOf="@+id/textView35"
-                app:layout_constraintTop_toBottomOf="@+id/textView35" />
+                app:layout_constraintEnd_toStartOf="@+id/currentPosition_btn"
+                app:layout_constraintStart_toStartOf="@+id/trafficTime_text"
+                app:layout_constraintTop_toBottomOf="@+id/trafficTime_text" />
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/appCompatImageButton"
+                android:id="@+id/currentPosition_btn"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginEnd="120dp"
@@ -328,7 +332,7 @@
             tools:context=".ui.home.HomeDialogFragment">
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/bottomloading"
+                android:id="@+id/bottom_loading"
                 android:layout_width="250dp"
                 android:layout_height="170dp"
                 android:layout_marginTop="50dp"
@@ -389,7 +393,6 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="4dp"
                 android:fontFamily="@font/roboto"
-                android:text="4.1"
                 android:textSize="13sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="parent"
@@ -402,7 +405,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:progressTint="#FFEB3B"
-                android:rating="4.1"
                 android:secondaryProgressTint="#FFEB3B"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/avgRating"
@@ -410,11 +412,10 @@
                 app:layout_constraintTop_toTopOf="@+id/avgRating" />
 
             <TextView
-                android:id="@+id/commentSize"
+                android:id="@+id/comment_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text=""
                 android:textSize="12sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
@@ -451,13 +452,13 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/tel_btn"
-                style="@style/homedialog_icon"
+                style="@style/home_dialog_icon"
                 android:layout_width="0dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:drawableTop="@drawable/tele"
-                android:text="撥打電話"
+                android:text="@string/call"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toTopOf="@+id/viewpager_home"
@@ -470,10 +471,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/nav_btn"
-                style="@style/homedialog_icon"
+                style="@style/home_dialog_icon"
                 android:layout_width="0dp"
                 android:drawableTop="@drawable/navigate"
-                android:text="開始導航"
+                android:text="@string/start_navigation"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tel_btn"
@@ -485,12 +486,12 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/menu_btn"
-                style="@style/homedialog_icon"
+                style="@style/home_dialog_icon"
                 android:layout_width="0dp"
                 android:layout_marginEnd="24dp"
                 android:drawableTop="@drawable/menu_icon"
                 android:onClick="@{()-> viewModel.navToMenu(shop)}"
-                android:text="查看菜單"
+                android:text="@string/look_menu"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"
                 app:layout_constraintBottom_toBottomOf="@+id/nav_btn"
@@ -513,53 +514,56 @@
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/shopName"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/add_to_favorite" />
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/traffic_mode_icon"
                 mode="@{viewModel.trafficMode}"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:layout_marginStart="10dp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
-                app:layout_constraintBottom_toBottomOf="@+id/commentSize"
-                app:layout_constraintStart_toEndOf="@+id/commentSize"
-                app:layout_constraintTop_toTopOf="@+id/commentSize" />
+                app:layout_constraintBottom_toBottomOf="@+id/comment_count"
+                app:layout_constraintStart_toEndOf="@+id/comment_count"
+                app:layout_constraintTop_toTopOf="@+id/comment_count"
+                android:contentDescription="@string/traffic_mode" />
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/traffic_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="@{viewModel.trafficTimeLiveData}"
                 android:textSize="14sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                app:layout_constraintStart_toEndOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="@+id/imageView" />
+                app:layout_constraintBottom_toBottomOf="@+id/traffic_mode_icon"
+                app:layout_constraintStart_toEndOf="@+id/traffic_mode_icon"
+                app:layout_constraintTop_toTopOf="@+id/traffic_mode_icon" />
 
             <TextView
-                android:id="@+id/textView13"
+                android:id="@+id/shop_opening_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginBottom="2dp"
-                android:text="營業時間"
+                android:text="@string/shop_opening_time"
                 android:textSize="14sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-                app:layout_constraintStart_toEndOf="@+id/imageView2"
-                app:layout_constraintTop_toTopOf="@+id/imageView2" />
+                app:layout_constraintBottom_toBottomOf="@+id/clock_icon"
+                app:layout_constraintStart_toEndOf="@+id/clock_icon"
+                app:layout_constraintTop_toTopOf="@+id/clock_icon" />
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/clock_icon"
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:layout_marginTop="8dp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintStart_toStartOf="@+id/avgRating"
                 app:layout_constraintTop_toBottomOf="@+id/avgRating"
-                app:srcCompat="@drawable/ic_baseline_access_time_24" />
+                app:srcCompat="@drawable/ic_baseline_access_time_24"
+                android:contentDescription="@string/clock" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/drop_down"
@@ -568,12 +572,12 @@
                 android:layout_marginStart="4dp"
                 android:backgroundTint="@color/white"
                 android:foreground="@drawable/dropdown"
-                android:onClick="@{()->viewModel.displayOrNot()}"
+                android:onClick="@{()->viewModel.timeDisplayOrNot()}"
                 android:scaleType="centerInside"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
-                app:layout_constraintBottom_toBottomOf="@+id/textView13"
-                app:layout_constraintStart_toEndOf="@+id/textView13"
-                app:layout_constraintTop_toTopOf="@+id/textView13" />
+                app:layout_constraintBottom_toBottomOf="@+id/shop_opening_time"
+                app:layout_constraintStart_toEndOf="@+id/shop_opening_time"
+                app:layout_constraintTop_toTopOf="@+id/shop_opening_time" />
 
             <!--     Time       -->
 
@@ -581,137 +585,136 @@
                 android:id="@+id/timeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="@{viewModel.timeDisplay? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.isTimeDisplay? View.VISIBLE : View.GONE}"
                 app:layout_constraintTop_toBottomOf="@id/drop_down">
 
                 <TextView
-                    android:id="@+id/textView14"
+                    android:id="@+id/monday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="42dp"
                     android:layout_marginTop="16dp"
-                    android:text="星期一"
+                    android:text="@string/monday"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView15"
+                    android:id="@+id/tuesday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="星期二"
-                    app:layout_constraintStart_toStartOf="@+id/textView14"
-                    app:layout_constraintTop_toBottomOf="@+id/textView14" />
+                    android:text="@string/tuesday"
+                    app:layout_constraintStart_toStartOf="@+id/monday_text"
+                    app:layout_constraintTop_toBottomOf="@+id/monday_text" />
 
                 <TextView
-                    android:id="@+id/textView16"
+                    android:id="@+id/wednesday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="星期三"
-                    app:layout_constraintStart_toStartOf="@+id/textView15"
-                    app:layout_constraintTop_toBottomOf="@+id/textView15" />
+                    android:text="@string/wednesday"
+                    app:layout_constraintStart_toStartOf="@+id/tuesday_text"
+                    app:layout_constraintTop_toBottomOf="@+id/tuesday_text" />
 
                 <TextView
-                    android:id="@+id/textView17"
+                    android:id="@+id/thursday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="星期四"
-                    app:layout_constraintStart_toStartOf="@+id/textView16"
-                    app:layout_constraintTop_toBottomOf="@+id/textView16" />
+                    android:text="@string/thursday"
+                    app:layout_constraintStart_toStartOf="@+id/wednesday_text"
+                    app:layout_constraintTop_toBottomOf="@+id/wednesday_text" />
 
                 <TextView
-                    android:id="@+id/textView18"
+                    android:id="@+id/friday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="星期五"
-                    app:layout_constraintStart_toStartOf="@+id/textView17"
-                    app:layout_constraintTop_toBottomOf="@+id/textView17" />
+                    android:text="@string/friday"
+                    app:layout_constraintStart_toStartOf="@+id/thursday_text"
+                    app:layout_constraintTop_toBottomOf="@+id/thursday_text" />
 
                 <TextView
-                    android:id="@+id/textView19"
+                    android:id="@+id/saturday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="星期六"
-                    app:layout_constraintStart_toStartOf="@+id/textView18"
-                    app:layout_constraintTop_toBottomOf="@+id/textView18" />
+                    android:text="@string/saturday"
+                    app:layout_constraintStart_toStartOf="@+id/friday_text"
+                    app:layout_constraintTop_toBottomOf="@+id/friday_text" />
 
                 <TextView
-                    android:id="@+id/textView20"
+                    android:id="@+id/sunday_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="星期日"
-                    app:layout_constraintStart_toStartOf="@+id/textView19"
-                    app:layout_constraintTop_toBottomOf="@+id/textView19" />
+                    android:text="@string/sunday"
+                    app:layout_constraintStart_toStartOf="@+id/saturday_text"
+                    app:layout_constraintTop_toBottomOf="@+id/saturday_text" />
 
                 <TextView
-                    android:id="@+id/textView21"
+                    android:id="@+id/monday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="24dp"
                     android:text="@{viewModel.selectedShop.time[`星期一`]}"
-                    app:layout_constraintBottom_toBottomOf="@+id/textView14"
+                    app:layout_constraintBottom_toBottomOf="@+id/monday_text"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/textView14" />
+                    app:layout_constraintTop_toTopOf="@+id/monday_text" />
 
                 <TextView
-                    android:id="@+id/textView22"
+                    android:id="@+id/tuesday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{viewModel.selectedShop.time[`星期二`]}"
-                    app:layout_constraintStart_toStartOf="@+id/textView21"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
+                    app:layout_constraintStart_toStartOf="@+id/monday_time"
+                    app:layout_constraintTop_toBottomOf="@+id/monday_time" />
 
                 <TextView
-                    android:id="@+id/textView23"
+                    android:id="@+id/wednesday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{viewModel.selectedShop.time[`星期三`]}"
-                    app:layout_constraintStart_toStartOf="@+id/textView22"
-                    app:layout_constraintTop_toBottomOf="@+id/textView22" />
+                    app:layout_constraintStart_toStartOf="@+id/tuesday_time"
+                    app:layout_constraintTop_toBottomOf="@+id/tuesday_time" />
 
                 <TextView
-                    android:id="@+id/textView24"
+                    android:id="@+id/thursday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{viewModel.selectedShop.time[`星期四`]}"
-                    app:layout_constraintStart_toStartOf="@+id/textView23"
-                    app:layout_constraintTop_toBottomOf="@+id/textView23" />
+                    app:layout_constraintStart_toStartOf="@+id/wednesday_time"
+                    app:layout_constraintTop_toBottomOf="@+id/wednesday_time" />
 
                 <TextView
-                    android:id="@+id/textView25"
+                    android:id="@+id/friday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{viewModel.selectedShop.time[`星期五`]}"
-                    app:layout_constraintStart_toStartOf="@+id/textView24"
-                    app:layout_constraintTop_toBottomOf="@+id/textView24" />
+                    app:layout_constraintStart_toStartOf="@+id/thursday_time"
+                    app:layout_constraintTop_toBottomOf="@+id/thursday_time" />
 
                 <TextView
-                    android:id="@+id/textView26"
+                    android:id="@+id/saturday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{viewModel.selectedShop.time[`星期六`]}"
-                    app:layout_constraintStart_toStartOf="@+id/textView25"
-                    app:layout_constraintTop_toBottomOf="@+id/textView25" />
+                    app:layout_constraintStart_toStartOf="@+id/friday_time"
+                    app:layout_constraintTop_toBottomOf="@+id/friday_time" />
 
                 <TextView
-                    android:id="@+id/textView27"
+                    android:id="@+id/sunday_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="@{viewModel.selectedShop.time[`星期日`]}"
-                    app:layout_constraintStart_toStartOf="@+id/textView26"
-                    app:layout_constraintTop_toBottomOf="@+id/textView26" />
-
+                    app:layout_constraintStart_toStartOf="@+id/saturday_time"
+                    app:layout_constraintTop_toBottomOf="@+id/saturday_time" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -729,7 +732,7 @@
             app:layout_anchorGravity="center"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/noconnect"
+            app:lottie_rawRes="@raw/no_connect"
             app:lottie_url="REPLACE_JSON_URL" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

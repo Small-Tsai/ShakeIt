@@ -17,6 +17,10 @@
             type="com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel" />
 
         <variable
+            name="type"
+            type="int" />
+
+        <variable
             name="viewHolder"
             type="com.tsai.shakeit.ui.menu.detail.DrinksAdapter.ContentViewHolder" />
     </data>
@@ -36,7 +40,7 @@
             android:layout_marginBottom="4dp"
             android:buttonTint="@color/black"
             android:gravity="center_vertical"
-            android:onClick="@{()->viewModel.doSelect(viewHolder.absoluteAdapterPosition , content , price)}"
+            android:onClick="@{()->viewModel.doSelect(viewHolder.absoluteAdapterPosition , content , price , type)}"
             android:text=""
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"

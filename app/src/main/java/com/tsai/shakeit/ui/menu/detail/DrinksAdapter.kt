@@ -14,12 +14,17 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     inner class ContentViewHolder(private var binding: DrinksSelectRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(content: HashMap<String, Int>, viewModel: DrinksDetailViewModel) {
+        fun bind(
+            content: HashMap<String, Int>,
+            viewModel: DrinksDetailViewModel,
+            type: Int
+        ) {
             binding.viewModel = viewModel
             binding.viewHolder = this
             val key = content.keys.first()
             binding.content = key
             binding.price = content[key]!!
+            binding.type = type
             binding.executePendingBindings()
         }
 
@@ -65,12 +70,15 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         when (holder) {
-            is ContentViewHolder -> {
-                holder.bind((getItem(position) as DrinksDetail.DetailContent).content, viewModel)
-            }
-            is TitleViewHolder -> {
-                holder.bind((getItem(position) as DrinksDetail.DetailTitle).type)
-            }
+            is ContentViewHolder -> holder.bind(
+                content = (getItem(position) as DrinksDetail.DetailContent).content,
+                viewModel = viewModel,
+                type = (getItem(position) as DrinksDetail.DetailContent).type
+            )
+
+            is TitleViewHolder -> holder.bind(
+                title = (getItem(position) as DrinksDetail.DetailTitle).type
+            )
         }
     }
 
@@ -85,5 +93,5 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
 
 sealed class DrinksDetail {
     data class DetailTitle(val type: String) : DrinksDetail()
-    data class DetailContent(val content: HashMap<String, Int>) : DrinksDetail()
+    data class DetailContent(val content: HashMap<String, Int>, val type: Int) : DrinksDetail()
 }

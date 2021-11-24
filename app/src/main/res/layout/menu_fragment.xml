@@ -54,7 +54,7 @@
             android:fontFamily="@font/roboto"
             android:onClick="@{()->viewModel.startShare()}"
             android:singleLine="true"
-            android:text="邀請好友"
+            android:text="@string/invite_friends"
             app:cornerRadius="10sp"
             android:visibility="@{viewModel.status == LoadApiStatus.ERROR || viewModel.status==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
             app:icon="@drawable/share_icon"
@@ -71,7 +71,8 @@
             android:src="@drawable/img_placeholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/shopimg" />
 
         <ImageView
             android:id="@+id/blackImg"
@@ -81,7 +82,8 @@
             android:background="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/blackimg" />
 
         <TextView
             android:id="@+id/menu_title"
@@ -92,9 +94,9 @@
             android:layout_marginBottom="16dp"
             android:elevation="5dp"
             android:fontFamily="@font/noto_sans"
-            android:text="loading..."
+            android:text="@string/loading"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/addOrder_img"
             app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +111,7 @@
             android:gravity="center"
             android:onClick="@{()->viewModel.navToAddMenuItem()}"
             android:padding="0dp"
-            android:text="新增商品"
+            android:text="@string/add_new_product"
             android:textColor="@color/white"
             android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.GONE : View.VISIBLE }"
             android:textSize="12sp"
@@ -145,15 +147,15 @@
             android:layout_marginBottom="8dp"
             android:elevation="5dp"
             android:fontFamily="@font/noto_sans"
-            android:onClick="@{()->viewModel.doNavToOrder()}"
-            android:text="查看訂單"
+            android:onClick="@{()->viewModel.navToOrder()}"
+            android:text="@string/check_order"
             android:visibility="@{viewModel.status == LoadApiStatus.LOADING? View.GONE: View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textView9"
+            android:id="@+id/order_product_count"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_marginTop="10dp"
@@ -178,7 +180,8 @@
             android:backgroundTint="@color/white"
             android:onClick="@{() ->viewModel.popBack()}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/popback" />
 
         <View
             android:id="@+id/view2"

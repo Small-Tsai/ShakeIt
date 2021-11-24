@@ -10,14 +10,6 @@ const val WALKING = "walking"
 
 const val DRIVING = "driving"
 
-const val ICE = "ice"
-
-const val CAPACITY = "capacity"
-
-const val SUGAR = "sugar"
-
-const val OTHERS = "others"
-
 const val ORDERS = "orders"
 
 const val KEY_CREATED_TIME = "date"

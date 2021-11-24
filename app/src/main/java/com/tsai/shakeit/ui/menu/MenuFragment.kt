@@ -63,11 +63,11 @@ class MenuFragment : Fragment() {
 
         val adapter = MenuAdapter(viewModel)
 
-        viewModel.productList.observe(viewLifecycleOwner, { list ->
-            adapter.submitList(list)
+        viewModel.menuList.observe(viewLifecycleOwner, { menuList ->
+            adapter.submitList(menuList)
             var x = 0
             binding.tableLayout.removeAllTabs()
-            list.forEach {
+            menuList.forEach {
                 x++
                 if (it is Menu.Title) {
                     binding.tableLayout.addTab(
@@ -78,22 +78,20 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.navToDetail.observe(viewLifecycleOwner, {
-            it?.let {
+            it?.let { product ->
                 viewModel.otherUserId?.let { otherUserId ->
-                    viewModel.orderProduct.value?.let { orderProduct ->
-                        findNavController().navigate(
-                            DrinksDetailFragmentDirections.navToDetail(
-                                it,
-                                Shop(
-                                    shop_Id = viewModel.selectedShop.shop_Id,
-                                    branch = viewModel.selectedShop.branch,
-                                    shop_Img = viewModel.selectedShop.shop_Img
-                                ),
-                                userId = otherUserId,
-                                hasOrder = viewModel.hasOrder.value!!
-                            )
+                    findNavController().navigate(
+                        DrinksDetailFragmentDirections.navToDetail(
+                            product,
+                            Shop(
+                                shop_Id = viewModel.selectedShop.shop_Id,
+                                branch = viewModel.selectedShop.branch,
+                                shop_Img = viewModel.selectedShop.shop_Img
+                            ),
+                            userId = otherUserId,
+                            hasOrder = viewModel.hasOrder.value!!
                         )
-                    }
+                    )
                 }
             }
         })
@@ -110,18 +108,18 @@ class MenuFragment : Fragment() {
             it?.let { binding.shopInfo = it }
         })
 
-        viewModel.orderProduct.observe(viewLifecycleOwner, { orderListProduct ->
-            if (!orderListProduct.isNullOrEmpty()) {
+        viewModel.orderProductList.observe(viewLifecycleOwner, { orderProductList ->
+            if (!orderProductList.isNullOrEmpty()) {
                 viewModel.hasOrderProduct()
-                viewModel.updateOrderTotalPrice(orderListProduct.sumOf { it.price * it.qty })
+                viewModel.updateOrderTotalPrice(orderProductList.sumOf { it.price * it.qty })
             } else {
                 viewModel.noOrderProduct()
             }
-            binding.textView9.text = orderListProduct.size.toString()
+            binding.orderProductCount.text = orderProductList.size.toString()
         })
 
-        viewModel.branchProduct.observe(viewLifecycleOwner, {
-            viewModel.filterMyList(it)
+        viewModel.branchProductList.observe(viewLifecycleOwner, {
+            viewModel.filterProductList(it)
         })
 
         viewModel.navToAddItem.observe(viewLifecycleOwner, {
@@ -141,7 +139,7 @@ class MenuFragment : Fragment() {
             it?.let { startActivity(Intent.createChooser(it, "choose:")) }
         })
 
-        viewModel.order.observe(viewLifecycleOwner, {
+        viewModel.orderList.observe(viewLifecycleOwner, {
             if (it.isEmpty()) viewModel.noOrder()
             else viewModel.hasOrder()
         })

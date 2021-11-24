@@ -11,7 +11,7 @@ object UserInfo {
 
     var userImage = ""
 
-    var userCurrentSelectTraffic = DRIVING
+    var userCurrentSelectTrafficMode = DRIVING
 
     var userCurrentSettingTrafficTime = "60"
 

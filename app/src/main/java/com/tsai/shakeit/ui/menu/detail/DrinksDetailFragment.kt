@@ -16,7 +16,6 @@ import com.tsai.shakeit.ext.getVmFactory
 
 class DrinksDetailFragment : BottomSheetDialogFragment() {
 
-
     private val viewModel by viewModels<DrinksDetailViewModel> {
         getVmFactory(
             product =
@@ -37,7 +36,6 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
             ).hasOrder
         )
     }
-
 
     private lateinit var binding: DrinksDetailFragmentBinding
 
@@ -65,7 +63,7 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
         })
 
         val adapter = DrinksAdapter(viewModel)
-        viewModel.product.observe(viewLifecycleOwner, {
+        viewModel.drinksDetailList.observe(viewLifecycleOwner, {
             adapter.submitList(it)
             adapter.notifyDataSetChanged()
         })
@@ -82,7 +80,6 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
                 }
             }
         })
-
 
         dialogBinding?.viewModel = viewModel
         dialogBinding?.lifecycleOwner = viewLifecycleOwner

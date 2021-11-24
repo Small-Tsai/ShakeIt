@@ -13,19 +13,15 @@ import kotlinx.coroutines.launch
 class CommentViewModel(private val repository: ShakeItRepository, private val shopId: String?) :
     ViewModel() {
 
-
-    private val _comment = MutableLiveData<List<Comment>>()
-    val comment: LiveData<List<Comment>>
-        get() = _comment
-
-
+    private val _commentList = MutableLiveData<List<Comment>>()
+    val commentList: LiveData<List<Comment>>
+        get() = _commentList
 
     fun getComment() {
         viewModelScope.launch {
-//            Logger.d("get comment from $shopId")
             when (val result = shopId?.let { repository.getComment(it) }) {
                 is Result.Success -> {
-                    _comment.value = result.data!!
+                    _commentList.value = result.data!!
                 }
                 is Result.Fail -> {
                     Logger.d("getComment Fail")

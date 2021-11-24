@@ -26,9 +26,9 @@ class MenuViewModel(
     val otherUserId: String?,
 ) : ViewModel() {
 
-    private val _productList = MutableLiveData<List<Menu>>()
-    val productList: LiveData<List<Menu>>
-        get() = _productList
+    private val _menuList = MutableLiveData<List<Menu>>()
+    val menuList: LiveData<List<Menu>>
+        get() = _menuList
 
     private val _navToDetail = MutableLiveData<Product?>()
     val navToDetail: LiveData<Product?>
@@ -48,13 +48,13 @@ class MenuViewModel(
     val shop: LiveData<Shop?>
         get() = _shop
 
-    private var _orderProduct = MutableLiveData<List<OrderProduct>>()
-    val orderProduct: LiveData<List<OrderProduct>>
-        get() = _orderProduct
+    private var _orderProductList = MutableLiveData<List<OrderProduct>>()
+    val orderProductList: LiveData<List<OrderProduct>>
+        get() = _orderProductList
 
-    private var _order = MutableLiveData<List<Order>>()
-    val order: LiveData<List<Order>>
-        get() = _order
+    private var _orderList = MutableLiveData<List<Order>>()
+    val orderList: LiveData<List<Order>>
+        get() = _orderList
 
     private val _hasOrderProduct = MutableLiveData<Boolean>()
     val hasOrderProduct: LiveData<Boolean>
@@ -76,18 +76,26 @@ class MenuViewModel(
     val status: LiveData<LoadApiStatus?>
         get() = _status
 
-    var title = MutableLiveData<String>().apply {
+    private val _navToAddItem = MutableLiveData<Boolean?>()
+    val navToAddItem: LiveData<Boolean?>
+        get() = _navToAddItem
+
+    var orderName = MutableLiveData<String>().apply {
         value = "我的訂單"
     }
 
     private val myId = selectedShop.shop_Id.substring(0, 10) + UserInfo.userId.substring(0, 10)
-    private var otherId = ""
+
+    private val otherId: String
+        get() {
+            return selectedShop.shop_Id.substring(0, 10) + otherUserId?.substring(0, 10)
+        }
 
     private val mOrder = Order(
         shop_Name = selectedShop.name,
         branch = selectedShop.branch,
         date = Timestamp.now(),
-        order_Name = title.value!!,
+        order_Name = orderName.value!!,
         shop_Id = selectedShop.shop_Id,
         user_Id = UserInfo.userId,
         invitation = arrayListOf(UserInfo.userId),
@@ -121,7 +129,7 @@ class MenuViewModel(
         } else {
             viewModelScope.launch {
                 _status.value = LoadApiStatus.LOADING
-                mOrder.order_Name = title.value.toString()
+                mOrder.order_Name = orderName.value.toString()
                 when (val result =
                     withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
                     is Result.Success -> {
@@ -174,26 +182,24 @@ class MenuViewModel(
     }
 
     private fun getOrder() {
-        if (otherUserId != UserInfo.userId && otherUserId != "") {
-            otherId = selectedShop.shop_Id.substring(0, 10) + otherUserId?.substring(0, 10)
-            _order = repository.getShopOrder(otherId)
+        _orderList = if (otherUserId != UserInfo.userId && otherUserId != "") {
+            repository.getShopOrder(otherId)
         } else {
-            _order = repository.getShopOrder(myId)
+            repository.getShopOrder(myId)
         }
     }
 
     private fun getOrderProduct() {
-        if (otherUserId != UserInfo.userId && otherUserId != "") {
-            otherId = selectedShop.shop_Id.substring(0, 10) + otherUserId?.substring(0, 10)
-            _orderProduct = repository.getFireBaseOrderProduct(otherId)
+        _orderProductList = if (otherUserId != UserInfo.userId && otherUserId != "") {
+            repository.getFireBaseOrderProduct(otherId)
         } else {
-            _orderProduct = repository.getFireBaseOrderProduct(myId)
+            repository.getFireBaseOrderProduct(myId)
         }
     }
 
-    private val _branchProduct = MutableLiveData<List<Product>>()
-    val branchProduct: LiveData<List<Product>>
-        get() = _branchProduct
+    private val _branchProductList = MutableLiveData<List<Product>>()
+    val branchProductList: LiveData<List<Product>>
+        get() = _branchProductList
 
     private fun getProduct() {
         viewModelScope.launch {
@@ -202,9 +208,8 @@ class MenuViewModel(
                     is Result.Loading -> _status.value = LoadApiStatus.LOADING
 
                     is Result.Success -> {
-                        Logger.d("data = ${result.data}")
                         result.data.let {
-                            _branchProduct.value = it
+                            _branchProductList.value = it
                             _status.value = LoadApiStatus.DONE
                         }
                     }
@@ -220,9 +225,9 @@ class MenuViewModel(
         }
     }
 
-    fun filterMyList(productList: List<Product>) {
+    fun filterProductList(productList: List<Product>) {
 
-        val mList = mutableListOf<Menu>()
+        val menuList = mutableListOf<Menu>()
         val titleList = mutableListOf<String>()
 
         for (i in productList.indices) {
@@ -232,21 +237,21 @@ class MenuViewModel(
         val newTitleList = titleList.distinct()
 
         for (i in newTitleList.indices) {
-            val list = productList.filter { it.type == newTitleList[i] }
-            mList.add(Menu.Title(newTitleList[i]))
-            for (x in list.indices) {
-                mList.add(Menu.MenuProduct(list[x]))
+            val filteredProductList = productList.filter { it.type == newTitleList[i] }
+            menuList.add(Menu.Title(newTitleList[i]))
+            for (product in filteredProductList.indices) {
+                menuList.add(Menu.MenuProduct(filteredProductList[product]))
             }
         }
-        _productList.value = mList
+        _menuList.value = menuList
     }
 
-    fun doNavToDetail(product: Product) {
+    fun navToDetail(product: Product) {
         _navToDetail.value = product
         _navToDetail.value = null
     }
 
-    fun doNavToOrder() {
+    fun navToOrder() {
         _navToOrder.value = true
         _navToOrder.value = null
     }
@@ -255,10 +260,6 @@ class MenuViewModel(
         _popBack.value = true
         _popBack.value = null
     }
-
-    private val _navToAddItem = MutableLiveData<Boolean?>()
-    val navToAddItem: LiveData<Boolean?>
-        get() = _navToAddItem
 
     fun navToAddMenuItem() {
         _navToAddItem.value = true

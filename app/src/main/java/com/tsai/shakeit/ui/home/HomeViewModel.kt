@@ -42,7 +42,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     //LiveData for detect is now user select walking or driving
     private val _trafficMode =
-        MutableLiveData<String>().apply { value = UserInfo.userCurrentSelectTraffic }
+        MutableLiveData<String>().apply { value = UserInfo.userCurrentSelectTrafficMode }
     val trafficMode: LiveData<String>
         get() = _trafficMode
 
@@ -93,7 +93,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             emit((result as Result.Success).data.sortedBy { it.type })
         }
     }
-
 
     //Record current user selected shop snippet
     private val _snippet = MutableLiveData<String?>()
@@ -294,13 +293,13 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     fun selectWalk() {
-        UserInfo.userCurrentSelectTraffic = WALKING
-        _trafficMode.value = UserInfo.userCurrentSelectTraffic
+        UserInfo.userCurrentSelectTrafficMode = WALKING
+        _trafficMode.value = UserInfo.userCurrentSelectTrafficMode
     }
 
     fun selectDriving() {
-        UserInfo.userCurrentSelectTraffic = DRIVING
-        _trafficMode.value = UserInfo.userCurrentSelectTraffic
+        UserInfo.userCurrentSelectTrafficMode = DRIVING
+        _trafficMode.value = UserInfo.userCurrentSelectTrafficMode
     }
 
     fun doNothing() {}

@@ -6,16 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.R
-import com.tsai.shakeit.app.CAPACITY
-import com.tsai.shakeit.app.ICE
-import com.tsai.shakeit.app.OTHERS
-import com.tsai.shakeit.app.SUGAR
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.service.MyFirebaseService
-import com.tsai.shakeit.util.*
+import com.tsai.shakeit.ui.menu.detail.OptionsType.*
+import com.tsai.shakeit.util.UserInfo
+import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,24 +27,17 @@ class DrinksDetailViewModel(
 ) :
     ViewModel() {
 
-    private val _product = MutableLiveData<List<DrinksDetail>>()
-    val product: LiveData<List<DrinksDetail>>
-        get() = _product
+    private val _drinksDetailList = MutableLiveData<List<DrinksDetail>>()
+    val drinksDetailList: LiveData<List<DrinksDetail>>
+        get() = _drinksDetailList
 
-    private val _qty = MutableLiveData<Int>()
+    private val _qty = MutableLiveData<Int>().apply { value = 1 }
     val qty: LiveData<Int>
         get() = _qty
 
     private val _popBack = MutableLiveData<Boolean?>()
     val popBack: LiveData<Boolean?>
         get() = _popBack
-
-    var selectedPositionList = mutableListOf<Int>()
-    private var mContentList: MutableMap<String, ArrayList<String>> = mutableMapOf()
-    val isCapacitySelected = MutableLiveData<Boolean>().apply { value = false }
-    val isIceSelected = MutableLiveData<Boolean>().apply { value = false }
-    val isSugarSelected = MutableLiveData<Boolean>().apply { value = false }
-    var unSelectText = MutableLiveData<String>()
 
     private val _showDialog = MutableLiveData<Boolean?>()
     val showDialog: LiveData<Boolean?>
@@ -56,11 +47,17 @@ class DrinksDetailViewModel(
     val status: LiveData<LoadApiStatus?>
         get() = _status
 
-    var title = MutableLiveData<String>().apply {
-        value = "我的訂單"
-    }
+    var orderName = MutableLiveData<String>().apply { value = "我的訂單" }
 
     private val isAllSelected = MutableLiveData<Boolean>().apply { value = false }
+    val isCapacitySelected = MutableLiveData<Boolean>().apply { value = false }
+    val isIceSelected = MutableLiveData<Boolean>().apply { value = false }
+    val isSugarSelected = MutableLiveData<Boolean>().apply { value = false }
+    var unSelectText = MutableLiveData<String>()
+
+    var selectedPositionList = mutableListOf<Int>()
+    private var productDetailContentList: MutableMap<Int, ArrayList<String>> = mutableMapOf()
+
 
     fun showDialog() {
         if (hasOrder == false && isAllSelected.value == true) {
@@ -81,7 +78,7 @@ class DrinksDetailViewModel(
             shop_Name = data.shop_Name.last(),
             branch = shop!!.branch,
             date = Timestamp.now(),
-            order_Name = title.value!!,
+            order_Name = orderName.value!!,
             shop_Id = shop.shop_Id,
             user_Id = UserInfo.userId,
             invitation = arrayListOf(UserInfo.userId),
@@ -89,17 +86,20 @@ class DrinksDetailViewModel(
         )
 
         val mOrderProduct = _qty.value?.let { qty ->
-            mContentList[ICE].let { ice ->
-                mContentList[CAPACITY]?.let { capacity ->
-                    mContentList[OTHERS]?.let { others ->
+            productDetailContentList[ICE.type].let { ice ->
+                productDetailContentList[CAPACITY.type]?.let { capacity ->
+                    productDetailContentList[OTHERS.type]?.let { others ->
                         OrderProduct(
                             name = data.name,
                             ice = ice?.first() ?: "無法調冰",
                             capacity = capacity.first(),
                             qty = qty,
-                            sugar = mContentList[SUGAR]?.first() ?: "無法調甜",
+                            sugar = productDetailContentList[SUGAR.type]?.first() ?: "無法調甜",
                             others = others.toString()
-                                .substring(1, mContentList[OTHERS].toString().length - 1),
+                                .substring(
+                                    1,
+                                    productDetailContentList[OTHERS.type].toString().length - 1
+                                ),
                             price = data.price,
                             product_Img = data.product_Img,
                             user = User(
@@ -116,17 +116,17 @@ class DrinksDetailViewModel(
 
         viewModelScope.launch {
 
-            if (mContentList[ICE].isNullOrEmpty() && iceSize > 1) {
+            if (productDetailContentList[ICE.type].isNullOrEmpty() && iceSize > 1) {
                 unSelectText.value = "尚未選擇冰量"
             } else {
                 isIceSelected.value = true
             }
 
-            if (mContentList[CAPACITY].isNullOrEmpty()) {
+            if (productDetailContentList[CAPACITY.type].isNullOrEmpty()) {
                 unSelectText.value = "尚未選擇容量"
             }
 
-            if (mContentList[SUGAR].isNullOrEmpty() && sugarSize > 1) {
+            if (productDetailContentList[SUGAR.type].isNullOrEmpty() && sugarSize > 1) {
                 unSelectText.value = "尚未選擇甜度"
             } else {
                 isSugarSelected.value = true
@@ -167,9 +167,8 @@ class DrinksDetailViewModel(
     }
 
     init {
-        _qty.value = 1
-        filterList()
-        mContentList[OTHERS] = arrayListOf("")
+        refactorDetailList()
+        productDetailContentList[OTHERS.type] = arrayListOf("")
     }
 
     fun plus() {
@@ -180,7 +179,7 @@ class DrinksDetailViewModel(
         _qty.value = _qty.value?.minus(1)
     }
 
-    private fun filterList() {
+    private fun refactorDetailList() {
         val detailList = mutableListOf<DrinksDetail>()
         detailList.add(DrinksDetail.DetailTitle("容量"))
         data.capacity.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
@@ -192,11 +191,11 @@ class DrinksDetailViewModel(
             detailList.add(DrinksDetail.DetailTitle("甜度"))
             data.sugar.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         }
-        if (data.others.size!=0){
+        if (data.others.size != 0) {
             detailList.add(DrinksDetail.DetailTitle("加料"))
             data.others.forEach { detailList.add(DrinksDetail.DetailContent(hashMapOf(it.key to it.value))) }
         }
-        _product.value = detailList
+        _drinksDetailList.value = detailList
     }
 
     fun popBack() {
@@ -204,23 +203,26 @@ class DrinksDetailViewModel(
         _popBack.value = null
     }
 
-    private var resultSize = 0
+    private var calculateRangeResult = 0
     private val capacitySize = data.capacity.size
     private val iceSize = data.ice.size
     private val sugarSize = data.sugar.size
     private val othersSize = data.others.size
-    private val rangeCapacity = selectRange(0, capacitySize, CAPACITY)
-    private val rangeCapacityToIce = selectRange(capacitySize, iceSize, ICE)
-    private val rangeIceToSugar = selectRange(resultSize, sugarSize, SUGAR)
-    private val rangeSugarToOthers = selectRange(resultSize, othersSize, OTHERS)
-    private var firstClick = 0
+    private val rangeCapacity = calculateSelectRange(0, capacitySize, CAPACITY)
+    private val rangeCapacityToIce = calculateSelectRange(capacitySize, iceSize, ICE)
+    private val rangeIceToSugar = calculateSelectRange(
+        calculateRangeResult, sugarSize,
+        SUGAR
+    )
+    private val rangeSugarToOthers = calculateSelectRange(calculateRangeResult, othersSize, OTHERS)
+    private var clickCount = 0
     private var capacityPrice = 0
     private var othersPrice = 0
 
     fun doSelect(position: Int, content: String, price: Int) {
 
-        if (firstClick == 0) {
-            selectedPositionList.add(position); firstClick += 1
+        if (clickCount == 0) {
+            selectedPositionList.add(position); clickCount += 1
         }
 
         when (position) {
@@ -243,67 +245,68 @@ class DrinksDetailViewModel(
             }
         }
         data.price = capacityPrice + othersPrice
-        _product.value = _product.value
+        _drinksDetailList.value = _drinksDetailList.value
     }
 
     private fun refactorListInOthersRange(i: Int, content: String) {
 
         if (selectedPositionList.contains(i)) {
-            mContentList[OTHERS]?.remove(content)
+            productDetailContentList[OTHERS.type]?.remove(content)
             selectedPositionList.remove(i)
         } else {
             selectedPositionList.add(i)
 
-            if (mContentList[OTHERS] == arrayListOf("")) {
-                mContentList[OTHERS] = arrayListOf(content)
+            if (productDetailContentList[OTHERS.type] == arrayListOf("")) {
+                productDetailContentList[OTHERS.type] = arrayListOf(content)
             } else {
-                mContentList[OTHERS]?.add(content)
+                productDetailContentList[OTHERS.type]?.add(content)
             }
         }
     }
 
     private fun refactorPositionList(
-        i: Int,
-        list: MutableList<Int>,
+        position: Int,
+        selectedPositionList: MutableList<Int>,
         range: IntRange,
         content: String,
     ) {
-        val mList = list.filter { it !in range } as MutableList<Int>
-        mList.add(i)
-        selectedPositionList = mList
+        val newSelectedPositionList =
+            selectedPositionList.filter { it !in range } as MutableList<Int>
+        newSelectedPositionList.add(position)
+        this.selectedPositionList = newSelectedPositionList
 
         when (range) {
-            rangeCapacity -> mContentList[CAPACITY] = arrayListOf(content)
-            rangeCapacityToIce -> mContentList[ICE] = arrayListOf(content)
-            rangeIceToSugar -> mContentList[SUGAR] = arrayListOf(content)
+            rangeCapacity -> productDetailContentList[CAPACITY.type] = arrayListOf(content)
+            rangeCapacityToIce -> productDetailContentList[ICE.type] = arrayListOf(content)
+            rangeIceToSugar -> productDetailContentList[SUGAR.type] = arrayListOf(content)
         }
     }
 
-    private fun selectRange(lastSize: Int, nextSize: Int, type: String): IntRange {
+    private fun calculateSelectRange(lastSize: Int, nextSize: Int, type: OptionsType): IntRange {
         when (type) {
             CAPACITY -> {
-                resultSize = lastSize + nextSize
-                return lastSize..resultSize
+                calculateRangeResult = lastSize + nextSize
+                return lastSize..calculateRangeResult
             }
             ICE -> {
                 return if (iceSize <= 1) {
                     -1..-1
                 } else {
-                    resultSize = lastSize + 1 + nextSize
-                    lastSize + 2..resultSize
+                    calculateRangeResult = lastSize + 1 + nextSize
+                    lastSize + 2..calculateRangeResult
                 }
             }
             SUGAR -> {
                 return if (sugarSize <= 1) {
                     -1..-1
                 } else {
-                    resultSize = lastSize + 1 + nextSize
-                    lastSize + 2..resultSize
+                    calculateRangeResult = lastSize + 1 + nextSize
+                    lastSize + 2..calculateRangeResult
                 }
             }
             OTHERS -> {
-                resultSize = lastSize + 1 + nextSize
-                return lastSize + 2..resultSize
+                calculateRangeResult = lastSize + 1 + nextSize
+                return lastSize + 2..calculateRangeResult
             }
             else -> {
                 return 0..0

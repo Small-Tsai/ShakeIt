@@ -25,7 +25,6 @@ class MenuAdapter(val viewModel: MenuViewModel) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(title: String) {
             binding.typeTitle.text = title
-
             binding.executePendingBindings()
         }
     }

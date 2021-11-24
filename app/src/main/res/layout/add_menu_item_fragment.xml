@@ -138,7 +138,7 @@
                         android:maxLength="10"
                         android:nextFocusForward="@id/productDes_edt"
                         android:singleLine="true"
-                        android:text="@={viewModel.name}"
+                        android:text="@={viewModel.productName}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -176,7 +176,7 @@
                         android:inputType="text"
                         android:nextFocusForward="@id/productDes_edt"
                         android:singleLine="true"
-                        android:text="@={viewModel.type}"
+                        android:text="@={viewModel.productType}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
@@ -213,7 +213,7 @@
                         android:maxLength="60"
                         android:inputType="textMultiLine"
                         android:nextFocusForward="@id/address_edt"
-                        android:text="@={viewModel.dercription}"
+                        android:text="@={viewModel.productDescription}"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                         android:textColor="@color/black"
                         android:textSize="18sp">
@@ -228,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:onClick="@{()->viewModel.implementUsuallySet()}"
+                    android:onClick="@{()->viewModel.implementCommonOption()}"
                     android:text="套用常見配置"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"

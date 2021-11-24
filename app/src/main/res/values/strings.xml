@@ -39,6 +39,13 @@
     <string name="friday">星期五</string>
     <string name="saturday">星期六</string>
     <string name="sunday">星期日</string>
+    <string name="invite_friends">邀請好友</string>
+    <string name="shopimg">shopImg</string>
+    <string name="blackimg">blackImg</string>
+    <string name="loading">loading...</string>
+    <string name="add_new_product">新增商品</string>
+    <string name="check_order">查看訂單</string>
+    <string name="popback">popBack</string>
 
 
 </resources>

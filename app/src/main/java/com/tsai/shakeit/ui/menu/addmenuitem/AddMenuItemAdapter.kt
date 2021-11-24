@@ -39,12 +39,12 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
             if (content.keys.isNotEmpty()) {
                 Logger.d("content is Notempty")
-                viewModel.content.value = content.keys.first()
-                viewModel.price.value = content[content.keys.first()].toString()
+                viewModel.optionName.value = content.keys.first()
+                viewModel.optionPrice.value = content[content.keys.first()].toString()
             } else {
                 Logger.d("content is empty")
-                viewModel.content.value = ""
-                viewModel.price.value = ""
+                viewModel.optionName.value = ""
+                viewModel.optionPrice.value = ""
             }
 
             binding.executePendingBindings()

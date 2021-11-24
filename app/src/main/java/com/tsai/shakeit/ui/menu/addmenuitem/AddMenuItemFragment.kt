@@ -62,11 +62,11 @@ class AddMenuItemFragment : Fragment() {
             addOtherAdapter.submitList(it.toMutableList())
         })
 
-        viewModel.content.observe(viewLifecycleOwner, {
+        viewModel.optionName.observe(viewLifecycleOwner, {
             it?.let { viewModel.setListContent(it) }
         })
 
-        viewModel.price.observe(viewLifecycleOwner, {
+        viewModel.optionPrice.observe(viewLifecycleOwner, {
             viewModel.setListPrice(it)
         })
 

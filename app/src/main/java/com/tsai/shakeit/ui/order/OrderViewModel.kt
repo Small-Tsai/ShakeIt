@@ -9,7 +9,7 @@ import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
@@ -84,7 +84,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
         if (!Util.isInternetConnected()) {
             _status.value = LoadApiStatus.ERROR
-            mToast(Util.getString(R.string.internet_not_connected))
+            myToast(Util.getString(R.string.internet_not_connected))
         } else {
             viewModelScope.launch {
                 _status.value = LoadApiStatus.LOADING
@@ -112,7 +112,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     }
                 } else {
                     _status.value = LoadApiStatus.DONE
-                    mToast(Util.getString(R.string.noOrderProductDenyDetele))
+                    myToast(Util.getString(R.string.noOrderProductDenyDetele))
                 }
             }
         }

@@ -14,10 +14,6 @@
         <import type="com.tsai.shakeit.network.LoadApiStatus" />
 
         <variable
-            name="lifecycle"
-            type="androidx.lifecycle.LifecycleOwner" />
-
-        <variable
             name="mainViewModel"
             type="com.tsai.shakeit.MainViewModel" />
 
@@ -242,9 +238,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="24dp"
-            navBtsMainViewMode="@{mainViewModel}"
-            navBtsViewModel="@{viewModel}"
-            lifecycleOwner="@{lifecycle}"
             android:background="@drawable/bg_dialog_corner"
             android:backgroundTint="@color/darkgrey"
             android:visibility="@{viewModel.status == LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING ||mainViewModel.currentFragmentType!=CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
@@ -329,9 +322,6 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_dialog_corner"
             android:elevation="15dp"
-            btsMainViewMode="@{mainViewModel}"
-            btsViewModel="@{viewModel}"
-            lifecycleOwner="@{lifecycle}"
             android:onClick="@{()->viewModel.doNothing()}"
             android:visibility="@{viewModel.status ==LoadApiStatus.ERROR||viewModel.status==LoadApiStatus.LOADING || mainViewModel.currentFragmentType == CurrentFragmentType.HOME_NAV? View.GONE : View.VISIBLE}"
             app:behavior_hideable="true"
@@ -482,6 +472,7 @@
                 style="@style/home_dialog_icon"
                 android:layout_width="0dp"
                 android:drawableTop="@drawable/navigate"
+                android:onClick="@{()->viewModel.startDrawPolyLine()}"
                 android:text="@string/start_navigation"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"

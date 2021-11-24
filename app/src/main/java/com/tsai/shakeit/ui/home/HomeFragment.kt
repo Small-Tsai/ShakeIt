@@ -35,14 +35,14 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.ext.moveCamera
 import com.tsai.shakeit.ext.visibility
+import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
-
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
 
@@ -129,7 +129,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.lifecycle = viewLifecycleOwner
 
         //get map
         val mapFragment =
@@ -249,22 +248,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { UserInfo.userCurrentSettingTrafficTime = it }
         })
 
-        //set navBtn onClickListener
-        binding.navBtn.setOnClickListener {
-            viewModel.startDrawPolyLine()
-        }
-
         // observe get google direction done
         viewModel.options.observe(viewLifecycleOwner, {
 
+            //clear polyLine
             if (this::polyLine.isInitialized) {
                 polyLine.remove()
             }
 
+            //draw polyLine
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG ||
                 mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
             ) {
                 it?.let {
+                    changeBtsBehaviorToNavigation()
                     moveCameraToCurrentLocation(17f, GoogleCameraMoveMode.ANIMATE)
                     polyLine = mMap.addPolyline(it)
                 }
@@ -320,6 +317,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
         return binding.root
     }
+
 
     //Add Marker On Map
     private fun addMarkerAfterClearMap(
@@ -379,7 +377,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         appPermission.askPermissionToGetDeviceLocation(this)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        setBottomSheetBehavior()
         moveCameraToSelectedShop()
     }
 
@@ -413,7 +411,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 if (filteredProudctList.isNotEmpty()) {
                     doSearch(filteredProudctList.first())
                 } else {
-                    mToast("未搜尋到${binding.searchView.query}")
+                    myToast("未搜尋到${binding.searchView.query}")
                     viewModel.isSearchBarFocus.value = false
                 }
                 return false
@@ -466,7 +464,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         queryShopName = product.shop_Name.last()
         binding.searchView.setQuery(product.name, false)
-        mToast("正在搜尋附近含有 - ${product.name} 的店家 ")
+        myToast("正在搜尋附近含有 - ${product.name} 的店家 ")
 
         if (!allShopName.isNullOrEmpty()) {
             val searchName = allShopName.filter { it != queryShopName }
@@ -582,6 +580,80 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         iconGenerator.setContentView(markerView)
         iconGenerator.setBackground(null)
         return iconGenerator.makeIcon(label)
+    }
+
+    private fun changeBtsBehaviorToNavigation() {
+        bottomSheetNavBehavior.isDraggable = false
+        bottomSheetBehavior.halfExpandedRatio = 0.0001f
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+        viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+        bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun setBottomSheetBehavior() {
+
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        //observe current fragment type
+        viewModel.currentFragmentType.observe(viewLifecycleOwner, {
+            when (it) {
+                CurrentFragmentType.HOME ->
+                    if (viewModel.status.value != LoadApiStatus.LOADING &&
+                        binding.toolbarConstraint.visibility != View.VISIBLE
+                    ) {
+                        toolbarVisible()
+                    }
+                CurrentFragmentType.HOME_NAV -> toolbarGone()
+                else -> {
+                }
+            }
+        })
+
+        //bottomSheet CallBack
+        var x = 0
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
+                            mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                            viewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                        }
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+                if (slideOffset > 0.4f && x == 0) {
+                    x = 1; toolbarGone()
+                }
+
+                if (x == 1 && slideOffset < 0.4f &&
+                    viewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV
+                ) {
+                    x = 0; toolbarVisible()
+                }
+            }
+        })
+    }
+
+    //set toolbar visibility
+    private fun toolbarVisible() {
+        binding.toolbarConstraint.startAnimation(MyAnimation.fromTop)
+        binding.toolbarConstraint.visibility(1)
+    }
+
+    //set toolbar visibility
+    private fun toolbarGone() {
+        binding.toolbarConstraint.startAnimation(MyAnimation.toTopGone)
+        binding.toolbarConstraint.visibility(0)
     }
 }
 

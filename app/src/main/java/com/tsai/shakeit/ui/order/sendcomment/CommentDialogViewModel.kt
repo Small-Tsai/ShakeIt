@@ -14,7 +14,7 @@ import com.tsai.shakeit.util.UserInfo.userImage
 import com.tsai.shakeit.util.UserInfo.userName
 import kotlinx.coroutines.launch
 import com.google.firebase.Timestamp
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 
 class CommentDialogViewModel(
     private val repository: ShakeItRepository,
@@ -71,7 +71,7 @@ class CommentDialogViewModel(
                         leave()
                     }
                     is Result.Fail -> {
-                        mToast("fail")
+                        myToast("fail")
                         leave()
                     }
                 }

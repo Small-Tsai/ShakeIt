@@ -16,7 +16,7 @@ fun Timestamp.toTimeFromTimeStamp(): String {
         .toString()
 }
 
-fun mToast(text: String, duration: String? = null) {
+fun myToast(text: String, duration: String? = null) {
     when (duration) {
         null -> Toast.makeText(ShakeItApplication.instance, text, "0".toInt()).show()
         "long" -> Toast.makeText(ShakeItApplication.instance, text, "1".toInt()).show()

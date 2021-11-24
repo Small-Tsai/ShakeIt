@@ -6,7 +6,7 @@ import android.location.LocationManager
 import com.permissionx.guolindev.PermissionX
 import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.ui.home.HomeFragment
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
@@ -14,7 +14,7 @@ import java.lang.Exception
 
 class AppPermissions {
 
-    private var lm =
+    private var locationManager =
         ShakeItApplication.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     private var gpsEnabled = false
@@ -61,23 +61,23 @@ class AppPermissions {
                     }
 
                     try {
-                        gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                        gpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                     } catch (e: Exception) {
                         Logger.e("gps $e")
                     }
 
                     try {
-                        networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+                        networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
                     } catch (e: Exception) {
                         Logger.e("network $e")
                     }
 
                     if (!gpsEnabled && !networkEnabled) {
-                        mToast(Util.getString(R.string.need_open_currentLocation))
+                        myToast(Util.getString(R.string.need_open_currentLocation))
                     }
 
                 } else {
-                    mToast("已拒絕以下權限: $deniedList")
+                    myToast("已拒絕以下權限: $deniedList")
                 }
             }
     }

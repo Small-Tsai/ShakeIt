@@ -10,7 +10,7 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
@@ -273,15 +273,15 @@ class AddMenuItemViewModel(
 
         if (!Util.isInternetConnected()) {
             _status.value = LoadApiStatus.ERROR
-            mToast(Util.getString(R.string.internet_not_connected))
+            myToast(Util.getString(R.string.internet_not_connected))
         } else if (userCapaContentList.isNullOrEmpty() || userCapaPriceList.isNullOrEmpty()) {
-            mToast("請至少填寫一組容量與價格選項")
+            myToast("請至少填寫一組容量與價格選項")
         } else if (userIceContentList.isNullOrEmpty()) {
-            mToast("請至少填寫一組冰量選項")
+            myToast("請至少填寫一組冰量選項")
         } else if (userSugarContentList.isNullOrEmpty()) {
-            mToast("請至少填寫一組甜度選項")
+            myToast("請至少填寫一組甜度選項")
         } else if (name.isEmpty() || type.isEmpty()) {
-            mToast("商品名稱與類別不可留白喔")
+            myToast("商品名稱與類別不可留白喔")
         } else {
             viewModelScope.launch {
 
@@ -353,7 +353,7 @@ class AddMenuItemViewModel(
                         repository.postProduct(product)
                     }) {
                         is Result.Success -> {
-                            mToast("上傳商品成功", "long")
+                            myToast("上傳商品成功", "long")
                             _status.value = LoadApiStatus.DONE
                             _navToMenu.value = true
                             _navToMenu.value = null
@@ -375,7 +375,7 @@ class AddMenuItemViewModel(
         viewModelScope.async {
 
             if (productImageUri.value == null) {
-                mToast("請上傳一張商品圖片")
+                myToast("請上傳一張商品圖片")
             } else {
                 _status.value = LoadApiStatus.LOADING
                 productImageUri.value?.let {
@@ -386,7 +386,7 @@ class AddMenuItemViewModel(
                             _productFireBaseImageUri.value = result.data!!
                         }
                         is Result.Fail -> {
-                            mToast(result.error, "long")
+                            myToast(result.error, "long")
                             _status.value = LoadApiStatus.ERROR
                         }
                     }

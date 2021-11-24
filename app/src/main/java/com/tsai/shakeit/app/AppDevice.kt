@@ -10,7 +10,7 @@ import com.tsai.shakeit.util.UserInfo
 
 class AppDevice(private val fragment: HomeFragment) {
 
-    private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     // get location
     @SuppressLint("MissingPermission")
@@ -18,13 +18,13 @@ class AppDevice(private val fragment: HomeFragment) {
 
         if (locationPermissionGranted) {
 
-            mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(instance)
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(instance)
 
             try {
                 val locationRequest = LocationRequest.create()
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-                mFusedLocationProviderClient.requestLocationUpdates(
+                fusedLocationProviderClient.requestLocationUpdates(
                     locationRequest,
                     object : LocationCallback() {
                         override fun onLocationResult(locationResult: LocationResult?) {

@@ -9,8 +9,7 @@ import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
-import com.tsai.shakeit.network.LoadApiStatus
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.util.UserInfo
 import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.flow.collect
@@ -39,7 +38,7 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
     private fun getFavoriteData() {
         viewModelScope.launch {
             if (!Util.isInternetConnected()) {
-                mToast(Util.getString(R.string.internet_not_connected))
+                myToast(Util.getString(R.string.internet_not_connected))
             } else {
                 repository.getFavorite(UserInfo.userId).collect {
                     (it as Result.Success).data.let { data -> _myFavorite.value = data }

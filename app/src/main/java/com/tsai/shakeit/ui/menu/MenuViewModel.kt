@@ -9,7 +9,7 @@ import com.google.firebase.Timestamp
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
@@ -117,7 +117,7 @@ class MenuViewModel(
     fun addNewDocToFireBase() {
         if (!Util.isInternetConnected()) {
             _status.value = LoadApiStatus.ERROR
-            mToast(Util.getString(R.string.internet_not_connected))
+            myToast(Util.getString(R.string.internet_not_connected))
         } else {
             viewModelScope.launch {
                 _status.value = LoadApiStatus.LOADING
@@ -210,7 +210,7 @@ class MenuViewModel(
                     }
 
                     is Result.Fail -> {
-                        mToast(result.error, "long")
+                        myToast(result.error, "long")
                         _status.value = LoadApiStatus.ERROR
                     }
 

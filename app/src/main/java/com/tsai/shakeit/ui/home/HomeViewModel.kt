@@ -15,7 +15,7 @@ import com.tsai.shakeit.data.directionPlaceModel.Distance
 import com.tsai.shakeit.data.directionPlaceModel.Duration
 import com.tsai.shakeit.data.directionPlaceModel.Leg
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.*
 import kotlinx.coroutines.flow.collect
@@ -185,7 +185,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     }
                     is Result.Fail -> {
                         _status.value = LoadApiStatus.ERROR
-                        mToast(allShop.error)
+                        myToast(allShop.error)
                     }
                     is Result.Error -> allShop.exception.message?.let { Logger.e(it) }
                 }
@@ -196,10 +196,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     private fun showIsSearchingToast() {
         when (trafficMode.value) {
             WALKING -> {
-                mToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
+                myToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
             }
             DRIVING -> {
-                mToast("正在搜尋騎車${userSettingTime.value}分鐘內的店家")
+                myToast("正在搜尋騎車${userSettingTime.value}分鐘內的店家")
             }
         }
     }
@@ -258,7 +258,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         viewModelScope.launch {
             repository.deleteFavorite(shopId).collect {
                 if (it is Result.Success) {
-                    mToast("已移除此收藏")
+                    myToast("已移除此收藏")
                 }
             }
         }
@@ -271,7 +271,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 when (it) {
                     is Result.Success -> {
                         checkHasFavorite()
-                        mToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
+                        myToast("已將 ${favorite.shop.name + favorite.shop.branch} 加入收藏")
                     }
                     else -> {
                         Logger.e((it as Result.Fail).error)
@@ -334,7 +334,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                         _bottomStatus.value = LoadApiStatus.DONE
                     }
                     is Result.Fail -> {
-                        mToast(result.error)
+                        myToast(result.error)
                     }
                     is Result.Error -> Logger.e(result.exception.toString())
                 }

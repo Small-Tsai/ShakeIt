@@ -17,7 +17,7 @@ import com.tsai.shakeit.app.*
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.ShakeItApi
 import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.*
@@ -126,7 +126,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .set(comment)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        mToast("發佈成功！")
+                        myToast("發佈成功！")
                         continuation.resume(Result.Success(true))
                     } else {
                         task.exception?.let {
@@ -160,7 +160,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         task.result?.documents?.forEach { it.reference.delete() }
-                        mToast("已移除訂單")
+                        myToast("已移除訂單")
                         document.delete()
                         continuation.resume(Result.Success(true))
                     } else {
@@ -203,7 +203,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .delete()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        mToast("已移除商品")
+                        myToast("已移除商品")
                     } else {
                         task.exception?.let {
                             Logger.w(
@@ -632,7 +632,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .putFile(image)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        mToast("上傳中...")
+                        myToast("上傳中...")
                         imageRef.downloadUrl.addOnSuccessListener {
                             continuation.resume(Result.Success(it.toString()))
                         }

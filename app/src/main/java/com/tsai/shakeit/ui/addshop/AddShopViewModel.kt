@@ -11,7 +11,7 @@ import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
@@ -90,11 +90,11 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
 
         if (!Util.isInternetConnected()) {
             _status.value = LoadApiStatus.ERROR
-            mToast(Util.getString(R.string.internet_not_connected))
+            myToast(Util.getString(R.string.internet_not_connected))
         } else if (name.isEmpty() || branch.isEmpty() || address.isEmpty()) {
-            mToast("店家名、分店名、店家地址不可空白喔！")
+            myToast("店家名、分店名、店家地址不可空白喔！")
         } else if (shopImageUri.value == null || menuImageUri.value == null) {
-            mToast("未上傳封面圖片或菜單圖片")
+            myToast("未上傳封面圖片或菜單圖片")
         } else {
             viewModelScope.async {
                 shopImageUri.value?.let {
@@ -106,7 +106,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                             _shopFireBaseImageUri.value = result.data!!
                         }
                         is Result.Fail -> {
-                            mToast(result.error, "long")
+                            myToast(result.error, "long")
                             _status.value = LoadApiStatus.ERROR
                         }
                     }
@@ -122,7 +122,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                             _menuFireBaseImageUri.value = result.data!!
                         }
                         is Result.Fail -> {
-                            mToast(result.error, "long")
+                            myToast(result.error, "long")
                             _status.value = LoadApiStatus.ERROR
                         }
                     }
@@ -230,13 +230,13 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         repository.postShopInfo(shop)
                     }) {
                         is Result.Success -> {
-                            mToast("發佈 ${shop.name}$branch 商店資訊成功！")
+                            myToast("發佈 ${shop.name}$branch 商店資訊成功！")
                             _navToHome.value = true
                             _navToHome.value = false
                             _status.value = LoadApiStatus.DONE
                         }
                         is Result.Fail -> {
-                            mToast("發佈 ${shop.name}$branch 商店資訊失敗！")
+                            myToast("發佈 ${shop.name}$branch 商店資訊失敗！")
                             _status.value = LoadApiStatus.ERROR
                         }
                     }

@@ -12,7 +12,7 @@ import com.tsai.shakeit.app.OTHERS
 import com.tsai.shakeit.app.SUGAR
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.ext.mToast
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.service.MyFirebaseService
 import com.tsai.shakeit.util.*
@@ -134,7 +134,7 @@ class DrinksDetailViewModel(
 
             if (!Util.isInternetConnected()) {
                 _status.value = LoadApiStatus.DONE
-                mToast(Util.getString(R.string.internet_not_connected))
+                myToast(Util.getString(R.string.internet_not_connected))
             } else if (
                 isIceSelected.value == true &&
                 isCapacitySelected.value == true &&
@@ -155,7 +155,7 @@ class DrinksDetailViewModel(
                                 is Result.Success -> {
                                     closeDialog()
                                     popBack()
-                                    mToast("加入訂單成功")
+                                    myToast("加入訂單成功")
                                     _status.value = LoadApiStatus.DONE
                                 }
                             }

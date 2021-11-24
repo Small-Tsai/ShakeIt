@@ -10,7 +10,6 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.databinding.AddMenuItemRowBinding
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
@@ -19,8 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.HashMap
 
 class AddMenuItemViewModel(
     private val repository: ShakeItRepository,
@@ -56,8 +53,6 @@ class AddMenuItemViewModel(
         get() = _addOtherListLiveData
 
     private val _productFireBaseImageUri = MutableLiveData<String>()
-    private val productFireBaseImageUri: LiveData<String>
-        get() = _productFireBaseImageUri
 
     private val _popBack = MutableLiveData<Boolean?>()
     val popBack: LiveData<Boolean?>
@@ -130,13 +125,13 @@ class AddMenuItemViewModel(
     }
 
 
-    var currentSelectedPostion = -1
+    private var currentSelectedPostion = -1
     fun recordCurrentSelectedPosition(positon: Int) {
         Logger.d("cu = $positon")
         currentSelectedPostion = positon
     }
 
-    var currentSelectedType = -1
+    private var currentSelectedType = -1
     fun recordCurrentSelectedType(type: Int) {
         currentSelectedType = type
     }
@@ -343,7 +338,7 @@ class AddMenuItemViewModel(
                     ice = _iceList.value!!,
                     sugar = _sugarList.value!!,
                     others = _others.value!!,
-                    shopId = shop!!.shop_Id,
+                    shopId = shop.shop_Id,
                     shopAddress = shop.address,
                     shop_Name = mArray,
                     branch = shop.branch.replace(" ", ""),

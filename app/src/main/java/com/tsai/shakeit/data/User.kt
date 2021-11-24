@@ -10,5 +10,4 @@ data class User(
     val user_Name: String = "",
     val user_Image: String = "",
     var user_Token: String = ""
-) : Parcelable {
-}
+) : Parcelable

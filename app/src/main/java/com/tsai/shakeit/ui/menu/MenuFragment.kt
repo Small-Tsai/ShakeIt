@@ -1,20 +1,18 @@
 package com.tsai.shakeit.ui.menu
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.children
-import androidx.core.view.forEach
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller
+import com.google.android.material.tabs.TabLayout
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
@@ -22,12 +20,6 @@ import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
-import androidx.recyclerview.widget.LinearSmoothScroller
-
-import androidx.recyclerview.widget.RecyclerView.SmoothScroller
-import com.google.android.material.tabs.TabLayout
-import java.lang.Exception
-import java.lang.reflect.Field
 
 
 class MenuFragment : Fragment() {
@@ -69,7 +61,7 @@ class MenuFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val adapter = MenuAdapter(viewModel, binding)
+        val adapter = MenuAdapter(viewModel)
 
         viewModel.productList.observe(viewLifecycleOwner, { list ->
             adapter.submitList(list)
@@ -106,11 +98,11 @@ class MenuFragment : Fragment() {
             }
         })
 
-        viewModel.popback.observe(viewLifecycleOwner, Observer {
+        viewModel.popback.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigateUp() }
         })
 
-        viewModel.navToOrder.observe(viewLifecycleOwner, Observer {
+        viewModel.navToOrder.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigate(OrderFragmentDirections.navToOrder()) }
         })
 
@@ -174,8 +166,6 @@ class MenuFragment : Fragment() {
                 // TODO("Handle tab reselect")
             }
         })
-
-
 
         dialogBinding?.viewModel = viewModel
         dialogBinding?.lifecycleOwner = viewLifecycleOwner

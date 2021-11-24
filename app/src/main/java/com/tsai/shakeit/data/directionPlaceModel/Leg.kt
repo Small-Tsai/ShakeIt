@@ -1,8 +1,6 @@
 package com.tsai.shakeit.data.directionPlaceModel
 
-import android.os.Parcelable
 import com.squareup.moshi.Json
-import kotlinx.parcelize.Parcelize
 
 
 data class Leg(

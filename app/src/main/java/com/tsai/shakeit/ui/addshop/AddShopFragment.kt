@@ -1,30 +1,26 @@
 package com.tsai.shakeit.ui.addshop
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.AddShopFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
-
-private const val AUTOCOMPLETE_REQUEST_CODE = 2
 
 class AddShopFragment : Fragment() {
 
@@ -33,8 +29,6 @@ class AddShopFragment : Fragment() {
     }
 
     private lateinit var binding: AddShopFragmentBinding
-    private val fromShop = 0
-    private val fromMenu = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,8 +46,8 @@ class AddShopFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.menuPhoto.menuSetOnClickChoosePhoto(fromMenu)
-        binding.shopPhoto.setOnClickChoosePhoto(fromShop)
+        binding.menuPhoto.menuSetOnClickChoosePhoto()
+        binding.shopPhoto.setOnClickChoosePhoto()
         binding.dateRev.adapter = adapter
 
         viewModel.popBack.observe(viewLifecycleOwner, {
@@ -86,105 +80,90 @@ class AddShopFragment : Fragment() {
         return binding.root
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        when (requestCode) {
-
-            AUTOCOMPLETE_REQUEST_CODE -> {
-                when (resultCode) {
-
-                    Activity.RESULT_OK -> {
-                        data?.let {
-                            val place = Autocomplete.getPlaceFromIntent(it)
-                            binding.addressEdt.setText(place.address)
-
-                            place.phoneNumber?.let { phoneNumber ->
-                                binding.telEdt.setText("0${phoneNumber.substring(4)}")
-                                viewModel.tel = "0${phoneNumber.substring(4)}"
-                            }
-
-
-                            if (place.openingHours == null) {
-                                viewModel.setTimeListWhenAutoCompleteFail()
-                            } else {
-                                viewModel.setTimeListByAutoComplete(place.openingHours!!.periods)
-                            }
-                            place.latLng?.let { latLng ->
-                                viewModel.lat = latLng.latitude
-                                viewModel.lon = latLng.longitude
-                            }
-                        }
-                    }
-
-                    AutocompleteActivity.RESULT_ERROR -> {
-                        Logger.d("autoComplete error")
-                        data?.let {
-                            val status = Autocomplete.getStatusFromIntent(data)
-                        }
-                    }
-
-                    Activity.RESULT_CANCELED -> {
-                    }
-                }
-                return
-            }
-
-            fromShop -> {
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    data.data?.let { uri ->
-
-                        val bitmap =
-                            MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
-                        binding.shopPhoto.foreground = ((BitmapDrawable(bitmap)))
-                        viewModel.shopImageUri.value = uri
-                    }
+    private val shopActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                val result = activityResult.data
+                result?.data.let { uri ->
+                    val bitmap = uri?.let { getBitmapFromUri(it) }
+                    binding.shopPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
+                    viewModel.shopImageUri.value = uri
                 }
             }
-
-            fromMenu -> {
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    data.data?.let { uri ->
-                        val bitmap = getBitmapFromUri(uri)
-                        binding.menuPhoto.foreground = ((BitmapDrawable(bitmap)))
-                        viewModel.menuImageUri.value = uri
-                    }
-                }
-            }
-
         }
-    }
+
+    private val menuActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                val result = activityResult.data
+                result?.data.let { uri ->
+                    val bitmap = uri?.let { getBitmapFromUri(it) }
+                    binding.menuPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
+                    viewModel.shopImageUri.value = uri
+                }
+            }
+        }
+
+    private val autocompleteActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+
+                val result = activityResult.data
+
+                result?.let { intent ->
+                    val place = Autocomplete.getPlaceFromIntent(intent)
+                    binding.addressEdt.setText(place.address)
+
+                    place.phoneNumber?.let { phoneNumber ->
+                        "0${phoneNumber.substring(4)}".also { binding.telEdt.setText(it) }
+                        viewModel.tel = "0${phoneNumber.substring(4)}"
+                    }
+
+                    if (place.openingHours == null) {
+                        viewModel.setTimeListWhenAutoCompleteFail()
+                    } else {
+                        viewModel.setTimeListByAutoComplete(place.openingHours!!.periods)
+                    }
+
+                    place.latLng?.let { latLng ->
+                        viewModel.lat = latLng.latitude
+                        viewModel.lon = latLng.longitude
+                    }
+                }
+            } else {
+                Logger.d("autoComplete error")
+            }
+        }
+
 
     private fun getBitmapFromUri(uri: Uri) =
         ShakeItApplication.instance.contentResolver.openFileDescriptor(uri, "r")?.use {
             BitmapFactory.decodeFileDescriptor(it.fileDescriptor)
         }
 
-    private fun MaterialButton.setOnClickChoosePhoto(buttonName: Int) {
+    private fun MaterialButton.setOnClickChoosePhoto() {
         setOnClickListener {
             ImagePicker.with(fragment = this@AddShopFragment)
                 .galleryOnly()
                 .crop(16f, 9f)
                 .compress(1024)
                 .createIntent { intent ->
-                    startActivityForResult(intent, buttonName)
+                    shopActivityLauncher.launch(intent)
                 }
         }
     }
 
-    private fun MaterialButton.menuSetOnClickChoosePhoto(buttonName: Int) {
+    private fun MaterialButton.menuSetOnClickChoosePhoto() {
         setOnClickListener {
             ImagePicker.with(fragment = this@AddShopFragment)
                 .galleryOnly()
                 .crop()
                 .compress(1024)
                 .createIntent { intent ->
-                    startActivityForResult(intent, buttonName)
+                    menuActivityLauncher.launch(intent)
                 }
         }
     }
-
 
     private fun startAutoCompleteIntent() {
 
@@ -202,6 +181,6 @@ class AddShopFragment : Fragment() {
         val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
             .build(ShakeItApplication.instance)
 
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+        autocompleteActivityLauncher.launch(intent)
     }
 }

@@ -1,4 +1,4 @@
-package com.tsai.shakeit.util
+package com.tsai.shakeit.app
 
 // m/min
 const val WALKING_SPEED_AVG = 75.00

@@ -22,8 +22,6 @@ import kotlinx.coroutines.withContext
 
 class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
-    val dateList = listOf<String>("星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日")
-
     private val _isDateOpen = MutableLiveData<Boolean>()
     val isDateOpen: LiveData<Boolean>
         get() = _isDateOpen
@@ -66,17 +64,11 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     }
 
     private val _shopFireBaseImageUri = MutableLiveData<String>()
-    private val shopFireBaseImageUri: LiveData<String>
-        get() = _shopFireBaseImageUri
 
     private val _menuFireBaseImageUri = MutableLiveData<String>()
-    private val menuFireBaseImageUri: LiveData<String>
-        get() = _menuFireBaseImageUri
 
     private val _timeList =
         MutableLiveData<HashMap<String, String>>().apply { value = hashMapOf() }
-    val timeList: LiveData<HashMap<String, String>>
-        get() = _timeList
 
     var timeOpen = MutableLiveData<String>()
     var timeClose = MutableLiveData<String>()

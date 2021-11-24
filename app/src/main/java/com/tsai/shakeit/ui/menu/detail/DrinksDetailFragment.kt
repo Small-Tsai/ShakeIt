@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tsai.shakeit.R
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.DialogOrderNameBinding
 import com.tsai.shakeit.databinding.DrinksDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory

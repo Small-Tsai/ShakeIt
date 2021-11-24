@@ -47,7 +47,7 @@ class LoginFragment : Fragment() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        updateUser(currentUser);
+        updateUser(currentUser)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

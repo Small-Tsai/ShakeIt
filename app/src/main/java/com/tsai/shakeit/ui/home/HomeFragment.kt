@@ -38,7 +38,6 @@ import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ext.mToast
 import com.tsai.shakeit.ext.moveCamera
 import com.tsai.shakeit.ext.visibility
-import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
 import com.tsai.shakeit.ui.menu.MenuFragmentDirections
@@ -61,7 +60,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var selectedShop: Shop
     private lateinit var polyLine: Polyline
     private lateinit var mContext: Context
-    private lateinit var result: List<Product>
+    private lateinit var filteredProudctList: List<Product>
     private lateinit var allShopName: List<String>
     private lateinit var allShopData: List<Shop>
     private lateinit var allProductList: List<Product>
@@ -139,19 +138,21 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //when selected shop
         viewModel.selectedShop.observe(viewLifecycleOwner, { shop ->
+
             val favorite = Favorite(shop = shop, user_Id = UserInfo.userId)
             selectedShop = shop
-            binding.favorite = favorite
-            binding.shop = shop
-
             viewModel.checkHasFavorite()
 
-            binding.telBtn.setOnClickListener {
-                telUri = Uri.parse("tel:${shop.tel}")
-                startActivity(Intent(Intent.ACTION_DIAL, telUri))
-            }
-
             binding.apply {
+
+                this.shop = shop
+                this.favorite = favorite
+
+                telBtn.setOnClickListener {
+                    telUri = Uri.parse("tel:${shop.tel}")
+                    startActivity(Intent(Intent.ACTION_DIAL, telUri))
+                }
+
                 viewpagerHome.let {
                     tabsHome.setupWithViewPager(it)
                     it.adapter = CommentPagerAdapter(childFragmentManager, shopId = shop.shop_Id)
@@ -165,10 +166,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.mapNavState.observe(viewLifecycleOwner, {
             it?.let {
                 stopMapNavigation()
-                moveCameraToCurrentLocation(
-                    UserInfo.userCurrentLocation,
-                    GoogleCameraMoveMode.ANIMATE
-                )
+                moveCameraToCurrentLocation(16f, GoogleCameraMoveMode.ANIMATE)
             }
         })
 
@@ -203,11 +201,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             allShopData = shopData
 
             // observe when get currentPosition
-
             viewModel.trafficMode.value?.let { mode ->
                 mainViewModel.currentFragmentType.value?.let { getDirection(mode, it) }
             }
-
 
             //observe mainViewModel shopFilteredList from firebase
             mainViewModel.firebaseFilteredShopList.observe(viewLifecycleOwner, { dbList ->
@@ -224,6 +220,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             })
         })
 
+        //import allShopName from viewModel
         viewModel.allShopName.observe(viewLifecycleOwner, {
             allShopName = it
         })
@@ -242,7 +239,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.isMoveCamera.observe(viewLifecycleOwner, {
             it?.let {
                 moveCameraToCurrentLocation(
-                    UserInfo.userCurrentLocation, GoogleCameraMoveMode.ANIMATE
+                    18f, GoogleCameraMoveMode.ANIMATE
                 )
             }
         })
@@ -252,7 +249,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             it?.let { UserInfo.userCurrentSettingTrafficTime = it }
         })
 
-        //set navBtn onClickListrner
+        //set navBtn onClickListener
         binding.navBtn.setOnClickListener {
             viewModel.startDrawPolyLine()
         }
@@ -268,12 +265,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
             ) {
                 it?.let {
-                    mMap.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(
-                            UserInfo.userCurrentLocation,
-                            17F,
-                        )
-                    )
+                    moveCameraToCurrentLocation(17f, GoogleCameraMoveMode.ANIMATE)
                     polyLine = mMap.addPolyline(it)
                 }
             }
@@ -281,8 +273,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         //observe mode change for getDirection from walk or driving
         viewModel.trafficMode.observe(viewLifecycleOwner, {
+
             if (appPermission.locationPermissionGranted) {
                 Logger.d("mode observe $it")
+
                 MyAnimation.startSearchAnimationOnMap(
                     UserInfo.userCurrentLocation,
                     mMap,
@@ -324,7 +318,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 binding.searchView.clearFocus()
             }
         })
-
         return binding.root
     }
 
@@ -407,12 +400,45 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         viewModel.allProduct.observe(viewLifecycleOwner, { list ->
             allProductList = list
-            listAdapter.submitList(list.sortedBy { it.type })
+            listAdapter.submitList(list)
         })
 
         binding.searchView.setOnQueryTextFocusChangeListener { _, b ->
             viewModel.isSearchBarFocus.value = b
         }
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (filteredProudctList.isNotEmpty()) {
+                    doSearch(filteredProudctList.first())
+                } else {
+                    mToast("未搜尋到${binding.searchView.query}")
+                    viewModel.isSearchBarFocus.value = false
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let { text ->
+
+                    filteredProudctList = allProductList.filter { it.type.contains(text) }
+                    listAdapter.submitList(filteredProudctList)
+
+                    if (filteredProudctList.isEmpty()) {
+                        filteredProudctList = allProductList.filter { it.shop_Name.contains(text) }
+                        listAdapter.submitList(filteredProudctList)
+                    }
+
+                    if (filteredProudctList.isEmpty()) {
+                        filteredProudctList = allProductList.filter { it.name.contains(text) }
+                        listAdapter.submitList(filteredProudctList)
+                    }
+
+                }
+                return false
+            }
+        })
 
         val clearButton: ImageView =
             binding.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
@@ -426,53 +452,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 binding.searchView.setQuery("", false)
             }
         }
-
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                if (result.isNotEmpty()) {
-                    doSearch(result.first())
-                } else {
-                    mToast("未搜尋到${binding.searchView.query}")
-                    viewModel.isSearchBarFocus.value = false
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { text ->
-
-                    result = allProductList.filter { it.type.contains(text) }
-                        .toMutableList().sortedBy { it.type }
-
-                    listAdapter.submitList(result)
-
-                    if (result.isEmpty()) {
-                        result = allProductList.filter { it.shop_Name.contains(text) }
-                            .toMutableList().sortedBy { it.type }
-                        listAdapter.submitList(result)
-                    }
-
-                    if (result.isEmpty()) {
-                        result = allProductList.filter { it.name.contains(text) }
-                            .toMutableList().sortedBy { it.type }
-                        listAdapter.submitList(result)
-                    }
-
-                }
-                return false
-            }
-        })
         binding.searchRev.adapter = listAdapter
     }
 
     private fun doSearch(product: Product) {
+
         MyAnimation.startSearchAnimationOnMap(
             UserInfo.userCurrentLocation,
             mMap,
             vAnimator,
             viewModel.distance
         )
+
         queryShopName = product.shop_Name.last()
         binding.searchView.setQuery(product.name, false)
         mToast("正在搜尋附近含有 - ${product.name} 的店家 ")
@@ -481,6 +472,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             val searchName = allShopName.filter { it != queryShopName }
             addMarkerAfterClearMap(searchName)
         }
+
         binding.searchView.clearFocus()
         binding.searchRev.visibility(0)
     }
@@ -493,7 +485,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         if (!::selectedShop.isInitialized) {
             moveCameraToCurrentLocation(
-                UserInfo.userCurrentLocation, GoogleCameraMoveMode.IMMEDIATELY
+                18f, GoogleCameraMoveMode.IMMEDIATELY
             )
         }
 
@@ -560,18 +552,18 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     //move camera
     private fun moveCameraToCurrentLocation(
-        currentPosition: LatLng,
+        zoomFloat: Float,
         googleCameraMoveMode: GoogleCameraMoveMode
     ) {
         when (googleCameraMoveMode) {
             GoogleCameraMoveMode.ANIMATE -> mMap.moveCamera(
-                currentPosition,
-                18f,
+                UserInfo.userCurrentLocation,
+                zoomFloat,
                 googleCameraMoveMode
             )
             GoogleCameraMoveMode.IMMEDIATELY -> mMap.moveCamera(
-                currentPosition,
-                18f,
+                UserInfo.userCurrentLocation,
+                zoomFloat,
                 googleCameraMoveMode
             )
         }

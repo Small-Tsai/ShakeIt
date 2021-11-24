@@ -1,8 +1,6 @@
 package com.tsai.shakeit.ext
 
 import android.app.Activity
-import android.view.Gravity
-import android.widget.Toast
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.factory.ViewModelFactory
 

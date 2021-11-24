@@ -6,6 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.R
+import com.tsai.shakeit.app.CAPACITY
+import com.tsai.shakeit.app.ICE
+import com.tsai.shakeit.app.OTHERS
+import com.tsai.shakeit.app.SUGAR
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.mToast
@@ -38,8 +42,7 @@ class DrinksDetailViewModel(
         get() = _popBack
 
     var selectedPositionList = mutableListOf<Int>()
-    var mContentList: MutableMap<String, ArrayList<String>> = mutableMapOf()
-
+    private var mContentList: MutableMap<String, ArrayList<String>> = mutableMapOf()
     val isCapacitySelected = MutableLiveData<Boolean>().apply { value = false }
     val isIceSelected = MutableLiveData<Boolean>().apply { value = false }
     val isSugarSelected = MutableLiveData<Boolean>().apply { value = false }
@@ -89,25 +92,23 @@ class DrinksDetailViewModel(
             mContentList[ICE].let { ice ->
                 mContentList[CAPACITY]?.let { capacity ->
                     mContentList[OTHERS]?.let { others ->
-                        mContentList[SUGAR].let { sugar ->
-                            OrderProduct(
-                                name = data.name,
-                                ice = ice?.first() ?: "無法調冰",
-                                capacity = capacity.first(),
-                                qty = qty,
-                                sugar = sugar?.first() ?: "無法調甜",
-                                others = others.toString()
-                                    .substring(1, mContentList[OTHERS].toString().length - 1),
-                                price = data.price,
-                                product_Img = data.product_Img,
-                                user = User(
-                                    user_Id = UserInfo.userId,
-                                    user_Image = UserInfo.userImage,
-                                    user_Name = UserInfo.userName,
-                                    user_Token = MyFirebaseService.token.toString()
-                                ),
-                            )
-                        }
+                        OrderProduct(
+                            name = data.name,
+                            ice = ice?.first() ?: "無法調冰",
+                            capacity = capacity.first(),
+                            qty = qty,
+                            sugar = mContentList[SUGAR]?.first() ?: "無法調甜",
+                            others = others.toString()
+                                .substring(1, mContentList[OTHERS].toString().length - 1),
+                            price = data.price,
+                            product_Img = data.product_Img,
+                            user = User(
+                                user_Id = UserInfo.userId,
+                                user_Image = UserInfo.userImage,
+                                user_Name = UserInfo.userName,
+                                user_Token = MyFirebaseService.token.toString()
+                            ),
+                        )
                     }
                 }
             }

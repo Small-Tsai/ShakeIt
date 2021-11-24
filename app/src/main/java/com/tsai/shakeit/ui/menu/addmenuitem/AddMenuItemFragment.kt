@@ -1,15 +1,14 @@
 package com.tsai.shakeit.ui.menu.addmenuitem
 
 import android.app.Activity
-import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
@@ -17,12 +16,9 @@ import com.google.android.material.button.MaterialButton
 import com.tsai.shakeit.databinding.AddMenuItemFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
-import com.tsai.shakeit.util.UserInfo
 
 
 class AddMenuItemFragment : Fragment() {
-
-    private val fromProduct = 0
 
     private val viewModel by viewModels<AddMenuItemViewModel> {
         getVmFactory(
@@ -47,7 +43,7 @@ class AddMenuItemFragment : Fragment() {
         val addSugarAdapter = AddMenuItemAdapter(viewModel)
         val addOtherAdapter = AddMenuItemAdapter(viewModel)
 
-        binding.productPhotoBtn.setOnClickChoosePhoto(fromProduct)
+        binding.productPhotoBtn.setOnClickChoosePhoto()
 
         viewModel.addCapacityListLiveData.observe(viewLifecycleOwner, {
             Logger.d("observe it")
@@ -90,37 +86,27 @@ class AddMenuItemFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-
-            fromProduct -> {
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    data.data?.let { uri ->
-
-                        // 將照片顯示
-                        val bitmap =
-                            MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
-
-                        binding.productPhotoBtn.foreground = ((BitmapDrawable(bitmap)))
-
-                        //傳Uri到viewModel
-                        viewModel.productImageUri.value = uri
-                    }
+    private val productActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                val result = activityResult.data
+                result?.data.let { uri ->
+                    val bitmap =
+                        MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
+                    binding.productPhotoBtn.foreground = ((BitmapDrawable(bitmap)))
+                    viewModel.productImageUri.value = uri
                 }
             }
         }
-    }
 
-    private fun MaterialButton.setOnClickChoosePhoto(buttonName: Int) {
-
+    private fun MaterialButton.setOnClickChoosePhoto() {
         setOnClickListener {
             ImagePicker.with(fragment = this@AddMenuItemFragment)
                 .galleryOnly()
                 .crop()
                 .compress(1024)
                 .createIntent { intent ->
-                    startActivityForResult(intent,buttonName)
+                    productActivityLauncher.launch(intent)
                 }
         }
     }

@@ -1,6 +1,7 @@
 package com.tsai.shakeit.util
 
 import com.google.android.libraries.maps.model.LatLng
+import com.tsai.shakeit.app.DRIVING
 
 object UserInfo {
 

@@ -105,7 +105,7 @@ class OrderDetailFragment : Fragment() {
         viewModel.shop.observe(viewLifecycleOwner, { shop ->
             binding.shop = shop
             binding.orderTelBtn.setOnClickListener {
-                telUri = Uri.parse("tel:${shop.tel}");
+                telUri = Uri.parse("tel:${shop.tel}")
                 startActivity(Intent(Intent.ACTION_DIAL, telUri))
             }
         })

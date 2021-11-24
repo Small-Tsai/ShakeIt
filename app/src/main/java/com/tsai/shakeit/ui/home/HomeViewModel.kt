@@ -3,6 +3,10 @@ package com.tsai.shakeit.ui.home
 import androidx.lifecycle.*
 import com.google.android.libraries.maps.model.*
 import com.tsai.shakeit.R
+import com.tsai.shakeit.app.DRIVING
+import com.tsai.shakeit.app.DRIVING_SPEED_AVG
+import com.tsai.shakeit.app.WALKING
+import com.tsai.shakeit.app.WALKING_SPEED_AVG
 import com.tsai.shakeit.data.Favorite
 import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Result
@@ -83,9 +87,13 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     //LiveData of product
-    private val _allProduct = MutableLiveData<List<Product>>()
-    val allProduct: LiveData<List<Product>>
-        get() = _allProduct
+
+    val allProduct: LiveData<List<Product>> = liveData {
+        repository.getAllProduct().collect{ result ->
+            emit((result as Result.Success).data.sortedBy { it.type })
+        }
+    }
+
 
     //Record current user selected shop snippet
     private val _snippet = MutableLiveData<String?>()
@@ -150,20 +158,11 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
 
     init {
-        getAllProduct()
         getMyFavorite()
     }
 
     fun clearSearchBarFocus() {
         isSearchBarFocus.value = false
-    }
-
-    private fun getAllProduct() {
-        viewModelScope.launch {
-            repository.getAllProduct().collect { result ->
-                (result as Result.Success).also { _allProduct.value = result.data!! }
-            }
-        }
     }
 
     fun getUserSearchingProduct(product: Product) {
@@ -231,7 +230,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    var mShopId: String? = null
+    private var mShopId: String? = null
     fun checkHasFavorite() {
         isInMyFavorite.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
@@ -365,5 +364,3 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         trafficTimeLiveData.value = duration.text
     }
 }
-
-

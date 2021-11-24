@@ -14,7 +14,7 @@ import java.lang.Exception
 
 class AppPermissions {
 
-    var lm =
+    private var lm =
         ShakeItApplication.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     private var gpsEnabled = false
@@ -61,13 +61,13 @@ class AppPermissions {
                     }
 
                     try {
-                        gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
                     } catch (e: Exception) {
                         Logger.e("gps $e")
                     }
 
                     try {
-                        networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                        networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
                     } catch (e: Exception) {
                         Logger.e("network $e")
                     }

@@ -6,11 +6,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Product
-import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.databinding.MenuProductRowBinding
 import com.tsai.shakeit.databinding.MenuTitleRowBinding
 
-class MenuAdapter(val viewModel: MenuViewModel, private val menuBinding: MenuFragmentBinding) :
+class MenuAdapter(val viewModel: MenuViewModel) :
     ListAdapter<Menu, RecyclerView.ViewHolder>(DiffCallback) {
 
     inner class ProductViewHolder(private var binding: MenuProductRowBinding) :

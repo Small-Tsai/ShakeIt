@@ -34,7 +34,7 @@ class CommentFragment(private val shopId: String) : Fragment() {
 
         val adapter = CommentAdapter()
 
-        val mainViewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
         viewModel.comment.observe(viewLifecycleOwner, {
             adapter.submitList(it)

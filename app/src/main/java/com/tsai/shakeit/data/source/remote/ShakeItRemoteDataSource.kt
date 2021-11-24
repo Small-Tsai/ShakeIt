@@ -13,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.*
 import com.tsai.shakeit.R
+import com.tsai.shakeit.app.*
 import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
@@ -428,7 +429,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
         if (!orderProduct.isNullOrEmpty()) {
             val last = orderProduct.last()
-            orderProduct.forEach {
+            orderProduct.forEach { it ->
                 val orderProductDocument = document.collection(ORDER_PRODUCT).document()
                 it.orderProduct_Id = orderProductDocument.id
                 orderProductDocument

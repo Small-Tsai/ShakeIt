@@ -78,7 +78,7 @@ interface ShakeItDataSource {
 
     fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
 
-    fun getFavorite(userId: String): kotlinx.coroutines.flow.Flow<Result<List<Favorite>>>
+    fun getFavorite(userId: String): Flow<Result<List<Favorite>>>
 
     fun updateUserTokenOnFireBase(newToken: String)
 

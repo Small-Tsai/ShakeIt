@@ -69,7 +69,7 @@ class ViewModelFactory(
                     AddShopViewModel(repository)
 
                 isAssignableFrom(SettingViewModel::class.java) ->
-                    SettingViewModel(repository, shopList)
+                    SettingViewModel(shopList)
 
                 isAssignableFrom(LoginViewModel::class.java) ->
                     LoginViewModel(repository)

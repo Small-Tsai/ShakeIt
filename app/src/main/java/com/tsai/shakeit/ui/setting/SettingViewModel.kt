@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.data.Shop
-import com.tsai.shakeit.data.source.ShakeItRepository
 
-class SettingViewModel(private val repository: ShakeItRepository, private val list: Array<Shop>) :
+class SettingViewModel(private val list: Array<Shop>) :
     ViewModel() {
 
     private val _shopList = MutableLiveData<List<String>>().apply {

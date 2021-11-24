@@ -1,19 +1,25 @@
 package com.tsai.shakeit
 
 import android.os.Looper
+import android.view.View
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
+import com.tsai.shakeit.ext.visibility
+import com.tsai.shakeit.network.LoadApiStatus
+import com.tsai.shakeit.ui.home.HomeViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
-import com.tsai.shakeit.util.DRIVING
-import com.tsai.shakeit.util.WALKING
+import com.tsai.shakeit.util.*
 
 @BindingAdapter("shopNameArray")
 fun TextView.bindShopNameArray(name: ArrayList<String>?) {
@@ -178,8 +184,104 @@ fun ImageView.bindTrafficIcon(mode: String) {
     }
 }
 
-@BindingAdapter("bottomSheetBehavior")
-fun ConstraintLayout.bindBottomSheetBehavior() {
+@BindingAdapter("btsMainViewMode", "btsViewModel", "lifecycleOwner")
+fun ConstraintLayout.bindBottomSheetBehavior(
+    mainViewModel: MainViewModel,
+    viewModel: HomeViewModel,
+    viewLifecycleOwner: LifecycleOwner
+) {
+
+    val bottomSheetBehavior = BottomSheetBehavior.from(this)
+    val toolbarConstraint = rootView.findViewById<ConstraintLayout>(R.id.toolbar_constraint)
+
+    //set toolbar visibility
+    fun toolbarVisible() {
+        toolbarConstraint.startAnimation(MyAnimation.fromTop)
+        toolbarConstraint.visibility(1)
+    }
+
+    //set toolbar visibility
+    fun toolbarGone() {
+        toolbarConstraint.startAnimation(MyAnimation.toTopGone)
+        toolbarConstraint.visibility(0)
+    }
+    //observe current fragment type
+    viewModel.currentFragmentType.observe(viewLifecycleOwner, {
+        when (it) {
+            CurrentFragmentType.HOME ->
+                if (viewModel.status.value != LoadApiStatus.LOADING &&
+                    toolbarConstraint.visibility != View.VISIBLE
+                ) {
+                    toolbarVisible()
+                }
+            CurrentFragmentType.HOME_NAV -> toolbarGone()
+            else -> {
+            }
+        }
+    })
+
+    if (mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG ||
+        mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
+    ) {
+        bottomSheetBehavior.halfExpandedRatio = 0.0001f
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+    }
+
+    //bottomSheet CallBack
+    var x = 0
+    bottomSheetBehavior.addBottomSheetCallback(object :
+        BottomSheetBehavior.BottomSheetCallback() {
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+            when (newState) {
+                BottomSheetBehavior.STATE_HIDDEN -> {
+                    if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
+                        mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                        viewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                    }
+                }
+                else -> {
+
+                }
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            if (slideOffset > 0.4f && x == 0) {
+                x = 1; toolbarGone()
+            }
+
+            if (x == 1 && slideOffset < 0.4f &&
+                viewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV
+            ) {
+                x = 0; toolbarVisible()
+            }
+        }
+    })
+}
+
+@BindingAdapter("navBtsMainViewMode", "navBtsViewModel", "lifecycleOwner")
+fun ConstraintLayout.bindNavBottomSheetBehavior(
+    mainViewModel: MainViewModel,
+    viewModel: HomeViewModel,
+    viewLifecycleOwner: LifecycleOwner
+) {
+    val bottomSheetNavBehavior = BottomSheetBehavior.from(this)
+
+    viewModel.options.observe(viewLifecycleOwner, {
+        if (mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG ||
+            mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
+        ) {
+            it?.let {
+                mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+                viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
+                bottomSheetNavBehavior.isDraggable = false
+                bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+    })
 
 }
 

@@ -65,7 +65,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var allShopName: List<String>
     private lateinit var allShopData: List<Shop>
     private lateinit var allProductList: List<Product>
-
     private var queryShopName: String = ""
     private val vAnimator = ValueAnimator()
 
@@ -98,8 +97,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             mainViewModel.selectedShop.observe(viewLifecycleOwner, {
                 selectedShop = it
             })
-
         }
+
+        // calculate average rating
+        mainViewModel.ratingAvg.observe(viewLifecycleOwner, { ratingAvg ->
+            if (ratingAvg.isNaN()) {
+                binding.avgRating.text = "0"
+                binding.ratingBar.rating = ratingAvg
+            } else {
+                "%.1f".format(ratingAvg).also { binding.avgRating.text = it }
+                binding.ratingBar.rating = ratingAvg
+            }
+        })
+
+        // update total comment qty on bottomSheet
+        mainViewModel.commentCount.observe(viewLifecycleOwner, { commentCount ->
+            "($commentCount)".also { binding.commentCount.text = it }
+        })
 
         setBackPressedBehavior()
         mContext = binding.root.context
@@ -116,6 +130,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.lifecycle = viewLifecycleOwner
 
         //get map
         val mapFragment =
@@ -145,20 +160,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //observe current fragment type
-        viewModel.currentFragmentType.observe(viewLifecycleOwner, {
-            when (it) {
-                CurrentFragmentType.HOME ->
-                    if (viewModel.status.value != LoadApiStatus.LOADING &&
-                        binding.toolbarConstraint.visibility != View.VISIBLE
-                    ) {
-                        toolbarVisible()
-                    }
-                CurrentFragmentType.HOME_NAV -> toolbarGone()
-                else -> {
-                }
-            }
-        })
 
         //observe onClick stop navigation
         viewModel.mapNavState.observe(viewLifecycleOwner, {
@@ -267,13 +268,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
             ) {
                 it?.let {
-                    bottomSheetNavBehavior.isDraggable = false
-                    bottomSheetBehavior.halfExpandedRatio = 0.0001f
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                    mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
-                    viewModel.currentFragmentType.value = CurrentFragmentType.HOME_NAV
-                    bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-
                     mMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
                             UserInfo.userCurrentLocation,
@@ -381,6 +375,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private fun stopMapNavigation() {
         bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+        viewModel.currentFragmentType.value = CurrentFragmentType.HOME
         if (this::polyLine.isInitialized) {
             polyLine.remove()
         }
@@ -390,7 +386,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         appPermission.askPermissionToGetDeviceLocation(this)
-        setBottomSheetBehavior()
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         moveCameraToSelectedShop()
     }
 
@@ -489,76 +485,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.searchRev.visibility(0)
     }
 
-    // custom BottomSheetUI
-    private fun setBottomSheetBehavior() {
-
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
-        // update total comment qty on bottomSheet
-        mainViewModel.commentCount.observe(viewLifecycleOwner, { commentCount ->
-            "($commentCount)".also { binding.commentCount.text = it }
-        })
-
-        // calculate average rating
-        mainViewModel.ratingAvg.observe(viewLifecycleOwner, { ratingAvg ->
-            if (ratingAvg.isNaN()) {
-                binding.avgRating.text = "0"
-                binding.ratingBar.rating = ratingAvg
-            } else {
-                "%.1f".format(ratingAvg).also { binding.avgRating.text = it }
-                binding.ratingBar.rating = ratingAvg
-            }
-        })
-
-        //bottomSheet CallBack
-        var x = 0
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
-                            mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
-                            viewModel.currentFragmentType.value = CurrentFragmentType.HOME
-                        }
-                    }
-                    else -> {
-                    }
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-                if (slideOffset > 0.4f) {
-                    if (x == 0) {
-                        x = 1
-                        toolbarGone()
-                    }
-                }
-
-                if (x == 1 && slideOffset < 0.4f) {
-                    x = 0
-                    if (viewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
-                        toolbarVisible()
-                    }
-                }
-            }
-        })
-    }
-
-    //set toolbar visibility
-    private fun toolbarVisible() {
-        binding.toolbarConstraint.startAnimation(MyAnimation.fromTop)
-        binding.toolbarConstraint.visibility(1)
-    }
-
-    //set toolbar visibility
-    private fun toolbarGone() {
-        binding.toolbarConstraint.startAnimation(MyAnimation.toTopGone)
-        binding.toolbarConstraint.visibility(0)
-    }
-
     //set google map UI
     @SuppressLint("MissingPermission")
     fun setMapUI() {
@@ -578,7 +504,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mMap.setOnMarkerClickListener {
 
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
-
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG
                 viewModel.currentFragmentType.value = CurrentFragmentType.HOME_DIALOG

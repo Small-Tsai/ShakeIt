@@ -43,11 +43,7 @@ class LoginViewModel(private val repository: ShakeItRepository) : ViewModel() {
     fun joinToOrder(orderId: String) {
         viewModelScope.launch {
             Logger.d("joinOrder")
-            when (
-                val result = withContext(Dispatchers.IO) {
-                    repository.joinToOrder(orderId)
-                }
-            ) {
+            when (withContext(Dispatchers.IO) { repository.joinToOrder(orderId) }) {
                 is Result.Success -> {
                     _navToOrder.value = true
                     _navToOrder.value = null

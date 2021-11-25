@@ -46,7 +46,6 @@ class AddMenuItemFragment : Fragment() {
         binding.productPhotoBtn.setOnClickChoosePhoto()
 
         viewModel.addCapacityListLiveData.observe(viewLifecycleOwner, {
-            Logger.d("observe it")
             addCapacityAdapter.submitList(it.toMutableList())
         })
 

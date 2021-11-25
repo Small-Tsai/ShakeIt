@@ -87,7 +87,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     // LiveData of product
-
     val allProduct: LiveData<List<Product>> = liveData {
         repository.getAllProduct().collect { result ->
             emit((result as Result.Success).data.sortedBy { it.type })
@@ -114,9 +113,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         value = UserInfo.userCurrentSettingTrafficTime
     }
 
-    // LiveData for detect search focus
-    val isSearchBarFocus = MutableLiveData<Boolean>().apply { value = false }
-
     // LiveData for record user selected shop
     val selectedShop = MutableLiveData<Shop>()
 
@@ -129,7 +125,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     // Init polyline option
     private var navOption = PolylineOptions()
 
-    // Calculate distance from userSettingTime
+    // Calculate distance from userSettingTime -> distance = averageSpeed * userSettingTime
     val distance: Double
         get() {
             var distance = 0.0
@@ -146,7 +142,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             return distance
         }
 
-    // Decide polyLine style from traffic mode
+    // Decide polyLine style from traffic mode, walk->dot, driving->dash
     private val pattern: List<PatternItem>
         get() {
             val result = when (trafficMode.value) {
@@ -160,17 +156,30 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         getMyFavorite()
     }
 
+    // LiveData for detect search focus
+    // FilterBtn will transform to closeSearchBarBtn By dataBinding it
+    val isSearchBarFocus = MutableLiveData<Boolean>().apply { value = false }
+
+    // CloseSearchBarBtn onClick -> clear searchBar focus , null prevent navigation agin
     fun clearSearchBarFocus() {
         isSearchBarFocus.value = false
+    }
+
+    // FilterBtn onClick -> navToSetting page , null prevent navigation agin
+    fun navToSetting() {
+        _navToSetting.value = true
+        _navToSetting.value = null
     }
 
     fun getUserSearchingProduct(product: Product) {
         _userSearchingProduct.value = product
     }
 
-    fun getShopData(center: LatLng, type: String? = null) {
+    // If distance between shopLocation and userLocation smaller then [distance] then get it's data
+    // Distance between shopLocation and userLocation calculate by firebase using GeoLocation
+    fun getShopData(userLocation: LatLng, type: String? = null) {
         viewModelScope.launch {
-            repository.getAllShop(center, distance).collect { allShop ->
+            repository.getAllShop(userLocation, distance).collect { allShop ->
                 when (allShop) {
                     is Result.Loading -> {
                         if (type != "search") showLoading()
@@ -195,19 +204,17 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _status.value = LoadApiStatus.LOADING
     }
 
-    // when click nav Done
     fun mapNavDone() {
         _mapNavState.value = false
         _mapNavState.value = null
     }
 
-    // move camera
     fun moveCameraToCurrentLocation() {
         _isMoveCamera.value = true
         _isMoveCamera.value = null
     }
 
-    // use to check has favorite or not
+    // Use to check has favorite or not
     private fun getMyFavorite() {
         viewModelScope.launch {
             repository.getFavorite(UserInfo.userId).collect {
@@ -222,25 +229,19 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         isInMyFavorite.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
-    // nav to setting page
-    fun navToSetting() {
-        _navToSetting.value = true
-        _navToSetting.value = null
-    }
-
-    // nav to menu page
+    // Nav to menu page
     fun navToMenu(shop: Shop) {
         _navToMenu.value = shop
         _navToMenu.value = null
     }
 
-    // nav to addShop page
+    // Nav to addShop page
     fun navToAddShop() {
         _navToAddShop.value = true
         _navToAddShop.value = null
     }
 
-    // delete favorite
+    // Delete favorite by shopId
     fun deleteFavorite(shopId: String) {
         viewModelScope.launch {
             repository.deleteFavorite(shopId).collect {
@@ -251,7 +252,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    // upload favorite
+    // Post favorite
     fun postMyFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.postFavorite(favorite).collect {
@@ -268,14 +269,14 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    // get selected shop
+    // Get selectedShopId by it's snippet
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
         _snippet.value = markerSnippet
         selectedShop.value = shopListLiveData.value?.first { it.shop_Id == markerSnippet }
     }
 
-    // bottomSheet shop open time
+    // BottomSheet shop open time display or not by dataBinding it to layout
     fun timeDisplayOrNot() {
         isTimeDisplay.value = isTimeDisplay.value == false
     }
@@ -290,6 +291,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _trafficMode.value = UserInfo.userCurrentSelectTrafficMode
     }
 
+    // When user click bottomSheet constraintLayout do nothing to prevent bottomSheet close
     fun doNothing() {}
 
     fun startDrawPolyLine() {

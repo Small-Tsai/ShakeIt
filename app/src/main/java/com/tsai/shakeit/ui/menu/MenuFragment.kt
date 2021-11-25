@@ -96,7 +96,7 @@ class MenuFragment : Fragment() {
             }
         })
 
-        viewModel.popback.observe(viewLifecycleOwner, {
+        viewModel.popBack.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigateUp() }
         })
 
@@ -118,7 +118,7 @@ class MenuFragment : Fragment() {
             binding.orderProductCount.text = orderProductList.size.toString()
         })
 
-        viewModel.branchProductList.observe(viewLifecycleOwner, {
+        viewModel.shopProductList.observe(viewLifecycleOwner, {
             viewModel.filterProductList(it)
         })
 

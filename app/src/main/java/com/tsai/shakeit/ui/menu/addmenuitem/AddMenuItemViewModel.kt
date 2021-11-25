@@ -21,24 +21,28 @@ class AddMenuItemViewModel(
     val shop: Shop?,
 ) : ViewModel() {
 
+    // LiveData of capacityList for submit to Capacity recycleView
     private val _addCapacityListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
         value = mutableListOf()
     }
     val addCapacityListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addCapacityListLiveData
 
+    // LiveData of capacityList for submit to Ice recycleView
     private val _addIceListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
         value = mutableListOf()
     }
     val addIceListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addIceListLiveData
 
+    // LiveData of capacityList for submit to Sugar recycleView
     private val _addSugarListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
         value = mutableListOf()
     }
     val addSugarListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addSugarListLiveData
 
+    // LiveData of capacityList for submit to Others recycleView
     private val _addOtherListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
         value = mutableListOf()
     }
@@ -57,22 +61,26 @@ class AddMenuItemViewModel(
     val navToMenu: LiveData<Boolean?>
         get() = _navToMenu
 
+    // Use Two-way dataBinding to get text edit by user for option and product
     val optionName = MutableLiveData<String>()
     val optionPrice = MutableLiveData<String>()
     var productName = ""
     var productDescription = ""
     var productType = ""
 
+    // LiveData of Map(optionName to optionPrice) map( "big" to 50 )
     private val _capacityListForPost = MutableLiveData<HashMap<String, Int>>()
     private val _iceListForPost = MutableLiveData<HashMap<String, Int>>()
     private val _sugarListForPost = MutableLiveData<HashMap<String, Int>>()
     private val _othersListForPost = MutableLiveData<HashMap<String, Int>>()
 
+    // list of capacity, ice, sugar, others
     private var capacityList = mutableListOf<AddMenuItem>()
     private var iceList = mutableListOf<AddMenuItem>()
     private var sugarList = mutableListOf<AddMenuItem>()
     private var othersList = mutableListOf<AddMenuItem>()
 
+    // initialize 4 LiveData
     init {
         _capacityListForPost.value = hashMapOf()
         _iceListForPost.value = hashMapOf()
@@ -80,7 +88,8 @@ class AddMenuItemViewModel(
         _othersListForPost.value = hashMapOf()
     }
 
-    // type 0->capacity , 1->ice , 2->sugar , 3->other
+    // Type 0->capacity , 1->ice , 2->sugar , 3->others
+    // Initialize 4 list for submit to each recycleView when fragment onCreateView
     fun initSelectItem() {
 
         capacityList = mutableListOf(
@@ -112,23 +121,33 @@ class AddMenuItemViewModel(
         refreshLiveData()
     }
 
+    // Use to record adapterPosition which user select on recycleView
     private var currentSelectedPostion = -1
-    fun recordCurrentSelectedPosition(positon: Int) {
-        currentSelectedPostion = positon
+    fun recordCurrentSelectedPosition(position: Int) {
+        currentSelectedPostion = position
     }
 
+    // Use to record optionType which user select on recycleView
+    // Type 0->capacity , 1->ice , 2->sugar , 3->others
     private var currentSelectedType = -1
     fun recordCurrentSelectedType(type: Int) {
         currentSelectedType = type
     }
 
-    // record editText content
+    // Use to record options name edit by user
     private val capacityOptionsName = hashMapOf<Int, String?>()
     private val iceOptionsName = hashMapOf<Int, String?>()
     private val sugarOptionsName = hashMapOf<Int, String?>()
     private val othersOptionsName = hashMapOf<Int, String?>()
 
     // Set option name when observe optionName change
+    /* Logic ->
+    When user select editText record it's adapterPosition and it's type ->
+    Due to Two-way dataBinding when text change trigger observe to do setOptionName function ->
+    When type=0 -> it means user select on capacityOption ->
+    capacityOptionsName[recordPosition] = userImportContent ->
+    Get result ex. hashMap( 1 to "big" )
+    */
     fun setOptionName(userImportContent: String) {
         when (currentSelectedType) {
             0 -> {
@@ -166,7 +185,8 @@ class AddMenuItemViewModel(
         }
     }
 
-    // record editText price
+    // Record editText price
+    // Logic same as setOptionName function
     private val capacityOptionPrice = hashMapOf<Int, String>()
     private val othersOptionPrice = hashMapOf<Int, String>()
     fun setOptionPrice(price: String) {
@@ -178,7 +198,10 @@ class AddMenuItemViewModel(
         }
     }
 
-    fun implementCommonOption() {
+    // Use for implement common options
+    // clear old options -> set new options -> set new data for post -> refresh UI
+    // Get result ex. hashMap( 1 to "50" )
+    fun implementCommonOptions() {
         clearAllOption()
         setNewOptions()
         setNewPostData()
@@ -257,9 +280,19 @@ class AddMenuItemViewModel(
         othersOptionPrice[3] = "10"
     }
 
-    // merge content and price
+
+    /*
+    merge content and price -> postProductImg await to get it's imgUri ->
+    split shopName -> setProduct -> post productData to firebase
+    Ex.
+    capacityOptionsName = hashMap( 1 to "big" ) , capacityOptionsPrice = hashMap( 1 to "50" )
+    merge result -> capacityListForPost = hashMap( "big" to "50" )
+    shopName split -> ex. 可不可熟成紅茶 to ["可","可不","可不可"....]
+    setProduct -> put shopNameArray & imgUri & capacityListForPost... to Product data class
+    -> post product
+    */
     @FlowPreview
-    fun mergeAllList() {
+    fun setProductDataThenPost() {
 
         if (capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
             myToast("請至少填寫一組容量與價格選項")
@@ -273,6 +306,7 @@ class AddMenuItemViewModel(
             viewModelScope.launch {
 
                 mergeOptionNameAndPrice()
+
                 if (productImageUri.value == null) {
                     myToast("請上傳一張商品圖片")
                 } else {
@@ -309,12 +343,7 @@ class AddMenuItemViewModel(
                 is Result.Loading -> _status.value = LoadApiStatus.LOADING
                 is Result.Success -> {
 
-                    val shopNameArray = arrayListOf<String>()
-                    var shopName = ""
-                    for (i in shop.name.indices) {
-                        shopName += shop.name[i].toString()
-                        shopNameArray.add(shopName)
-                    }
+                    val shopNameArray = transFromShopNameToArray(shop)
 
                     // set product data
                     val product = Product(
@@ -341,11 +370,22 @@ class AddMenuItemViewModel(
                 }
                 else -> {}
             }
-        }.catch { Logger.e("setShopData fail = ${it.message}") }
+        }.catch { Logger.e("setProductData fail = ${it.message}") }
     }
 
-    // use to post product img
+    private fun transFromShopNameToArray(shop: Shop): ArrayList<String> {
+        val shopNameArray = arrayListOf<String>()
+        var shopName = ""
+        for (i in shop.name.indices) {
+            shopName += shop.name[i].toString()
+            shopNameArray.add(shopName)
+        }
+        return shopNameArray
+    }
+
+    // Use to post product img
     val productImageUri = MutableLiveData<Uri>()
+
     private fun mergeOptionNameAndPrice() {
         capacityOptionsName.keys.forEach {
             if (!capacityOptionsName[it].isNullOrEmpty() && it > 0) {
@@ -382,7 +422,7 @@ class AddMenuItemViewModel(
         }
     }
 
-    // when onclick addBtn add new list for user to set product data
+    // When onclick addBtn add new list for user to set product data
     fun addOption(type: Int) {
         when (type) {
             0 -> addNewOption(capacityList, CAPACITY.type)
@@ -393,6 +433,13 @@ class AddMenuItemViewModel(
         refreshLiveData()
     }
 
+    /*
+    When recycleView addNewOption it will re use same layout so if editText already has text on it
+    it will duplicate that text on new option editText so before addOption have to setText to empty
+    but setText to empty will trigger Two-way dataBinding and trigger setOptionName & price function
+    it cause old data set to empty so before addNewOption set selectedType and selectedPosition to
+    new optionType and set new position to lastIndex to prevent old data set to empty
+     */
     private fun addNewOption(optionsList: MutableList<AddMenuItem>, optionType: Int) {
         currentSelectedType = optionType
         currentSelectedPostion = optionsList.lastIndex

@@ -63,7 +63,7 @@
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
             android:backgroundTint="@color/gery"
             android:fontFamily="@font/roboto"
-            android:onClick="@{()->viewModel.addNewDocToFireBase()}"
+            android:onClick="@{()->viewModel.addNewOrderToFireBase()}"
             android:text="@string/create_order"
             android:textColor="@color/darkgrey"
             app:elevation="10dp"

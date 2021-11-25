@@ -41,13 +41,13 @@
                     imageUrl="@{viewModel.data.product_Img}"
                     android:layout_width="match_parent"
                     android:layout_height="210dp"
+                    android:contentDescription="@string/add_to_order_img"
                     android:scaleType="centerCrop"
                     android:src="@drawable/img_placeholder"
                     app:layout_constraintDimensionRatio="w,16:9"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:contentDescription="@string/add_to_order_img" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/menu_popBack"
@@ -56,11 +56,11 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/icon_back"
+                    android:contentDescription="@string/pop_back"
                     android:onClick="@{() ->viewModel.popBack()}"
                     android:scaleType="centerCrop"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:contentDescription="@string/pop_back" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/addOrder_Title"
@@ -137,7 +137,9 @@
                     android:layout_width="26dp"
                     android:layout_height="26dp"
                     android:layout_marginStart="32dp"
+                    android:alpha="@{viewModel.qty == 1? 0.3f : 1}"
                     android:background="@drawable/color_circle"
+                    android:clickable="@{viewModel.qty == 1? false: true}"
                     android:onClick="@{()-> viewModel.minus()}"
                     android:src="@drawable/ic_baseline_remove_24"
                     app:layout_constraintBottom_toBottomOf="@+id/add_to_order_btn"

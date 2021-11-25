@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -36,7 +35,7 @@
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:paddingHorizontal="8dp"
-                android:text="留下對於這家店的評論吧！"
+                android:text="@string/leave_comment"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +62,7 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/comment_content_background"
                 android:gravity="top|start"
-                android:hint="Content"
+                android:hint="@string/content"
                 android:imeOptions="actionDone"
                 android:inputType="textMultiLine"
                 android:letterSpacing="0.15"
@@ -75,7 +74,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/button_publish"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/send_ratingBar" />
+                app:layout_constraintTop_toBottomOf="@+id/send_ratingBar"
+                android:autofillHints="" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/button_publish"
@@ -87,7 +87,7 @@
                 android:clickable="@{viewModel.publishBtnClickable}"
                 android:gravity="center"
                 android:onClick="@{() -> viewModel.postComment()}"
-                android:text="送出評論"
+                android:text="@string/post_comment"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="14sp"

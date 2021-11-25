@@ -1,21 +1,11 @@
 package com.tsai.shakeit.util
 
-import android.animation.IntEvaluator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.view.animation.AccelerateDecelerateInterpolator
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.model.Circle
-import com.google.android.libraries.maps.model.CircleOptions
 import com.google.android.libraries.maps.model.LatLng
-import com.tsai.shakeit.R
 import com.tsai.shakeit.ShakeItApplication
-
 
 object Util {
 

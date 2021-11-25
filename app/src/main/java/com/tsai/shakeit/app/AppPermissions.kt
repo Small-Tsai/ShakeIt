@@ -67,7 +67,8 @@ class AppPermissions {
                     }
 
                     try {
-                        networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+                        networkEnabled =
+                            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
                     } catch (e: Exception) {
                         Logger.e("network $e")
                     }
@@ -75,7 +76,6 @@ class AppPermissions {
                     if (!gpsEnabled && !networkEnabled) {
                         myToast(Util.getString(R.string.need_open_currentLocation))
                     }
-
                 } else {
                     myToast("已拒絕以下權限: $deniedList")
                 }

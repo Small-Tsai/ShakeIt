@@ -1,20 +1,15 @@
 package com.tsai.shakeit.ui.order.orderhistory
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.tsai.shakeit.R
-import com.tsai.shakeit.databinding.FragmentOrderBinding
 import com.tsai.shakeit.databinding.OrderHistoryFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.order.OrderAdapter
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
-import com.tsai.shakeit.ui.order.OrderViewModel
 
 class OrderHistoryFragment : Fragment() {
 
@@ -25,7 +20,8 @@ class OrderHistoryFragment : Fragment() {
     private lateinit var binding: OrderHistoryFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = OrderHistoryFragmentBinding.inflate(inflater, container, false)
@@ -37,7 +33,7 @@ class OrderHistoryFragment : Fragment() {
             findNavController().navigate(OrderHistoryFragmentDirections.navToOrder())
         })
 
-        viewModel.orderHistory.observe(viewLifecycleOwner,{
+        viewModel.orderHistory.observe(viewLifecycleOwner, {
             adapter.submitList(it)
         })
 
@@ -55,5 +51,4 @@ class OrderHistoryFragment : Fragment() {
         binding.historyRev.adapter = adapter
         return binding.root
     }
-
 }

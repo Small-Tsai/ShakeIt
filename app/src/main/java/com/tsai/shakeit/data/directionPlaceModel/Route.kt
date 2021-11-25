@@ -2,7 +2,6 @@ package com.tsai.shakeit.data.directionPlaceModel
 
 import com.squareup.moshi.Json
 
-
 data class Route(
 
     val bounds: Bounds,

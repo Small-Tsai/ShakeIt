@@ -35,101 +35,101 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     val navToSetting: LiveData<Boolean?>
         get() = _navToSetting
 
-    //LiveData of favoriteList
+    // LiveData of favoriteList
     private var _favorite = MutableLiveData<List<Favorite>>()
     val favorite: LiveData<List<Favorite>>
         get() = _favorite
 
-    //LiveData for detect is now user select walking or driving
+    // LiveData for detect is now user select walking or driving
     private val _trafficMode =
         MutableLiveData<String>().apply { value = UserInfo.userCurrentSelectTrafficMode }
     val trafficMode: LiveData<String>
         get() = _trafficMode
 
-    //LiveData for detect is now user using navigation or not
+    // LiveData for detect is now user using navigation or not
     private val _mapNavState = MutableLiveData<Boolean?>()
     val mapNavState: LiveData<Boolean?>
         get() = _mapNavState
 
-    //LiveData for draw polyLine on map
+    // LiveData for draw polyLine on map
     private val _options = MutableLiveData<PolylineOptions>()
     val options: LiveData<PolylineOptions>
         get() = _options
 
-    //LiveData for detect googleMap camera movement
+    // LiveData for detect googleMap camera movement
     private val _isMoveCamera = MutableLiveData<Boolean?>()
     val isMoveCamera: LiveData<Boolean?>
         get() = _isMoveCamera
 
-    //LiveData for record user current searching product
+    // LiveData for record user current searching product
     private val _userSearchingProduct = MutableLiveData<Product>()
     val userSearchingProduct: LiveData<Product>
         get() = _userSearchingProduct
 
-    //Status: The internal MutableLiveData that stores the status of the most recent request
+    // Status: The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<LoadApiStatus>()
     val status: LiveData<LoadApiStatus>
         get() = _status
 
-    //BottomSheet Status: The internal MutableLiveData that stores the status of the bottomSheet
+    // BottomSheet Status: The internal MutableLiveData that stores the status of the bottomSheet
     private val _bottomStatus = MutableLiveData<LoadApiStatus>()
     val bottomStatus: LiveData<LoadApiStatus>
         get() = _bottomStatus
 
-    //LiveData of shopList
+    // LiveData of shopList
     private val _shopListLiveData = MutableLiveData<List<Shop>>()
     val shopListLiveData: LiveData<List<Shop>>
         get() = _shopListLiveData
 
-    //Get shopName from shopLiveData
+    // Get shopName from shopLiveData
     val allShopName: LiveData<List<String>> = Transformations.map(shopListLiveData) { shop ->
         shop.map { it.name }.distinct()
     }
 
-    //LiveData of product
+    // LiveData of product
 
     val allProduct: LiveData<List<Product>> = liveData {
-        repository.getAllProduct().collect{ result ->
+        repository.getAllProduct().collect { result ->
             emit((result as Result.Success).data.sortedBy { it.type })
         }
     }
 
-    //Record current user selected shop snippet
+    // Record current user selected shop snippet
     private val _snippet = MutableLiveData<String?>()
 
-    //Record fragment type from home page
+    // Record fragment type from home page
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
 
-    //LiveData of path distance
+    // LiveData of path distance
     val distanceLiveData = MutableLiveData<String>().apply { value = "" }
 
-    //LiveData of path duration
+    // LiveData of path duration
     val trafficTimeLiveData = MutableLiveData<String>().apply { value = "" }
 
-    //LiveData use for decide display shop opening time or not by DataBinding
+    // LiveData use for decide display shop opening time or not by DataBinding
     val isTimeDisplay = MutableLiveData<Boolean>().apply { value = false }
 
-    //LiveData of userSetting traffic time
+    // LiveData of userSetting traffic time
     val userSettingTime = MutableLiveData<String>().apply {
         value = UserInfo.userCurrentSettingTrafficTime
     }
 
-    //LiveData for detect search focus
+    // LiveData for detect search focus
     val isSearchBarFocus = MutableLiveData<Boolean>().apply { value = false }
 
-    //LiveData for record user selected shop
+    // LiveData for record user selected shop
     val selectedShop = MutableLiveData<Shop>()
 
-    //LiveData for detect selected shop is in my favorite or not
+    // LiveData for detect selected shop is in my favorite or not
     val isInMyFavorite = MutableLiveData<Boolean>()
 
-    //LiveData for detect getDirection done
+    // LiveData for detect getDirection done
     val getDirectionDone = MutableLiveData<Boolean>()
 
-    //Init polyline option
+    // Init polyline option
     private var navOption = PolylineOptions()
 
-    //Calculate distance from userSettingTime
+    // Calculate distance from userSettingTime
     val distance: Double
         get() {
             var distance = 0.0
@@ -146,7 +146,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             return distance
         }
 
-    //Decide polyLine style from traffic mode
+    // Decide polyLine style from traffic mode
     private val pattern: List<PatternItem>
         get() {
             val result = when (trafficMode.value) {
@@ -207,13 +207,13 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _status.value = LoadApiStatus.LOADING
     }
 
-    //when click nav Done
+    // when click nav Done
     fun mapNavDone() {
         _mapNavState.value = false
         _mapNavState.value = null
     }
 
-    //move camera
+    // move camera
     fun moveCameraToCurrentLocation() {
         _isMoveCamera.value = true
         _isMoveCamera.value = null
@@ -234,25 +234,25 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         isInMyFavorite.value = _favorite.value?.map { it.shop.shop_Id }?.contains(mShopId)
     }
 
-    //nav to setting page
+    // nav to setting page
     fun navToSetting() {
         _navToSetting.value = true
         _navToSetting.value = null
     }
 
-    //nav to menu page
+    // nav to menu page
     fun navToMenu(shop: Shop) {
         _navToMenu.value = shop
         _navToMenu.value = null
     }
 
-    //nav to addShop page
+    // nav to addShop page
     fun navToAddShop() {
         _navToAddShop.value = true
         _navToAddShop.value = null
     }
 
-    //delete favorite
+    // delete favorite
     fun deleteFavorite(shopId: String) {
         viewModelScope.launch {
             repository.deleteFavorite(shopId).collect {
@@ -263,7 +263,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    //upload favorite
+    // upload favorite
     fun postMyFavorite(favorite: Favorite) {
         viewModelScope.launch {
             repository.postFavorite(favorite).collect {
@@ -280,14 +280,14 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    //get selected shop
+    // get selected shop
     fun getSelectedShopSnippet(markerSnippet: String) {
         mShopId = markerSnippet
         _snippet.value = markerSnippet
         selectedShop.value = shopListLiveData.value?.first { it.shop_Id == markerSnippet }
     }
 
-    //bottomSheet shop open time
+    // bottomSheet shop open time
     fun timeDisplayOrNot() {
         isTimeDisplay.value = isTimeDisplay.value == false
     }
@@ -308,7 +308,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _options.value = navOption
     }
 
-    //Call DirectionApi
+    // Call DirectionApi
     fun getDirection(url: String) {
         viewModelScope.launch {
 

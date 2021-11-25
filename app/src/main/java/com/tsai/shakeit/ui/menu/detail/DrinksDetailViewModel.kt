@@ -9,7 +9,7 @@ import com.tsai.shakeit.data.*
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
-import com.tsai.shakeit.service.MyFirebaseService
+import com.tsai.shakeit.service.MyFireBaseService
 import com.tsai.shakeit.ui.menu.detail.OptionsType.*
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
@@ -55,7 +55,6 @@ class DrinksDetailViewModel(
 
     var selectedPositionList = mutableListOf<Pair<Int, Int>>()
     private var productDetailContentList: MutableMap<Int, ArrayList<String>> = mutableMapOf()
-
 
     fun showDialog() {
         if (hasOrder == false && isAllSelected.value == true) {
@@ -104,7 +103,7 @@ class DrinksDetailViewModel(
                                 user_Id = UserInfo.userId,
                                 user_Image = UserInfo.userImage,
                                 user_Name = UserInfo.userName,
-                                user_Token = MyFirebaseService.token.toString()
+                                user_Token = MyFireBaseService.token.toString()
                             ),
                         )
                     }

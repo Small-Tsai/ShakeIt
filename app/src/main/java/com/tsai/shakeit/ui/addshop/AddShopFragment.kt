@@ -31,8 +31,9 @@ class AddShopFragment : Fragment() {
     private lateinit var binding: AddShopFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
 
         binding = AddShopFragmentBinding.inflate(inflater, container, false)
@@ -81,10 +82,10 @@ class AddShopFragment : Fragment() {
     }
 
     private val shopActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-                val result = activityResult.data
-                result?.data.let { uri ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultData = result.data
+                resultData?.data.let { uri ->
                     val bitmap = uri?.let { getBitmapFromUri(it) }
                     binding.shopPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
                     viewModel.shopImageUri.value = uri
@@ -93,10 +94,10 @@ class AddShopFragment : Fragment() {
         }
 
     private val menuActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-                val result = activityResult.data
-                result?.data.let { uri ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultData = result.data
+                resultData?.data.let { uri ->
                     val bitmap = uri?.let { getBitmapFromUri(it) }
                     binding.menuPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
                     viewModel.menuImageUri.value = uri
@@ -105,12 +106,10 @@ class AddShopFragment : Fragment() {
         }
 
     private val autocompleteActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-
-                val result = activityResult.data
-
-                result?.let { intent ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultData = result.data
+                resultData?.let { intent ->
                     val place = Autocomplete.getPlaceFromIntent(intent)
                     binding.addressEdt.setText(place.address)
 
@@ -134,7 +133,6 @@ class AddShopFragment : Fragment() {
                 Logger.d("autoComplete error")
             }
         }
-
 
     private fun getBitmapFromUri(uri: Uri) =
         ShakeItApplication.instance.contentResolver.openFileDescriptor(uri, "r")?.use {

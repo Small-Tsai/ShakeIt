@@ -60,13 +60,15 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
             title.forEach { name ->
                 favorite.let {
                     favoriteList.add(FavoriteItem.ShopName(name))
-                    favoriteList.add(FavoriteItem.ShopImg(favorite.filter { it.shop.name == name }
-                        .map { it.shop }))
+                    favoriteList.add(
+                        FavoriteItem.ShopImg(
+                            favorite.filter { it.shop.name == name }
+                                .map { it.shop }
+                        )
+                    )
                 }
             }
         }
         _favoriteItem.value = favoriteList
     }
 }
-
-

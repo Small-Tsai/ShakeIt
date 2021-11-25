@@ -8,4 +8,3 @@ fun Activity.getVmFactory(): ViewModelFactory {
     val repository = (applicationContext as ShakeItApplication).shakeItRepository
     return ViewModelFactory(repository = repository)
 }
-

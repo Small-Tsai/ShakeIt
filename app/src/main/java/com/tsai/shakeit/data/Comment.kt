@@ -11,4 +11,3 @@ data class Comment(
     val user: User? = null,
     val date: Timestamp? = null
 ) : Parcelable
-

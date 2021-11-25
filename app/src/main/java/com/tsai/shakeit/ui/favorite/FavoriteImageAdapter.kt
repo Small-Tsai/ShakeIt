@@ -21,7 +21,6 @@ class FavoriteImageAdapter(val viewModel: FavoriteViewModel) :
             binding.shop = shop
             binding.executePendingBindings()
         }
-
     }
 
     private companion object DiffCallback : DiffUtil.ItemCallback<Shop>() {
@@ -32,7 +31,6 @@ class FavoriteImageAdapter(val viewModel: FavoriteViewModel) :
         override fun areContentsTheSame(oldItem: Shop, newItem: Shop): Boolean {
             return oldItem == newItem
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteImageViewHolder {

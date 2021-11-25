@@ -69,6 +69,4 @@ class FavoriteFragment : Fragment() {
         binding.favoriteRev.adapter = adapter
         return binding.root
     }
-
-
 }

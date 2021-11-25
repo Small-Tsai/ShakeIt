@@ -6,7 +6,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.tsai.shakeit.R
 
-class MyFirebaseService : FirebaseMessagingService() {
+class MyFireBaseService : FirebaseMessagingService() {
 
     companion object {
         var sharedPref: SharedPreferences? = null

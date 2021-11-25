@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Order
-import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.OrderRowBinding
 import com.tsai.shakeit.ui.order.OrderAdapter.*
 
@@ -30,7 +29,6 @@ class OrderAdapter(val viewModel: OrderViewModel) :
         override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
             return oldItem == newItem
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {

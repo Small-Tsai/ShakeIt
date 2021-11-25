@@ -6,7 +6,6 @@ import com.tsai.shakeit.data.source.DefaultShakeItRepository
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.data.source.remote.ShakeItRemoteDataSource
 
-
 object ServiceLocator {
 
     @Volatile

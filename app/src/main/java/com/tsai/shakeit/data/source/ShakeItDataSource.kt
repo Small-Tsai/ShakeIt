@@ -64,9 +64,9 @@ interface ShakeItDataSource {
 
     suspend fun getHistoryOrderProduct(orderId: String): Result<List<OrderProduct>>
 
-    suspend fun getDirection(url:String): Flow<Result<Direction>>
+    suspend fun getDirection(url: String): Flow<Result<Direction>>
 
-    suspend fun joinToOrder(orderId:String): Result<Boolean>
+    suspend fun joinToOrder(orderId: String): Result<Boolean>
 
     suspend fun getAllProduct(): Flow<Result<List<Product>>>
 
@@ -81,5 +81,4 @@ interface ShakeItDataSource {
     fun getFavorite(userId: String): Flow<Result<List<Favorite>>>
 
     fun updateUserTokenOnFireBase(newToken: String)
-
 }

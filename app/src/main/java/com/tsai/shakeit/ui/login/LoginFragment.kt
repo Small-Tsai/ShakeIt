@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,7 +27,7 @@ import com.tsai.shakeit.R
 import com.tsai.shakeit.app.TOPIC
 import com.tsai.shakeit.databinding.LoginFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.service.MyFirebaseService
+import com.tsai.shakeit.service.MyFireBaseService
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
@@ -54,16 +53,18 @@ class LoginFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        MyFirebaseService.sharedPref =
+        MyFireBaseService.sharedPref =
             requireActivity().getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Logger.w("Fetching FCM registration token failed ${task.exception}")
-                return@OnCompleteListener
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Logger.w("Fetching FCM registration token failed ${task.exception}")
+                    return@OnCompleteListener
+                }
+                MyFireBaseService.token = task.result
             }
-            MyFirebaseService.token = task.result
-        })
+        )
 
         // Configure Google Sign In
         val gso = GoogleSignInOptions
@@ -84,7 +85,8 @@ class LoginFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
 
@@ -111,15 +113,13 @@ class LoginFragment : Fragment() {
     }
 
     private val signInActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(activityResult.data)
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 try {
-
                     // Google Sign In was successful, authenticate with Firebase
                     val account = task.getResult(ApiException::class.java)!!
                     firebaseAuthWithGoogle(account.idToken!!)
-
                 } catch (e: ApiException) {
                     Logger.w("Google sign in failed $e")
                 }

@@ -3,7 +3,6 @@ package com.tsai.shakeit.util
 import android.util.Log
 import com.tsai.shakeit.BuildConfig
 
-
 object Logger {
 
     private const val TAG = "Tsai"

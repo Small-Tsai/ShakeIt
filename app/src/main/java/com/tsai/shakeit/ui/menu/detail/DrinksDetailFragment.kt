@@ -40,7 +40,8 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
     private lateinit var binding: DrinksDetailFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
@@ -86,6 +87,4 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
         binding.detailRev.adapter = adapter
         return binding.root
     }
-
-
 }

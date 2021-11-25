@@ -22,4 +22,3 @@ data class Shop(
     @IgnoredOnParcel
     val geoPoint = GeoPoint(lat, lon)
 }
-

@@ -1,7 +1,6 @@
 package com.tsai.shakeit.ui.orderdetail
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -54,7 +53,7 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(name: String) {
+        fun bind() {
             binding.viewModel = viewModel
             if (viewModel.type == OrderType.HISTORY.type) {
                 binding.addItem.visibility(0)
@@ -81,13 +80,15 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
             ITEM_VIEW_TYPE_PRODUCT -> OrderProductViewHolder(
                 OrderDetailRowBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), viewModel
+                ),
+                viewModel
             )
 
             ITEM_VIEW_TYPE_BTN -> OrderProductBtnViewHolder(
                 OrderDetailRowBtnBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), viewModel
+                ),
+                viewModel
             )
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
@@ -102,7 +103,7 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
                 )
             }
             is OrderProductBtnViewHolder -> {
-                holder.bind((getItem(position) as OrderDetail.AddProductBtn).name)
+                holder.bind()
             }
         }
     }

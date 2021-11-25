@@ -13,7 +13,6 @@ import java.util.*
 class AddShopAdapter(private val viewModel: AddShopViewModel) :
     ListAdapter<HashMap<String, String>, DateViewHolder>(DiffCallback) {
 
-
     private companion object DiffCallback : DiffUtil.ItemCallback<HashMap<String, String>>() {
         override fun areItemsTheSame(
             oldItem: HashMap<String, String>,
@@ -28,7 +27,6 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
         ): Boolean {
             return oldItem == newItem
         }
-
     }
 
     class DateViewHolder(
@@ -64,32 +62,31 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
                     viewModel.adapterPostion.value = absoluteAdapterPosition
 
                     binding.openTime.setText(String.format("%02d:%02d", hour, minute))
-
                 }, hour, minute, true).show()
+                }
+
+                binding.closeTime.setOnClickListener {
+                    // Launch Time Picker Dialog
+                    TimePickerDialog(binding.root.context, { _, hour, minute ->
+
+                        viewModel.adapterPostion.value = absoluteAdapterPosition
+
+                        binding.closeTime.setText(String.format("%02d:%02d", hour, minute))
+                    }, hour, minute, true).show()
+                    }
+                    binding.executePendingBindings()
+                }
             }
 
-            binding.closeTime.setOnClickListener {
-                // Launch Time Picker Dialog
-                TimePickerDialog(binding.root.context, { _, hour, minute ->
-
-                    viewModel.adapterPostion.value = adapterPosition
-
-                    binding.closeTime.setText(String.format("%02d:%02d", hour, minute))
-
-                }, hour, minute, true).show()
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
+                return DateViewHolder(
+                    ShopDateRowBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                    viewModel
+                )
             }
-            binding.executePendingBindings()
+
+            override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
+                holder.bind(getItem(position))
+            }
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
-        return DateViewHolder(
-            ShopDateRowBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            viewModel
-        )
-    }
-
-    override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
-        holder.bind(getItem(position))
-    }
-}
+        

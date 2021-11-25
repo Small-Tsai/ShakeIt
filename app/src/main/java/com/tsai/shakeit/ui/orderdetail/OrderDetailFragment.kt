@@ -26,13 +26,16 @@ class OrderDetailFragment : Fragment() {
 
     private val swipeHelper by lazy {
         object : ItemTouchHelper.SimpleCallback(
-            ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
+            ItemTouchHelper.UP or
+                ItemTouchHelper.DOWN or
+                ItemTouchHelper.START or
+                ItemTouchHelper.END,
             0
         ) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
+                target: RecyclerView.ViewHolder,
             ): Boolean {
                 return true
             }
@@ -58,8 +61,9 @@ class OrderDetailFragment : Fragment() {
     private lateinit var binding: OrderDetailFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
 
         viewModel.mOrder?.let {

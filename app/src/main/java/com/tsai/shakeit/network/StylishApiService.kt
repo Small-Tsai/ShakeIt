@@ -44,7 +44,6 @@ private val retrofitNotify = Retrofit.Builder()
     .client(client)
     .build()
 
-
 interface ShakeItApiService {
 
     @GET
@@ -53,10 +52,15 @@ interface ShakeItApiService {
     @Headers("Authorization: key=$FIREBASE_SERVER_KEY", "Content-Type:$CONTENT_TYPE")
     @POST("fcm/send")
     suspend fun postNotification(@Body notification: PushNotification): Response<ResponseBody>
-
 }
 
 object ShakeItApi {
-    val retrofitService: ShakeItApiService by lazy { retrofit.create(ShakeItApiService::class.java) }
-    val firebaseService: ShakeItApiService by lazy { retrofitNotify.create(ShakeItApiService::class.java) }
+
+    val retrofitService: ShakeItApiService by lazy {
+        retrofit.create(ShakeItApiService::class.java)
+    }
+
+    val firebaseService: ShakeItApiService by lazy {
+        retrofitNotify.create(ShakeItApiService::class.java)
+    }
 }

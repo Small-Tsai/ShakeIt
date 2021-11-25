@@ -16,4 +16,3 @@ sealed class Result<out R> {
         }
     }
 }
-

@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="你的收藏"
+            android:text="@string/your_favorite"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
-            android:text="尚未有任何收藏"
+            android:text="@string/no_favorite"
             android:textSize="24sp"
             android:visibility="@{viewModel.isFavoriteEmpty? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/favorite_rev"

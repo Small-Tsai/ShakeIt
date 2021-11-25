@@ -89,11 +89,13 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         } else {
             viewModelScope.launch {
                 _status.value = LoadApiStatus.LOADING
-                when (val result = withContext(Dispatchers.IO) {
-                    repository.getOrderProduct(order.order_Id)
-                }) {
+                when (
+                    val result = withContext(Dispatchers.IO) {
+                        repository.getOrderProduct(order.order_Id)
+                    }
+                ) {
                     is Result.Success -> {
-                        _orderProduct.value = result.data!!
+                        _orderProduct.value = result.data
                     }
                     else -> {}
                 }
@@ -102,9 +104,11 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     _orderProduct.value?.let {
                         deleteOrder(order.order_Id, true)
                         Logger.d("orderId = ${order.order_Id}")
-                        when (val result = withContext(Dispatchers.IO) {
-                            repository.postHistoryOrder(order, it)
-                        }) {
+                        when (
+                            val result = withContext(Dispatchers.IO) {
+                                repository.postHistoryOrder(order, it)
+                            }
+                        ) {
                             is Result.Success -> {
                                 _status.value = LoadApiStatus.DONE
                                 _shopId.value = order.shop_Id
@@ -121,4 +125,3 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 }
-

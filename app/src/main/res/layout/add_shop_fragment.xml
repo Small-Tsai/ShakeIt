@@ -32,7 +32,7 @@
             android:clickable="@{viewModel.status==LoadApiStatus.LOADING? false : true}"
             android:elevation="5dp"
             android:onClick="@{()->viewModel.postShopInfo()}"
-            android:text="確認發佈"
+            android:text="@string/post"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scaleY="1.05"
-                    android:text="點擊上傳店家封面"
+                    android:text="@string/post_shop_photo"
                     android:textColor="@color/darkgrey"
                     android:textSize="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -78,7 +78,8 @@
                     android:onClick="@{()->viewModel.popBack()}"
                     android:translationZ="90dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/pop_back" />
 
 
                 <TextView
@@ -89,7 +90,7 @@
                     android:layout_marginStart="16dp"
                     android:background="@color/white"
                     android:gravity="center_horizontal|center_vertical"
-                    android:text="店家資訊"
+                    android:text="@string/shop_info"
                     android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/shop_photo" />
@@ -102,7 +103,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:hint="店家名稱(ex. 可不可熟成紅茶)"
+                    android:hint="@string/ex"
                     app:boxBackgroundColor="@color/white"
                     app:boxCornerRadiusBottomEnd="18dp"
                     app:boxCornerRadiusBottomStart="18dp"
@@ -138,7 +139,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:hint="分店名稱(ex. 台北市政店)"
+                    android:hint="@string/ex_branch"
                     app:boxBackgroundColor="@color/white"
                     app:boxCornerRadiusBottomEnd="18dp"
                     app:boxCornerRadiusBottomStart="18dp"
@@ -176,7 +177,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:hint="地址"
+                    android:hint="@string/address"
                     app:boxBackgroundColor="@color/white"
                     app:boxCornerRadiusBottomEnd="18dp"
                     app:boxCornerRadiusBottomStart="18dp"
@@ -215,7 +216,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
-                    android:hint="店家電話"
+                    android:hint="@string/tel"
                     app:boxBackgroundColor="@color/white"
                     app:boxCornerRadiusBottomEnd="18dp"
                     app:boxCornerRadiusBottomStart="18dp"
@@ -248,7 +249,7 @@
                     style="@style/pageTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="營業時間"
+                    android:text="@string/opening_time"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tel_input_layout" />
 
@@ -284,7 +285,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="上傳菜單"
+                    android:text="@string/upload_menu"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/date_rev" />
 
@@ -295,7 +296,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
-                    android:text="點擊上傳菜單"
+                    android:text="@string/click_upload_menu"
                     android:textColor="@color/darkgrey"
                     android:textSize="20dp"
                     app:layout_constraintEnd_toEndOf="parent"

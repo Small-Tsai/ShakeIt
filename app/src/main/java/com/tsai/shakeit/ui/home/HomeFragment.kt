@@ -35,8 +35,8 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FragmentHomeBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.ext.moveCamera
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
@@ -137,7 +137,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        //Create googleMap
+        // Create googleMap
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -166,7 +166,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         })
-
 
         // Observe onClick stop navigation
         viewModel.mapNavState.observe(viewLifecycleOwner, {
@@ -325,7 +324,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
-
     // Add Marker On Map
     private fun addMarkerAfterClearMap(
         dbList: List<String>,
@@ -342,7 +340,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                                     shop.name.substring(
                                         0,
                                         1
-                                    ), shop.branch
+                                    ),
+                                    shop.branch
                                 )
                             )
                         )
@@ -442,7 +441,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         filteredProudctList = allProductList.filter { it.name.contains(text) }
                         listAdapter.submitList(filteredProudctList)
                     }
-
                 }
                 return false
             }
@@ -515,7 +513,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     "${viewModel.trafficMode.value}",
                     mainViewModel.currentFragmentType.value!!
                 )
-
             }
             return@setOnMarkerClickListener true
         }
@@ -546,15 +543,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                 currentFragmentType == CurrentFragmentType.ORDER_DETAIL
             ) {
                 val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                        "origin=" + UserInfo.userCurrentLat + "," + UserInfo.userCurrentLng +
-                        "&destination=" + selectedShop.lat + "," + selectedShop.lon +
-                        "&mode=" + mode +
-                        "&key=" + DIRECTION_API_KEY +
-                        "&language=zh-TW"
+                    "origin=" + UserInfo.userCurrentLat + "," + UserInfo.userCurrentLng +
+                    "&destination=" + selectedShop.lat + "," + selectedShop.lon +
+                    "&mode=" + mode +
+                    "&key=" + DIRECTION_API_KEY +
+                    "&language=zh-TW"
 
                 viewModel.getDirection(url)
             }
-
         } else {
             Logger.e(getString(R.string.getDirectionFail))
         }
@@ -609,7 +605,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
-        //observe current fragment type
+        // observe current fragment type
         viewModel.currentFragmentType.observe(viewLifecycleOwner, {
             when (it) {
                 CurrentFragmentType.HOME ->
@@ -624,38 +620,40 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //bottomSheet CallBack
+        // bottomSheet CallBack
         var x = 0
         bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
+                BottomSheetBehavior.BottomSheetCallback() {
 
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
 
-                when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        if (mainViewModel.currentFragmentType.value != CurrentFragmentType.ORDER_DETAIL) {
-                            mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
-                            viewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            if (mainViewModel.currentFragmentType.value !=
+                                CurrentFragmentType.ORDER_DETAIL
+                            ) {
+                                mainViewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                                viewModel.currentFragmentType.value = CurrentFragmentType.HOME
+                            }
+                        }
+                        else -> {
                         }
                     }
-                    else -> {
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+                    if (slideOffset > 0.4f && x == 0) {
+                        x = 1; toolbarGone()
+                    }
+
+                    if (x == 1 && slideOffset < 0.4f &&
+                        viewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV
+                    ) {
+                        x = 0; toolbarVisible()
                     }
                 }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
-                if (slideOffset > 0.4f && x == 0) {
-                    x = 1; toolbarGone()
-                }
-
-                if (x == 1 && slideOffset < 0.4f &&
-                    viewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV
-                ) {
-                    x = 0; toolbarVisible()
-                }
-            }
-        })
+            })
     }
 
     // Set toolbar visibility
@@ -670,8 +668,3 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.toolbarConstraint.visibility(0)
     }
 }
-
-
-
-
-

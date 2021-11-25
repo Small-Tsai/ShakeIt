@@ -12,7 +12,6 @@ import com.tsai.shakeit.ui.orderdetail.OrderFriendsAdapter.*
 class OrderFriendsAdapter :
     ListAdapter<User, OrderFriendsViewHolder>(DiffCallback) {
 
-
     class OrderFriendsViewHolder(
         private val binding: OrderFriendsRowBinding
     ) :
@@ -32,7 +31,6 @@ class OrderFriendsAdapter :
         override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
             return oldItem.user_Id == newItem.user_Id
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderFriendsViewHolder {

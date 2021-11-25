@@ -29,7 +29,7 @@
             android:fontFamily="@font/roboto"
             android:gravity="center"
             android:scaleType="center"
-            android:text="訂單名稱"
+            android:text="@string/order_name"
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
             android:textColor="@color/black"
             android:textSize="18sp"
@@ -45,13 +45,14 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:hint="輸入訂單名稱"
+            android:hint="@string/import_order_name"
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
             android:inputType="textEmailAddress"
             android:text="@={viewModel.orderName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/menu_order_title" />
+            app:layout_constraintTop_toBottomOf="@+id/menu_order_title"
+            android:autofillHints="" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
@@ -64,7 +65,7 @@
             android:fontFamily="@font/roboto"
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
             android:onClick="@{()->viewModel.addNewDocToFireBase()}"
-            android:text="建立訂單"
+            android:text="@string/create_order"
             android:textColor="@color/darkgrey"
             app:elevation="10dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +83,8 @@
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/white_view" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lineLottie"

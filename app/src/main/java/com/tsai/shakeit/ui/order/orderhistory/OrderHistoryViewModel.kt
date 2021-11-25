@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.source.ShakeItRepository
-import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
 
@@ -36,9 +35,9 @@ class OrderHistoryViewModel(private val repository: ShakeItRepository) : ViewMod
 
     private fun getOrderHistory() {
         viewModelScope.launch {
-            when (val result = repository.getOrderHistory(UserInfo.userId)){
-                is Result.Success->{
-                    _orderHistory.value = result.data!!
+            when (val result = repository.getOrderHistory(UserInfo.userId)) {
+                is Result.Success -> {
+                    _orderHistory.value = result.data
                 }
                 else -> {}
             }
@@ -49,5 +48,4 @@ class OrderHistoryViewModel(private val repository: ShakeItRepository) : ViewMod
         _navToOrderDetail.value = order
         _navToOrderDetail.value = null
     }
-
 }

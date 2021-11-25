@@ -3,6 +3,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         maven { url 'https://jitpack.io' }
+        maven { url "https://plugins.gradle.org/m2/" }
         mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }

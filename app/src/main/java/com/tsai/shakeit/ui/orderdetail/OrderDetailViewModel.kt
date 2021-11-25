@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class OrderDetailViewModel(
     val mOrder: Order?,
     private val repository: ShakeItRepository,
@@ -67,8 +66,9 @@ class OrderDetailViewModel(
             viewModelScope.launch {
                 when (val result = repository.getHistoryOrderProduct(it.order_Id)) {
                     is Result.Success -> {
-                        _orderProduct.value = result.data!!
+                        _orderProduct.value = result.data
                     }
+                    else -> {}
                 }
             }
         }
@@ -87,8 +87,9 @@ class OrderDetailViewModel(
             mOrder?.let {
                 when (val result = repository.getShopInfo(it.shop_Id)) {
                     is Result.Success -> {
-                        _shop.value = result.data!!
+                        _shop.value = result.data
                     }
+                    else -> {}
                 }
             }
         }
@@ -155,10 +156,10 @@ class OrderDetailViewModel(
                         data = NotificationData(
                             "飲料到囉 ！",
                             "你的飲料有" + "\n" +
-                                    "-----------------------------" +
-                                    notifyContent +
-                                    "-----------------------------" + "\n" +
-                                    "總共 $totalPrice 元"
+                                "-----------------------------" +
+                                notifyContent +
+                                "-----------------------------" + "\n" +
+                                "總共 $totalPrice 元"
                         )
                     )
 

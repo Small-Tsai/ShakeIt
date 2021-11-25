@@ -17,7 +17,6 @@ import com.tsai.shakeit.databinding.AddMenuItemFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
 
-
 class AddMenuItemFragment : Fragment() {
 
     private val viewModel by viewModels<AddMenuItemViewModel> {
@@ -30,8 +29,9 @@ class AddMenuItemFragment : Fragment() {
     private lateinit var binding: AddMenuItemFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         binding = AddMenuItemFragmentBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
@@ -87,10 +87,10 @@ class AddMenuItemFragment : Fragment() {
     }
 
     private val productActivityLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-                val result = activityResult.data
-                result?.data.let { uri ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val resultData = result.data
+                resultData?.data.let { uri ->
                     val bitmap =
                         MediaStore.Images.Media.getBitmap(activity?.contentResolver, uri)
                     binding.productPhotoBtn.foreground = ((BitmapDrawable(bitmap)))
@@ -111,5 +111,3 @@ class AddMenuItemFragment : Fragment() {
         }
     }
 }
-
-

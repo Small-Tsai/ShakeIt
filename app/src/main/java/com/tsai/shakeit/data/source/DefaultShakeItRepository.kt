@@ -64,7 +64,7 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postShopInfo(shop)
     }
 
-    override suspend fun postImage(imageUri: Uri):  Flow<Result<String>> {
+    override suspend fun postImage(imageUri: Uri): Flow<Result<String>> {
         return shakeItDataSource.postImage(imageUri)
     }
 
@@ -98,7 +98,6 @@ class DefaultShakeItRepository(
     override fun getOrderProductBySnapShot(orderId: String): MutableLiveData<List<OrderProduct>> {
         return shakeItDataSource.getOrderProductBySnapShot(orderId)
     }
-
 
     override fun getFavorite(userId: String): Flow<Result<List<Favorite>>> {
         return shakeItDataSource.getFavorite(userId)
@@ -141,11 +140,10 @@ class DefaultShakeItRepository(
     }
 
     override suspend fun getAllProduct(): Flow<Result<List<Product>>> {
-       return shakeItDataSource.getAllProduct()
+        return shakeItDataSource.getAllProduct()
     }
 
     override fun updateUserTokenOnFireBase(newToken: String) {
         return shakeItDataSource.updateUserTokenOnFireBase(newToken)
     }
-
 }

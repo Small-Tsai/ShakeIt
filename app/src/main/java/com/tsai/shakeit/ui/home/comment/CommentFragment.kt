@@ -1,10 +1,10 @@
 package com.tsai.shakeit.ui.home.comment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.tsai.shakeit.MainViewModel
@@ -22,7 +22,8 @@ class CommentFragment(private val shopId: String) : Fragment() {
     private lateinit var binding: CommentFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
 
@@ -39,11 +40,10 @@ class CommentFragment(private val shopId: String) : Fragment() {
         viewModel.commentList.observe(viewLifecycleOwner, {
             adapter.submitList(it)
             mainViewModel.commentCount.value = it.size
-            mainViewModel.ratingAvg.value = it.map { comment->comment.rating }.average().toFloat()
+            mainViewModel.ratingAvg.value = it.map { comment -> comment.rating }.average().toFloat()
         })
 
         binding.commentRev.adapter = adapter
         return binding.root
     }
-
 }

@@ -21,7 +21,6 @@ class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(Di
         ): Boolean {
             return oldItem.user?.user_Id == newItem.user?.user_Id
         }
-
     }
 
     class CommentViewHolder(private var binding: CommentBinding) :
@@ -29,7 +28,6 @@ class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(Di
         fun bind(comment: Comment) {
             binding.comment = comment
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {

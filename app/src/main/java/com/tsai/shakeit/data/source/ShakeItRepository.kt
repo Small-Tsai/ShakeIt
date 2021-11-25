@@ -42,7 +42,7 @@ interface ShakeItRepository {
 
     suspend fun postShopInfo(shop: Shop): Flow<Result<Boolean>>
 
-    suspend fun postImage(imageUri: Uri):  Flow<Result<String>>
+    suspend fun postImage(imageUri: Uri): Flow<Result<String>>
 
     suspend fun postUserInfo(user: User): Result<Boolean>
 
@@ -81,5 +81,4 @@ interface ShakeItRepository {
     fun getFavorite(userId: String): Flow<Result<List<Favorite>>>
 
     fun updateUserTokenOnFireBase(newToken: String)
-
 }

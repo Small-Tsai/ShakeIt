@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
 class MenuViewModel(
     val selectedShop: Shop,
     private val repository: ShakeItRepository,
@@ -105,7 +104,7 @@ class MenuViewModel(
     private fun shareOrderToLINE() {
         mOrder.order_Id = myId
         val lineUrl = "https://line.me/R/msg/text/快來跟我一起喝${selectedShop.name}吧！" +
-                "https://com.smalltsai.shakeit/${mOrder.order_Id}"
+            "https://com.smalltsai.shakeit/${mOrder.order_Id}"
         val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
         _shareOrder.value = sendIntent
         _shareOrder.value = null
@@ -130,8 +129,10 @@ class MenuViewModel(
             viewModelScope.launch {
                 _status.value = LoadApiStatus.LOADING
                 mOrder.order_Name = orderName.value.toString()
-                when (val result =
-                    withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }) {
+                when (
+                    val result =
+                        withContext(Dispatchers.IO) { repository.crateNewOrderForShare(mOrder) }
+                ) {
                     is Result.Success -> {
                         shareOrderToLINE()
                         _showDialog.value = false
@@ -142,7 +143,6 @@ class MenuViewModel(
                 }
             }
         }
-
     }
 
     fun hasOrderProduct() {
@@ -164,10 +164,12 @@ class MenuViewModel(
     fun updateOrderTotalPrice(totalPrice: Int) {
         viewModelScope.launch {
             otherUserId?.let {
-                when (val result =
-                    withContext(Dispatchers.IO) {
-                        repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id, it)
-                    }) {
+                when (
+                    val result =
+                        withContext(Dispatchers.IO) {
+                            repository.updateOrderTotalPrice(totalPrice, selectedShop.shop_Id, it)
+                        }
+                ) {
                     is Result.Success -> Logger.d("update Price")
                     is Result.Fail -> Logger.e(result.error)
                 }
@@ -266,4 +268,3 @@ class MenuViewModel(
         _navToAddItem.value = null
     }
 }
-

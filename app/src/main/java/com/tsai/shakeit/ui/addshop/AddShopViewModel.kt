@@ -46,7 +46,6 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     val timeHashList: LiveData<MutableList<HashMap<String, String>>>
         get() = _timeHashList
 
-
     init {
         _isDateOpen.value = false
     }
@@ -82,14 +81,14 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     fun setTimeListByAutoComplete(periods: MutableList<Period>) {
         _timeHashList.value?.clear()
         periods.forEach {
-            val openHour = it.open.time.hours
-            val closeHour = it.close.time.hours
-            val openMinutes = it.open.time.minutes
-            val closeMinutes = it.close.time.minutes
+            val openHour = it.open!!.time.hours
+            val closeHour = it.close!!.time.hours
+            val openMinutes = it.open!!.time.minutes
+            val closeMinutes = it.close!!.time.minutes
             val openText = String.format("%02d:%02d", openHour, openMinutes)
             val closeText = String.format("%02d:%02d", closeHour, closeMinutes)
             _timeList.value?.let { list ->
-                when (it.open.day) {
+                when (it.open?.day) {
                     DayOfWeek.MONDAY -> {
                         list["星期一"] = "$openText - $closeText"
                         _timeHashList.value?.add(hashMapOf("星期一" to "$openText - $closeText"))
@@ -119,6 +118,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
                         list["星期日"] = "$openText - $closeText"
                         _timeHashList.value?.add(hashMapOf("星期日" to "$openText - $closeText"))
                     }
+                    else -> {}
                 }
                 _timeHashList.value = _timeHashList.value
             }
@@ -210,7 +210,3 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         }
     }
 }
-
-
-
-

@@ -46,10 +46,3 @@ fun GoogleMap.moveCamera(
         )
     }
 }
-
-
-
-
-
-
-

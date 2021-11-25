@@ -122,13 +122,13 @@ class AddMenuItemViewModel(
         currentSelectedType = type
     }
 
-    //record editText content
+    // record editText content
     private val capacityOptionsName = hashMapOf<Int, String?>()
     private val iceOptionsName = hashMapOf<Int, String?>()
     private val sugarOptionsName = hashMapOf<Int, String?>()
     private val othersOptionsName = hashMapOf<Int, String?>()
 
-    //Set option name when observe optionName change
+    // Set option name when observe optionName change
     fun setOptionName(userImportContent: String) {
         when (currentSelectedType) {
             0 -> {
@@ -166,7 +166,7 @@ class AddMenuItemViewModel(
         }
     }
 
-    //record editText price
+    // record editText price
     private val capacityOptionPrice = hashMapOf<Int, String>()
     private val othersOptionPrice = hashMapOf<Int, String>()
     fun setOptionPrice(price: String) {
@@ -257,7 +257,7 @@ class AddMenuItemViewModel(
         othersOptionPrice[3] = "10"
     }
 
-    //merge content and price
+    // merge content and price
     @FlowPreview
     fun mergeAllList() {
 
@@ -316,7 +316,7 @@ class AddMenuItemViewModel(
                         shopNameArray.add(shopName)
                     }
 
-                    //set product data
+                    // set product data
                     val product = Product(
                         name = productName.replace(" ", ""),
                         content = productDescription,
@@ -344,7 +344,7 @@ class AddMenuItemViewModel(
         }.catch { Logger.e("setShopData fail = ${it.message}") }
     }
 
-    //use to post product img
+    // use to post product img
     val productImageUri = MutableLiveData<Uri>()
     private fun mergeOptionNameAndPrice() {
         capacityOptionsName.keys.forEach {

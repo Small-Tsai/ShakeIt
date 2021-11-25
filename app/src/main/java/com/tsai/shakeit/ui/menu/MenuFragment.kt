@@ -21,7 +21,6 @@ import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 
-
 class MenuFragment : Fragment() {
 
     private val viewModel by viewModels<MenuViewModel> {
@@ -41,8 +40,9 @@ class MenuFragment : Fragment() {
     private lateinit var binding: MenuFragmentBinding
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
 
         viewModel.initProduct()
@@ -123,7 +123,10 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.navToAddItem.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(MenuFragmentDirections.navToAddItem(viewModel.selectedShop)) }
+            it?.let {
+                findNavController()
+                    .navigate(MenuFragmentDirections.navToAddItem(viewModel.selectedShop))
+            }
         })
 
         viewModel.showDialog.observe(viewLifecycleOwner, {

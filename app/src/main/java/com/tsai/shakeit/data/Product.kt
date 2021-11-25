@@ -20,6 +20,3 @@ data class Product(
     val branch: String = "",
     val product_Img: String = "",
 ) : Parcelable
-
-
-

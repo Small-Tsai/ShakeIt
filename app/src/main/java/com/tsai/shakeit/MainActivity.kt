@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation
 import com.google.android.libraries.places.api.Places
@@ -19,7 +18,6 @@ import com.tsai.shakeit.ui.home.HomeFragmentDirections
 import com.tsai.shakeit.ui.order.OrderFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -62,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpBottomNavigation(
         navView: MeowBottomNavigation,
-        navController: NavController
+        navController: NavController,
     ) {
         navView.add(MeowBottomNavigation.Model(1, R.drawable.homeicon))
         navView.add(MeowBottomNavigation.Model(2, R.drawable.heartb))
@@ -77,38 +75,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupNavController(navView: MeowBottomNavigation) {
-        findNavController(R.id.nav_host_fragment_activity_main).addOnDestinationChangedListener { navController: NavController, _: NavDestination, _: Bundle? ->
-            viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
+        findNavController(R.id.nav_host_fragment_activity_main)
+            .addOnDestinationChangedListener { navController: NavController, _, _ ->
+                viewModel.currentFragmentType.value = when (navController.currentDestination?.id) {
 
-                R.id.loginFragment -> CurrentFragmentType.LOGIN
+                    R.id.loginFragment -> CurrentFragmentType.LOGIN
 
-                R.id.navigation_home -> {
-                    navView.show(1, true)
-                    return@addOnDestinationChangedListener
+                    R.id.navigation_home -> {
+                        navView.show(1, true)
+                        return@addOnDestinationChangedListener
+                    }
+
+                    R.id.menuFragment -> CurrentFragmentType.MENU
+                    R.id.addShopFragment -> CurrentFragmentType.ADD_SHOP
+                    R.id.drinksDetailFragment -> CurrentFragmentType.DRINKS_DETAIL
+                    R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL
+
+                    R.id.navigation_order -> {
+                        navView.show(3, true)
+                        CurrentFragmentType.ORDER
+                    }
+
+                    R.id.navigation_favorite -> {
+                        navView.show(2, true)
+                        CurrentFragmentType.FAVORITE
+                    }
+
+                    R.id.orderHistoryFragment -> {
+                        CurrentFragmentType.ORDER_HISTORY
+                    }
+
+                    else -> viewModel.currentFragmentType.value
                 }
-
-                R.id.menuFragment -> CurrentFragmentType.MENU
-                R.id.addShopFragment -> CurrentFragmentType.ADD_SHOP
-                R.id.drinksDetailFragment -> CurrentFragmentType.DRINKS_DETAIL
-                R.id.orderDetailFragment -> CurrentFragmentType.ORDER_DETAIL
-
-                R.id.navigation_order -> {
-                    navView.show(3, true)
-                    CurrentFragmentType.ORDER
-                }
-
-                R.id.navigation_favorite -> {
-                    navView.show(2, true)
-                    CurrentFragmentType.FAVORITE
-                }
-
-                R.id.orderHistoryFragment -> {
-                    CurrentFragmentType.ORDER_HISTORY
-                }
-
-                else -> viewModel.currentFragmentType.value
             }
-        }
     }
 }
-

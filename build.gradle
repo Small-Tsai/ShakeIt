@@ -6,22 +6,24 @@ buildscript {
         version_glide = "4.11.0"
         version_moshi = "1.8.0"
         version_retrofit = "2.9.0"
+        version_ktlint = '10.2.0'
     }
     repositories {
         google()
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
         maven { url 'https://jitpack.io' }
         jcenter()
     }
     dependencies {
         //google map
         classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.0"
-
         classpath "com.android.tools.build:gradle:7.0.3"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.0"
         classpath 'com.google.gms:google-services:4.3.10'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$version_navigation"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.7.1'
+        classpath("org.jlleitschuh.gradle:ktlint-gradle:$version_ktlint")
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.0'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

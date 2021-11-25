@@ -7,4 +7,4 @@ import kotlinx.parcelize.Parcelize
 data class Distance(
     val text: String,
     val value: Int
-):Parcelable
+) : Parcelable

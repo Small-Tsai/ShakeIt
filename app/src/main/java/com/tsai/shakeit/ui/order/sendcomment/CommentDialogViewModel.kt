@@ -4,17 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import com.tsai.shakeit.data.Comment
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.User
 import com.tsai.shakeit.data.source.ShakeItRepository
+import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo.userId
 import com.tsai.shakeit.util.UserInfo.userImage
 import com.tsai.shakeit.util.UserInfo.userName
 import kotlinx.coroutines.launch
-import com.google.firebase.Timestamp
-import com.tsai.shakeit.ext.myToast
 
 class CommentDialogViewModel(
     private val repository: ShakeItRepository,
@@ -57,7 +57,6 @@ class CommentDialogViewModel(
             date = Timestamp.now()
         )
         Logger.d(_comment.value.toString())
-
     }
 
     fun send(comment: Comment) {

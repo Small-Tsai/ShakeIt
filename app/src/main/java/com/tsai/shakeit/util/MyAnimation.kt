@@ -21,7 +21,7 @@ object MyAnimation {
     val toTopGoneAnimation: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
 
-    //map search animation
+    // map search animation
     fun startSearchAnimation(
         currentPosition: LatLng,
         mMap: GoogleMap,

@@ -27,7 +27,6 @@ class DrinksAdapter(val viewModel: DrinksDetailViewModel) :
             binding.type = type
             binding.executePendingBindings()
         }
-
     }
 
     inner class TitleViewHolder(private var binding: DrinksSelectTitleBinding) :

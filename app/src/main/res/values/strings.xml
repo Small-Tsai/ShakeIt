@@ -10,16 +10,10 @@
     <string name="show_nothing">全部隱藏</string>
     <string name="empty" />
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="setOrder">建立訂單</string>
     <string name="explainPermission">主要功能需要使用到以下權限</string>
     <string name="yes">確定</string>
     <string name="no">取消</string>
     <string name="explainSettingPermission">您需要到設定頁面手動開啟權限</string>
-
-    <string name="notify_channel_id" translatable="false">MyDefaultChannelID</string>
-    <string name="notify_channel_name" translatable="false">MyDefaultChannelName</string>
-    <string name="notify_channel_description" translatable="false">MyDefaultChannelDescription</string>
     <string name="noOrderProductDenyDetele">無任何商品無法完成訂單，如要移除請點選移除按鈕</string>
     <string name="need_open_currentLocation">地圖功能需開啟定位</string>
     <string name="getDirectionFail">locationPermission false or selectedShop isNotInitialized</string>
@@ -42,7 +36,7 @@
     <string name="invite_friends">邀請好友</string>
     <string name="shopimg">shopImg</string>
     <string name="blackimg">blackImg</string>
-    <string name="loading">loading...</string>
+    <string name="loading">loading…</string>
     <string name="add_new_product">新增商品</string>
     <string name="check_order">查看訂單</string>
     <string name="pop_back">popBack</string>
@@ -87,6 +81,24 @@
     <string name="capacity">容量</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_in_with_google">Sign in with google</string>
+    <string name="post">確認發佈</string>
+    <string name="post_shop_photo">點擊上傳店家封面</string>
+    <string name="shop_info">店家資訊</string>
+    <string name="ex">店家名稱(ex. 可不可熟成紅茶)</string>
+    <string name="ex_branch">分店名稱(ex. 台北市政店)</string>
+    <string name="address">地址</string>
+    <string name="tel">店家電話</string>
+    <string name="opening_time">營業時間</string>
+    <string name="upload_menu">上傳菜單</string>
+    <string name="click_upload_menu">點擊上傳菜單</string>
+    <string name="leave_comment">留下對於這家店的評論吧！</string>
+    <string name="content">Content</string>
+    <string name="post_comment">送出評論</string>
+    <string name="your_favorite">你的收藏</string>
+    <string name="no_favorite">尚未有任何收藏</string>
+    <string name="your_order_no_arrow">你的訂單</string>
+    <string name="order_history_arrow"><![CDATA[歷史訂單 >]]></string>
+    <string name="no_order">尚未有任何訂單</string>
 
 
 </resources>

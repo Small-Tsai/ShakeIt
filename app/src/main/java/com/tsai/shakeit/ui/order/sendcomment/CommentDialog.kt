@@ -30,7 +30,8 @@ class CommentDialog : AppCompatDialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
 
@@ -49,7 +50,6 @@ class CommentDialog : AppCompatDialogFragment() {
         setRatingBar()
         return binding.root
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     private fun setRatingBar() {

@@ -7,4 +7,4 @@ import kotlinx.parcelize.Parcelize
 data class EndLocation(
     val lat: Double,
     val lng: Double
-):Parcelable
+) : Parcelable

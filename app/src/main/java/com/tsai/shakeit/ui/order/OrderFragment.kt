@@ -7,14 +7,9 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.databinding.FragmentOrderBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.util.CurrentFragmentType
 import com.tsai.shakeit.util.Logger
 
 class OrderFragment : Fragment() {
@@ -31,7 +26,7 @@ class OrderFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
 
-        //set backPressed behavior
+        // set backPressed behavior
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 findNavController().navigate(OrderFragmentDirections.navToHome())
@@ -76,10 +71,7 @@ class OrderFragment : Fragment() {
             Logger.d("$it")
         })
 
-
         binding.orderRev.adapter = adapter
         return binding.root
     }
-
-
 }

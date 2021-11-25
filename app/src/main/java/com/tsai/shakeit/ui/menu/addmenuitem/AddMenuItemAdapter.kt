@@ -83,20 +83,23 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
                 AddItemTitleViewHolder(
                     AddMenuItemTitleBinding.inflate(
                         LayoutInflater.from(parent.context), parent, false
-                    ), viewModel
+                    ),
+                    viewModel
                 )
             }
 
             ITEM_VIEW_TYPE_CONTENT -> AddItemViewHolder(
                 AddMenuItemRowBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), viewModel
+                ),
+                viewModel
             )
 
             ITEM_VIEW_TYPE_BTN -> AddItemBtnViewHolder(
                 AddMenuItemBtnBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
-                ), viewModel
+                ),
+                viewModel
             )
             else -> throw ClassCastException("Unknown viewType $viewType")
         }
@@ -121,7 +124,6 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
                 holder.bind((getItem(position) as AddMenuItem.Button).type)
             }
         }
-
     }
 
     override fun getItemViewType(position: Int): Int {

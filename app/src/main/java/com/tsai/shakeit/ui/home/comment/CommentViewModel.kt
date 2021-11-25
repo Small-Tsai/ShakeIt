@@ -21,7 +21,7 @@ class CommentViewModel(private val repository: ShakeItRepository, private val sh
         viewModelScope.launch {
             when (val result = shopId?.let { repository.getComment(it) }) {
                 is Result.Success -> {
-                    _commentList.value = result.data!!
+                    _commentList.value = result.data
                 }
                 is Result.Fail -> {
                     Logger.d(result.error)
@@ -30,5 +30,4 @@ class CommentViewModel(private val repository: ShakeItRepository, private val sh
             }
         }
     }
-
 }

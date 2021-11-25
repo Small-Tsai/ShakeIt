@@ -7,4 +7,4 @@ import kotlinx.parcelize.Parcelize
 data class Northeast(
     val lat: Double,
     val lng: Double
-):Parcelable
+) : Parcelable

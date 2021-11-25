@@ -21,13 +21,12 @@ import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.ShakeItApi
 import com.tsai.shakeit.util.*
 import com.tsai.shakeit.util.Util.isInternetConnected
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-
 
 object ShakeItRemoteDataSource : ShakeItDataSource {
 
@@ -102,7 +101,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             document.set(product)
             emit(Result.Success(true))
-
         }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun postComment(shopId: String, comment: Comment): Result<Boolean> =
@@ -176,7 +174,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
             val orderProduct = FirebaseFirestore.getInstance().collection(ORDERS)
 
-
             var document =
                 orderProduct.document(myShopId).collection(ORDER_PRODUCT).document(orderProductId)
 
@@ -205,7 +202,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-
     override suspend fun getShopInfo(shopId: String): Result<Shop> =
         suspendCoroutine { continuation ->
 
@@ -221,7 +217,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     } else {
                         task.exception?.let {
                             Logger.w(
-                                "[${this::class.simpleName}] Error shopInfo documents. ${it.message}"
+                                "[${this::class.simpleName}] Error shopInfo ${it.message}"
                             )
                             return@addOnCompleteListener
                         }
@@ -281,7 +277,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             awaitClose()
         }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
-
     override suspend fun getProduct(shop: Shop): Flow<Result<List<Product>>> =
         callbackFlow {
 
@@ -301,7 +296,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val shopData = task.result!!.toObjects(Product::class.java)
-                        //update shopName to full name
+                        // update shopName to full name
                         updateShopName(shopData, shop, dbShop, task)
                         trySend(Result.Success(shopData))
                     }
@@ -353,14 +348,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         } else {
                             task.exception?.let {
                                 Logger.w(
-                                    "[${this::class.simpleName}] Error update documents. ${it.message}"
+                                    "[${this::class.simpleName}] Error update ${it.message}"
                                 )
                                 return@addOnCompleteListener
                             }
                             continuation.resume(Result.Fail("update Failed"))
                         }
                     }
-
             } else {
                 document
                     .update("order_Price", totalPrice)
@@ -370,7 +364,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         } else {
                             task.exception?.let {
                                 Logger.w(
-                                    "[${this::class.simpleName}] Error update documents. ${it.message}"
+                                    "[${this::class.simpleName}] Error update ${it.message}"
                                 )
                                 return@addOnCompleteListener
                             }
@@ -396,7 +390,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                     } else {
                         task.exception?.let {
                             Logger.w(
-                                "[${this::class.simpleName}] Error getComment documents. ${it.message}"
+                                "[${this::class.simpleName}] Error getComment ${it.message}"
                             )
                             return@addOnCompleteListener
                         }
@@ -431,7 +425,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         } else {
                             task.exception?.let {
                                 Logger.w(
-                                    "[${this::class.simpleName}] Error post documents. ${it.message}"
+                                    "[${this::class.simpleName}] Error post ${it.message}"
                                 )
                                 continuation.resume(Result.Error(it))
                                 return@addOnCompleteListener
@@ -522,7 +516,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             val listResult = ShakeItApi.retrofitService.getDirection(url)
 
             emit(Result.Success(listResult))
-
         }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun joinToOrder(orderId: String): Result<Boolean> =
@@ -561,7 +554,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
             awaitClose()
         }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
-
 
     override suspend fun updateFilteredShop(shopList: FilterShop): Result<Boolean> =
         suspendCoroutine { continuation ->
@@ -701,7 +693,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             .collection(ORDERS)
             .orderBy(KEY_CREATED_TIME, Query.Direction.DESCENDING)
             .whereArrayContains("invitation", userId)
-            .addSnapshotListener { snapshot, e ->
+            .addSnapshotListener { snapshot, _ ->
 
                 val list = mutableListOf<Order>()
 
@@ -742,7 +734,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         return liveData
     }
 
-
     override fun getOrderProductBySnapShot(orderId: String): MutableLiveData<List<OrderProduct>> {
 
         val liveData = MutableLiveData<List<OrderProduct>>()
@@ -751,14 +742,13 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
             .collection(ORDERS)
             .document(orderId)
             .collection(ORDER_PRODUCT)
-            .addSnapshotListener { snapshot, e ->
+            .addSnapshotListener { snapshot, _ ->
 
                 val list = mutableListOf<OrderProduct>()
 
                 for (document in snapshot!!) {
                     val orderProduct = document.toObject(OrderProduct::class.java)
                     list.add(orderProduct)
-
                 }
                 liveData.value = list
             }
@@ -810,7 +800,8 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                                         .collection(ORDER_PRODUCT)
                                         .document(mProduct.orderProduct_Id)
                                         .update(
-                                            "user", User(
+                                            "user",
+                                            User(
                                                 user_Id = UserInfo.userId,
                                                 user_Name = UserInfo.userName,
                                                 user_Image = UserInfo.userImage,

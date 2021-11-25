@@ -36,7 +36,6 @@ class SearchAdapter(private val viewModel: HomeViewModel) :
             binding.viewModel = viewModel
             binding.product = product
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchProductViewHolder {

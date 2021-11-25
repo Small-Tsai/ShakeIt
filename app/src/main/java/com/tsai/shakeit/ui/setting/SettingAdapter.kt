@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.databinding.SettingItemRowBinding
-import com.tsai.shakeit.util.Logger
 
 class SettingAdapter(
     private val viewModel: SettingViewModel,
@@ -44,5 +43,4 @@ class SettingAdapter(
     override fun onBindViewHolder(holder: SettingListViewHolder, position: Int) {
         holder.bind(getItem(position), viewModel, mainViewModel)
     }
-
 }

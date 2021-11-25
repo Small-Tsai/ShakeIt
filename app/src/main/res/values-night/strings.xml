@@ -10,14 +10,9 @@
     <string name="show_nothing">全部隱藏</string>
     <string name="empty" />
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="setOrder">建立訂單</string>
     <string name="explainPermission">主要功能需要使用到以下權限</string>
     <string name="yes">確定</string>
     <string name="no">取消</string>
     <string name="explainSettingPermission">您需要到設定頁面手動開啟權限</string>
-    <string name="notify_channel_id" translatable="false">MyDefaultChannelID</string>
-    <string name="notify_channel_name" translatable="false">MyDefaultChannelName</string>
-    <string name="notify_channel_description" translatable="false">MyDefaultChannelDescription</string>
 
 </resources>

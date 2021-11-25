@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Order
 import com.tsai.shakeit.databinding.OrderHistoryRowBinding
-import com.tsai.shakeit.databinding.OrderRowBinding
-import com.tsai.shakeit.ui.order.OrderAdapter.OrderViewHolder
 
 class OrderHistoryAdapter(val viewModel: OrderHistoryViewModel) :
     ListAdapter<Order, OrderHistoryAdapter.OrderHistoryViewHolder>(DiffCallback) {
 
-    inner class OrderHistoryViewHolder(private var binding: OrderHistoryRowBinding, viewModel: OrderHistoryViewModel) :
+    inner class OrderHistoryViewHolder(
+        private var binding: OrderHistoryRowBinding,
+        viewModel: OrderHistoryViewModel
+    ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
             binding.order = order
@@ -30,7 +31,6 @@ class OrderHistoryAdapter(val viewModel: OrderHistoryViewModel) :
         override fun areContentsTheSame(oldItem: Order, newItem: Order): Boolean {
             return oldItem == newItem
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderHistoryViewHolder {

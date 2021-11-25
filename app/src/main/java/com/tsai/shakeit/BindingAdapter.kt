@@ -1,7 +1,10 @@
 package com.tsai.shakeit
 
 import android.os.Looper
-import android.widget.*
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -13,7 +16,6 @@ import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
-import com.tsai.shakeit.util.*
 
 @BindingAdapter("shopNameArray")
 fun TextView.bindShopNameArray(name: ArrayList<String>?) {
@@ -101,7 +103,6 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
     }
 }
 
-
 @BindingAdapter("circleimageUrl")
 fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
 
@@ -114,7 +115,6 @@ fun bindCircleImage(imgView: ImageView, imgUrl: String?) {
             .into(imgView)
     }
 }
-
 
 @BindingAdapter("mainViewModel", "shopName")
 fun SwitchMaterial.bindSwitch(
@@ -178,14 +178,3 @@ fun ImageView.bindTrafficIcon(mode: String) {
         DRIVING -> setImageResource(R.drawable.ic_baseline_drive_eta_24)
     }
 }
-
-
-
-
-
-
-
-
-
-
-

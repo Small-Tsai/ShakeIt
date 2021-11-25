@@ -173,7 +173,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
             repository.getAllShop(center, distance).collect { allShop ->
                 when (allShop) {
                     is Result.Loading -> {
-                        showIsSearchingToast()
                         if (type != "search") showLoading()
                     }
                     is Result.Success -> {
@@ -188,17 +187,6 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     }
                     is Result.Error -> allShop.exception.message?.let { Logger.e(it) }
                 }
-            }
-        }
-    }
-
-    private fun showIsSearchingToast() {
-        when (trafficMode.value) {
-            WALKING -> {
-                myToast("正在搜尋走路${userSettingTime.value}分鐘內的店家")
-            }
-            DRIVING -> {
-                myToast("正在搜尋騎車${userSettingTime.value}分鐘內的店家")
             }
         }
     }
@@ -343,7 +331,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     private fun setPolyLineData(
         leg: Leg,
-        stepList: MutableList<LatLng>
+        stepList: MutableList<LatLng>,
     ): PolylineOptions? {
 
         navOption.jointType(JointType.ROUND)

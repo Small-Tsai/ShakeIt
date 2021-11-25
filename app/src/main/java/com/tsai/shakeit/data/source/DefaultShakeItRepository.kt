@@ -60,7 +60,7 @@ class DefaultShakeItRepository(
         return shakeItDataSource.postComment(shopId, comment)
     }
 
-    override suspend fun postShopInfo(shop: Shop): Result<Boolean> {
+    override suspend fun postShopInfo(shop: Shop): Flow<Result<Boolean>> {
         return shakeItDataSource.postShopInfo(shop)
     }
 

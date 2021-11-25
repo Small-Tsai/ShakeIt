@@ -587,43 +587,36 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override suspend fun postShopInfo(shop: Shop): Result<Boolean> =
-        suspendCoroutine { continuation ->
+    override suspend fun postShopInfo(shop: Shop): Flow<Result<Boolean>> =
+        flow {
+            emit(Result.Loading)
+
+            if (!isInternetConnected()) {
+                emit(Result.Fail(Util.getString(R.string.internet_not_connected)))
+            }
 
             val shopCollection = FirebaseFirestore.getInstance().collection(SHOP)
             val document = shopCollection.document()
-
             shop.shop_Id = document.id
 
-            document
-                .set(shop)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        continuation.resume(Result.Success(true))
-                    } else {
-                        task.exception?.let {
-                            Logger.w(
-                                "Error updateFilterShop documents. ${it.message}"
-                            )
-                            return@addOnCompleteListener
-                        }
-                        continuation.resume(Result.Fail("postShopInfo Failed"))
-                    }
-                }
-        }
+            document.set(shop)
+            emit(Result.Success(true))
+        }.flowOn(Dispatchers.IO).catch { Result.Fail(it.message.toString()) }
 
     override suspend fun postImage(imageUri: Uri): Flow<Result<String>> =
         callbackFlow {
+            Logger.d("postImage start")
+            trySend(Result.Loading)
             val storageRef = FirebaseStorage.getInstance().reference
             val imageRef = storageRef.child("images/${imageUri.lastPathSegment}")
-
-            withContext(Dispatchers.Main) {
-                myToast("上傳中")
-            }
 
             if (!isInternetConnected()) {
                 trySend(Result.Fail(Util.getString(R.string.internet_not_connected)))
                 awaitClose()
+            }
+
+            withContext(Dispatchers.Main) {
+                myToast("上傳中")
             }
 
             imageRef
@@ -756,7 +749,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
 
     override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {
-
 
         val liveData = MutableLiveData<List<OrderProduct>>()
 

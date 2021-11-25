@@ -15,11 +15,8 @@ import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.Util
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
@@ -64,10 +61,6 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         _popBack.value = null
     }
 
-    private val _shopFireBaseImageUri = MutableLiveData<String>()
-
-    private val _menuFireBaseImageUri = MutableLiveData<String>()
-
     private val _timeList =
         MutableLiveData<HashMap<String, String>>().apply { value = hashMapOf() }
 
@@ -86,57 +79,6 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     var tel = ""
     var lat = 0.0
     var lon = 0.0
-
-    private suspend fun postImgUriToFireBase() {
-
-        if (!Util.isInternetConnected()) {
-            _status.value = LoadApiStatus.ERROR
-            myToast(Util.getString(R.string.internet_not_connected))
-        } else if (name.isEmpty() || branch.isEmpty() || address.isEmpty()) {
-            myToast("店家名、分店名、店家地址不可空白喔！")
-        } else if (shopImageUri.value == null || menuImageUri.value == null) {
-            myToast("未上傳封面圖片或菜單圖片")
-        } else {
-            shopImageUri.value?.let {
-                repository.postImage(it).collect { result ->
-                    when (result) {
-                        is Result.Loading -> {
-                            myToast("上傳中...")
-                            _status.value = LoadApiStatus.LOADING
-                        }
-                        is Result.Success -> {
-                            _shopFireBaseImageUri.value = result.data!!
-                        }
-                        is Result.Fail -> {
-                            myToast(result.error)
-                            _status.value = LoadApiStatus.ERROR
-                        }
-                        is Result.Error -> Logger.e(result.exception.toString())
-                    }
-                }
-            }
-
-            menuImageUri.value?.let {
-
-                repository.postImage(it).collect { result ->
-                    when (result) {
-                        is Result.Loading -> {
-                            myToast("上傳中...")
-                            _status.value = LoadApiStatus.LOADING
-                        }
-                        is Result.Success -> {
-                            _menuFireBaseImageUri.value = result.data!!
-                        }
-                        is Result.Fail -> {
-                            myToast(result.error)
-                            _status.value = LoadApiStatus.ERROR
-                        }
-                        is Result.Error -> Logger.e(result.exception.toString())
-                    }
-                }
-            }
-        }
-    }
 
     fun setTimeListByAutoComplete(periods: MutableList<Period>) {
         _timeHashList.value?.clear()
@@ -214,43 +156,62 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         Logger.d("timeList = ${_timeList.value}")
     }
 
+    @FlowPreview
     fun postShopInfo() {
         viewModelScope.launch {
 
-            postImgUriToFireBase()
+            if (!Util.isInternetConnected()) {
+                _status.value = LoadApiStatus.ERROR
+                myToast(Util.getString(R.string.internet_not_connected))
+            } else if (name.isEmpty() || branch.isEmpty() || address.isEmpty()) {
+                myToast("店家名、分店名、店家地址不可空白喔！")
+            } else if (shopImageUri.value == null || menuImageUri.value == null) {
+                myToast("未上傳封面圖片或菜單圖片")
+            } else {
+                _status.value = LoadApiStatus.LOADING
 
-            _shopFireBaseImageUri.value?.let {
-                _menuFireBaseImageUri.value?.let { menu ->
-                    val shop = Shop(
-                        name = name.replace(" ", ""),
-                        branch = branch,
-                        address = address,
-                        tel = tel,
-                        lat = lat,
-                        lon = lon,
-                        shop_Id = "",
-                        shop_Img = it,
-                        time = _timeList.value,
-                        menu_Img = menu,
-                    )
-                    when (val result = withContext(Dispatchers.IO) {
-                        repository.postShopInfo(shop)
-                    }) {
-                        is Result.Success -> {
-                            myToast("發佈 ${shop.name}$branch 商店資訊成功！")
-                            _navToHome.value = true
-                            _navToHome.value = false
-                            _status.value = LoadApiStatus.DONE
-                        }
-                        is Result.Fail -> {
-                            myToast("發佈 ${shop.name}$branch 商店資訊失敗！")
-                            _status.value = LoadApiStatus.ERROR
-                        }
+                val shopImg = repository.postImage(shopImageUri.value!!)
+                val menuImg = repository.postImage(menuImageUri.value!!)
+                menuImg.zip(shopImg) { shopImgResult, menuImgResult ->
+                    if (shopImgResult is Result.Success && menuImgResult is Result.Success) {
+                        val shop = Shop(
+                            name = name.replace(" ", ""),
+                            branch = branch,
+                            address = address,
+                            tel = tel,
+                            lat = lat,
+                            lon = lon,
+                            shop_Id = "",
+                            shop_Img = shopImgResult.data,
+                            time = _timeList.value,
+                            menu_Img = menuImgResult.data,
+                        )
+                        postShopInfo(shop)
                     }
-                }
+                }.collect()
             }
         }
     }
 
+    private suspend fun postShopInfo(shop: Shop) {
+        repository.postShopInfo(shop).collect { result ->
+            when (result) {
+                is Result.Success -> {
+                    myToast("發佈 ${shop.name}$branch 商店資訊成功！")
+                    _navToHome.value = true
+                    _navToHome.value = false
+                    _status.value = LoadApiStatus.DONE
+                }
+                is Result.Fail -> {
+                    myToast("發佈 ${shop.name}$branch 商店資訊失敗！")
+                    _status.value = LoadApiStatus.ERROR
+                }
+                else -> {}
+            }
+        }
+    }
 }
+
+
+
 

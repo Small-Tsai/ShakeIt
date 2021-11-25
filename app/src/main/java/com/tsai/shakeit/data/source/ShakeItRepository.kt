@@ -40,7 +40,7 @@ interface ShakeItRepository {
 
     suspend fun postComment(shopId: String, comment: Comment): Result<Boolean>
 
-    suspend fun postShopInfo(shop: Shop): Result<Boolean>
+    suspend fun postShopInfo(shop: Shop): Flow<Result<Boolean>>
 
     suspend fun postImage(imageUri: Uri):  Flow<Result<String>>
 

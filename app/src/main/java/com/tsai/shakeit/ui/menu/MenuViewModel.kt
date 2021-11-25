@@ -183,17 +183,17 @@ class MenuViewModel(
 
     private fun getOrder() {
         _orderList = if (otherUserId != UserInfo.userId && otherUserId != "") {
-            repository.getShopOrder(otherId)
+            repository.getOrderByOrderId(otherId)
         } else {
-            repository.getShopOrder(myId)
+            repository.getOrderByOrderId(myId)
         }
     }
 
     private fun getOrderProduct() {
         _orderProductList = if (otherUserId != UserInfo.userId && otherUserId != "") {
-            repository.getFireBaseOrderProduct(otherId)
+            repository.getOrderProductBySnapShot(otherId)
         } else {
-            repository.getFireBaseOrderProduct(myId)
+            repository.getOrderProductBySnapShot(myId)
         }
     }
 

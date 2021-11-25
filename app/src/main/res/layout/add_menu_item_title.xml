@@ -14,13 +14,12 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/addmenu_title"
+            android:id="@+id/addMenu_title"
             style="@style/pageContentTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@color/grey2"
-            android:text="Title"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

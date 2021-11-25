@@ -70,13 +70,13 @@ interface ShakeItRepository {
 
     suspend fun getAllProduct(): Flow<Result<List<Product>>>
 
-    fun getFilteredShopList(userId: String): MutableLiveData<List<String>>
+    fun getUserFilteredShopList(userId: String): MutableLiveData<List<String>>
 
-    fun getFireBaseOrder(userId: String): MutableLiveData<List<Order>>
+    fun getUserOrder(userId: String): MutableLiveData<List<Order>>
 
-    fun getShopOrder(orderId: String): MutableLiveData<List<Order>>
+    fun getOrderByOrderId(orderId: String): MutableLiveData<List<Order>>
 
-    fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>>
+    fun getOrderProductBySnapShot(orderId: String): MutableLiveData<List<OrderProduct>>
 
     fun getFavorite(userId: String): Flow<Result<List<Favorite>>>
 

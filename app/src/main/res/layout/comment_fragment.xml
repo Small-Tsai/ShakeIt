@@ -17,13 +17,13 @@
         tools:context=".ui.home.comment.CommentFragment">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/comment_title"
             style="@style/pageTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="評分及評論"
+            android:text="@string/rating_comment"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +37,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/comment_title"
             tools:listitem="@layout/comment" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

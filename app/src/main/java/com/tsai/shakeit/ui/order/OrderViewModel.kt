@@ -51,7 +51,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
     }
 
     private fun getOrderData() {
-        _userOrderList = repository.getFireBaseOrder(UserInfo.userId)
+        _userOrderList = repository.getUserOrder(UserInfo.userId)
     }
 
     fun deleteOrder(orderId: String, isOrderCompleted: Boolean) {
@@ -66,6 +66,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                 is Result.Fail -> {
                     Logger.e(result.error)
                 }
+                else -> {}
             }
         }
     }
@@ -94,6 +95,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     is Result.Success -> {
                         _orderProduct.value = result.data!!
                     }
+                    else -> {}
                 }
 
                 if (!_orderProduct.value.isNullOrEmpty()) {
@@ -108,6 +110,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                                 _shopId.value = order.shop_Id
                                 _shopId.value = null
                             }
+                            else -> {}
                         }
                     }
                 } else {

@@ -40,6 +40,7 @@ class OrderHistoryViewModel(private val repository: ShakeItRepository) : ViewMod
                 is Result.Success->{
                     _orderHistory.value = result.data!!
                 }
+                else -> {}
             }
         }
     }

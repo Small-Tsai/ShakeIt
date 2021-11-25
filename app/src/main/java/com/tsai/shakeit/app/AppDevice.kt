@@ -39,7 +39,6 @@ class AppDevice(private val fragment: HomeFragment) {
             } catch (e: SecurityException) {
                 Log.e("Exception: %s", e.message, e)
             }
-
         }
     }
 }

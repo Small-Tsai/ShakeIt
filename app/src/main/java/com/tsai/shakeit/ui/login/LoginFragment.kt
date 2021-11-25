@@ -1,11 +1,14 @@
 package com.tsai.shakeit.ui.login
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,15 +25,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.tsai.shakeit.R
+import com.tsai.shakeit.app.TOPIC
 import com.tsai.shakeit.databinding.LoginFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.service.MyFirebaseService
-import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import kotlinx.coroutines.launch
-
-private const val RC_SIGN_IN = 9001
 
 class LoginFragment : Fragment() {
 
@@ -84,7 +85,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
 
         // Initialize Firebase Auth
@@ -106,26 +107,24 @@ class LoginFragment : Fragment() {
 
     private fun signIn() {
         val signInIntent: Intent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        signInActivityLauncher.launch(signInIntent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    private val signInActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(activityResult.data)
+                try {
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    val account = task.getResult(ApiException::class.java)!!
+                    firebaseAuthWithGoogle(account.idToken!!)
 
-                // Google Sign In was successful, authenticate with Firebase
-                val account = task.getResult(ApiException::class.java)!!
-                firebaseAuthWithGoogle(account.idToken!!)
-
-            } catch (e: ApiException) {
-                Logger.w("Google sign in failed $e")
+                } catch (e: ApiException) {
+                    Logger.w("Google sign in failed $e")
+                }
             }
         }
-    }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
 
@@ -165,7 +164,6 @@ class LoginFragment : Fragment() {
                 } else {
                     findNavController().navigate(LoginFragmentDirections.navToHome())
                 }
-
             }
         }
     }

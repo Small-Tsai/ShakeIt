@@ -30,3 +30,4 @@ const val USERS = "users"
 
 const val ORDER_HISTORY = "orderHistory"
 
+const val TOPIC = "/topics/"

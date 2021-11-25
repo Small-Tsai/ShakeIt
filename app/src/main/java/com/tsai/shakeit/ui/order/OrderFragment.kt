@@ -28,7 +28,7 @@ class OrderFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
 
         //set backPressed behavior
@@ -58,7 +58,7 @@ class OrderFragment : Fragment() {
                 findNavController().navigate(
                     OrderFragmentDirections.navToOrderDetail(
                         order,
-                        "current"
+                        OrderType.CURRENT.type
                     )
                 )
             }

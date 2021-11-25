@@ -153,7 +153,7 @@ class MenuFragment : Fragment() {
         binding.tableLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 smoothScroller.targetPosition = tab?.tag as Int
-                binding.recyclerView.layoutManager?.startSmoothScroll(smoothScroller)
+                binding.productRev.layoutManager?.startSmoothScroll(smoothScroller)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -167,7 +167,7 @@ class MenuFragment : Fragment() {
 
         dialogBinding?.viewModel = viewModel
         dialogBinding?.lifecycleOwner = viewLifecycleOwner
-        binding.recyclerView.adapter = adapter
+        binding.productRev.adapter = adapter
         return binding.root
     }
 }

@@ -20,7 +20,7 @@ class AddMenuItemAdapter(private val viewModel: AddMenuItemViewModel) :
 
         fun bind(title: String) {
             binding.viewModel = viewModel
-            binding.addmenuTitle.text = title
+            binding.addMenuTitle.text = title
             binding.executePendingBindings()
         }
     }

@@ -24,8 +24,9 @@ class CommentViewModel(private val repository: ShakeItRepository, private val sh
                     _commentList.value = result.data!!
                 }
                 is Result.Fail -> {
-                    Logger.d("getComment Fail")
+                    Logger.d(result.error)
                 }
+                else -> {}
             }
         }
     }

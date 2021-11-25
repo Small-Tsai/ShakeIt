@@ -84,7 +84,7 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/comment_content_background"
-                android:clickable="@{viewModel.clickable}"
+                android:clickable="@{viewModel.publishBtnClickable}"
                 android:gravity="center"
                 android:onClick="@{() -> viewModel.postComment()}"
                 android:text="送出評論"

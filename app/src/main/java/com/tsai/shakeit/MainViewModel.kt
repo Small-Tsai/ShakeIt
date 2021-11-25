@@ -40,7 +40,7 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     //get FireBaseShopFilteredList on FireBase
     fun getFireBaseFilteredShopList() {
         if (firebaseFilteredShopList.value.isNullOrEmpty()) {
-            firebaseFilteredShopList = repository.getFilteredShopList(UserInfo.userId)
+            firebaseFilteredShopList = repository.getUserFilteredShopList(UserInfo.userId)
         }
     }
 }

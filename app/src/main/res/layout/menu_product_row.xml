@@ -22,7 +22,7 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
+            android:id="@+id/menu_product_cardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -38,10 +38,11 @@
                 android:layout_height="100dp"
                 android:elevation="5dp"
                 imageUrl="@{product.product_Img}"
-                android:src="@drawable/placedrink"
+                android:src="@drawable/place_drink"
                 android:scaleType="centerCrop"
                 tools:layout_editor_absoluteX="15dp"
-                tools:layout_editor_absoluteY="17dp" />
+                tools:layout_editor_absoluteY="17dp"
+                android:contentDescription="@string/place_holder" />
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -51,8 +52,8 @@
             android:layout_marginStart="16dp"
             android:text="@{product.name}"
             android:textColor="@color/black"
-            app:layout_constraintStart_toEndOf="@+id/cardView"
-            app:layout_constraintTop_toTopOf="@+id/cardView" />
+            app:layout_constraintStart_toEndOf="@+id/menu_product_cardView"
+            app:layout_constraintTop_toTopOf="@+id/menu_product_cardView" />
 
         <TextView
             android:id="@+id/productDes"
@@ -64,7 +65,7 @@
             android:singleLine="false"
             android:text="@{product.content}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cardView"
+            app:layout_constraintStart_toEndOf="@+id/menu_product_cardView"
             app:layout_constraintTop_toBottomOf="@+id/productTitle" />
 
         <TextView
@@ -74,8 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:fontFamily="@font/noto_sans"
-            android:textSize="14dp"
-            app:layout_constraintBottom_toBottomOf="@+id/cardView"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/menu_product_cardView"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <View

@@ -15,18 +15,18 @@ import com.tsai.shakeit.ShakeItApplication
 
 object MyAnimation {
 
-    val fromTop: Animation =
+    val fromTopVisibleAnimation: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slidedown)
 
-    val toTopGone: Animation =
+    val toTopGoneAnimation: Animation =
         AnimationUtils.loadAnimation(ShakeItApplication.instance, R.anim.slideup)
 
     //map search animation
-    fun startSearchAnimationOnMap(
+    fun startSearchAnimation(
         currentPosition: LatLng,
         mMap: GoogleMap,
         vAnimator: ValueAnimator,
-        distance: Double
+        distance: Double,
     ) {
 
         val circle: Circle = mMap.addCircle(

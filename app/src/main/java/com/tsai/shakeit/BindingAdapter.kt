@@ -1,13 +1,9 @@
 package com.tsai.shakeit
 
 import android.os.Looper
-import android.view.View
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LifecycleOwner
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.Timestamp
@@ -15,9 +11,6 @@ import com.tsai.shakeit.app.DRIVING
 import com.tsai.shakeit.app.WALKING
 import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.ext.toTimeFromTimeStamp
-import com.tsai.shakeit.ext.visibility
-import com.tsai.shakeit.network.LoadApiStatus
-import com.tsai.shakeit.ui.home.HomeViewModel
 import com.tsai.shakeit.ui.menu.addmenuitem.AddMenuItemViewModel
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailViewModel
 import com.tsai.shakeit.util.*
@@ -102,8 +95,8 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
 
         Glide.with(imgView.context)
             .load(imgUrl)
-            .placeholder(R.drawable.placedrink)
-            .error(R.drawable.placedrink)
+            .placeholder(R.drawable.place_drink)
+            .error(R.drawable.place_drink)
             .into(imgView)
     }
 }

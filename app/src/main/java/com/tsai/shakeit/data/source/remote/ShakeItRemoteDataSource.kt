@@ -19,7 +19,6 @@ import com.tsai.shakeit.data.directionPlaceModel.Direction
 import com.tsai.shakeit.data.source.ShakeItDataSource
 import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.ShakeItApi
-import com.tsai.shakeit.ui.orderdetail.TOPIC
 import com.tsai.shakeit.util.*
 import com.tsai.shakeit.util.Util.isInternetConnected
 import kotlinx.coroutines.Dispatchers
@@ -672,14 +671,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                 }
         }
 
-    override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
+    override fun getUserFilteredShopList(userId: String): MutableLiveData<List<String>> {
 
         val liveData = MutableLiveData<List<String>>()
-//        Logger.d(userId)
+
         FirebaseFirestore.getInstance()
             .collection(FILTER_SHOP)
             .document(userId)
-            .addSnapshotListener { snapshot, e ->
+            .addSnapshotListener { snapshot, _ ->
 
                 val list = mutableListOf<String>()
 
@@ -689,7 +688,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
                         list.add(it)
                     }
                 }
-
                 liveData.value = list
             }
         return liveData
@@ -709,7 +707,6 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
 
                 if (snapshot != null) {
                     for (document in snapshot) {
-//                        Logger.d("Current data: ${document.data}")
                         val order = document.toObject(Order::class.java)
                         list.add(order)
                     }
@@ -720,7 +717,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         return liveData
     }
 
-    override fun getShopOrder(orderId: String): MutableLiveData<List<Order>> {
+    override fun getOrderByOrderId(orderId: String): MutableLiveData<List<Order>> {
 
         Logger.d("shopId = $orderId")
         val liveData = MutableLiveData<List<Order>>()
@@ -728,16 +725,14 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
         FirebaseFirestore.getInstance()
             .collection(ORDERS)
             .whereEqualTo("order_Id", orderId)
-            .addSnapshotListener { snapshot, e ->
+            .addSnapshotListener { snapshot, _ ->
 
                 val list = mutableListOf<Order>()
 
                 if (snapshot != null) {
                     for (document in snapshot) {
-//                        Logger.d( "Current data: ${document.data}")
                         val order = document.toObject(Order::class.java)
                         if (order.order_Id == orderId) {
-//                            Logger.d("$order")
                             list.add(order)
                         }
                     }
@@ -748,7 +743,7 @@ object ShakeItRemoteDataSource : ShakeItDataSource {
     }
 
 
-    override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {
+    override fun getOrderProductBySnapShot(orderId: String): MutableLiveData<List<OrderProduct>> {
 
         val liveData = MutableLiveData<List<OrderProduct>>()
 

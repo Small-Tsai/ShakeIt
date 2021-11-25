@@ -5,20 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.data.User
 import com.tsai.shakeit.databinding.OrderFriendsRowBinding
-import com.tsai.shakeit.ui.orderdetail.OrderDetailAdapter.*
 import com.tsai.shakeit.ui.orderdetail.OrderFriendsAdapter.*
-import com.tsai.shakeit.util.UserInfo
 
-class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
+class OrderFriendsAdapter :
     ListAdapter<User, OrderFriendsViewHolder>(DiffCallback) {
 
 
     class OrderFriendsViewHolder(
-        private val binding: OrderFriendsRowBinding,
-        viewModel: OrderDetailViewModel
+        private val binding: OrderFriendsRowBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User) {
@@ -42,8 +38,7 @@ class OrderFriendsAdapter(private val viewModel: OrderDetailViewModel) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderFriendsViewHolder {
         return OrderFriendsViewHolder(
             OrderFriendsRowBinding
-                .inflate(LayoutInflater.from(parent.context), parent, false),
-            viewModel
+                .inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 

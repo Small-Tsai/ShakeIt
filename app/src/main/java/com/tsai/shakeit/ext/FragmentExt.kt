@@ -7,7 +7,6 @@ import com.tsai.shakeit.data.Product
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.factory.ViewModelFactory
 
-
 fun Fragment.getVmFactory(
     product: Product? = null,
     order: Order? = null,

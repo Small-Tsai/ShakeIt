@@ -29,7 +29,7 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
     val navToHome: LiveData<Shop>
         get() = _navToHome
 
-    val favoriteIsEmpty = MutableLiveData<Boolean?>().apply { value = true }
+    val isFavoriteEmpty = MutableLiveData<Boolean?>().apply { value = true }
 
     init {
         getFavoriteData()

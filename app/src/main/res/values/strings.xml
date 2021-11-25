@@ -45,7 +45,7 @@
     <string name="loading">loading...</string>
     <string name="add_new_product">新增商品</string>
     <string name="check_order">查看訂單</string>
-    <string name="popback">popBack</string>
+    <string name="pop_back">popBack</string>
     <string name="options">選項</string>
     <string name="import_options">填入選項</string>
     <string name="nt">NT＄</string>
@@ -59,6 +59,34 @@
     <string name="click_upload_productImg">點擊上傳商品圖片</string>
     <string name="post_product">發佈商品</string>
     <string name="addBtn">addBtn</string>
+    <string name="start_opening_time">開始營業時間</string>
+    <string name="close_time">結束營業時間</string>
+    <string name="show_shop_title">顯示商家</string>
+    <string name="order_shop_img">order_shop_img</string>
+    <string name="complete_order">完成訂單</string>
+    <string name="x">x</string>
+    <string name="order_history">歷史訂單</string>
+    <string name="your_order"><![CDATA[你的訂單 >]]></string>
+    <string name="add_new_drink">新增品項</string>
+    <string name="delete">刪除</string>
+    <string name="product_img">product_img</string>
+    <string name="your_product">你的商品</string>
+    <string name="nav_to_shop">導航至店家</string>
+    <string name="call_shop">電話點餐</string>
+    <string name="meal">餐點</string>
+    <string name="place_holder">place_holder</string>
+    <string name="map_icon">map_icon</string>
+    <string name="rating_comment">評分及評論</string>
+    <string name="order_name">訂單名稱</string>
+    <string name="import_order_name">輸入訂單名稱</string>
+    <string name="create_order">建立訂單</string>
+    <string name="white_view">white_view</string>
+    <string name="add_to_order_img">addToOrderImg</string>
+    <string name="add_to_order">加入訂單</string>
+    <string name="one">1</string>
+    <string name="capacity">容量</string>
+    <string name="sign_in">Sign In</string>
+    <string name="sign_in_with_google">Sign in with google</string>
 
 
 </resources>

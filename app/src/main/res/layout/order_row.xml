@@ -35,7 +35,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
+                android:id="@+id/order_row_constraint"
                 android:layout_width="match_parent"
                 android:layout_height="152dp"
                 android:background="@color/white"
@@ -55,12 +55,12 @@
                     android:layout_marginTop="8dp"
                     android:text="@{order.order_Name}"
                     android:textColor="@color/black"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/cardView2"
+                    android:id="@+id/order_img_card"
                     android:layout_width="85dp"
                     android:layout_height="90dp"
                     android:layout_marginStart="16dp"
@@ -76,7 +76,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/placedrink" />
+                        android:src="@drawable/place_drink"
+                        android:contentDescription="@string/order_shop_img" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -91,9 +92,9 @@
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/black"
-                    android:textSize="15dp"
-                    app:layout_constraintStart_toEndOf="@+id/cardView2"
-                    app:layout_constraintTop_toTopOf="@+id/cardView2" />
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toEndOf="@+id/order_img_card"
+                    app:layout_constraintTop_toTopOf="@+id/order_img_card" />
 
 
                 <TextView
@@ -104,8 +105,8 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:fontFamily="@font/roboto"
-                    android:textSize="13dp"
-                    app:layout_constraintStart_toEndOf="@+id/cardView2"
+                    android:textSize="13sp"
+                    app:layout_constraintStart_toEndOf="@+id/order_img_card"
                     app:layout_constraintTop_toBottomOf="@+id/order_shop" />
 
                 <TextView
@@ -117,8 +118,8 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/roboto"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardView2"
-                    app:layout_constraintStart_toEndOf="@+id/cardView2"
+                    app:layout_constraintBottom_toBottomOf="@+id/order_img_card"
+                    app:layout_constraintStart_toEndOf="@+id/order_img_card"
                     app:layout_constraintTop_toBottomOf="@+id/order_date" />
 
 
@@ -134,11 +135,11 @@
                     android:paddingTop="3dp"
                     android:paddingEnd="12dp"
                     android:paddingBottom="3dp"
-                    android:text="完成訂單"
+                    android:text="@string/complete_order"
                     android:textColor="@color/black"
-                    android:textSize="14dp"
+                    android:textSize="14sp"
                     app:cornerRadius="10dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/cardView2"
+                    app:layout_constraintBottom_toBottomOf="@+id/order_img_card"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/order_price" />
 
@@ -153,10 +154,10 @@
             android:layout_height="20dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/whitecircle"
+            android:background="@drawable/white_circle"
             android:fontFamily="@font/roboto"
             android:onClick="@{() ->viewModel.deleteOrder(order.order_Id,false)}"
-            android:text="x"
+            android:text="@string/x"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/outside_constraint" />

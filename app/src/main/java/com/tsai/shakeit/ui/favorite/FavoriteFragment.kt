@@ -22,8 +22,8 @@ class FavoriteFragment : Fragment() {
     }
     private lateinit var binding: FragmentFavoriteBinding
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -46,9 +46,7 @@ class FavoriteFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-
         val adapter = FavoriteAdapter(viewModel)
-
 
         viewModel.favoriteItem.observe(viewLifecycleOwner, {
             it?.let { adapter.submitList(it) }
@@ -57,7 +55,7 @@ class FavoriteFragment : Fragment() {
         viewModel.myFavorite.observe(viewLifecycleOwner, {
             viewModel.buildFavoriteList(it)
             if (it.isNotEmpty()) {
-                viewModel.favoriteIsEmpty.value = false
+                viewModel.isFavoriteEmpty.value = false
             }
         })
 

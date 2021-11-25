@@ -59,7 +59,7 @@ class DrinksDetailFragment : BottomSheetDialogFragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         viewModel.qty.observe(viewLifecycleOwner, {
-            binding.textView3.text = it.toString()
+            binding.prductCount.text = it.toString()
         })
 
         val adapter = DrinksAdapter(viewModel)

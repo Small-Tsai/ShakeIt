@@ -29,7 +29,6 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         get() = _popBack
 
     val shopImageUri = MutableLiveData<Uri>()
-
     val menuImageUri = MutableLiveData<Uri>()
 
     private val _navToHome = MutableLiveData<Boolean?>()

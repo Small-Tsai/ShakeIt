@@ -12,6 +12,7 @@ import com.tsai.shakeit.data.OrderProduct
 import com.tsai.shakeit.databinding.OrderDetailRowBinding
 import com.tsai.shakeit.databinding.OrderDetailRowBtnBinding
 import com.tsai.shakeit.ext.visibility
+import com.tsai.shakeit.ui.order.OrderType
 
 class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
     ListAdapter<OrderDetail, RecyclerView.ViewHolder>(DiffCallback) {
@@ -31,7 +32,7 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
             binding.orderProduct = orderProduct
             binding.viewModel = viewModel
 
-            if (viewModel.type == "history"){
+            if (viewModel.type == OrderType.HISTORY.type) {
                 binding.swipeDeleteBtn.visibility(0)
             }
 
@@ -49,13 +50,13 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
 
     class OrderProductBtnViewHolder(
         private val binding: OrderDetailRowBtnBinding,
-        private val viewModel: OrderDetailViewModel
+        private val viewModel: OrderDetailViewModel,
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(name: String) {
             binding.viewModel = viewModel
-            if (viewModel.type =="history"){
+            if (viewModel.type == OrderType.HISTORY.type) {
                 binding.addItem.visibility(0)
             }
             binding.executePendingBindings()
@@ -73,12 +74,10 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
 
         private const val ITEM_VIEW_TYPE_PRODUCT = 0x00
         private const val ITEM_VIEW_TYPE_BTN = 0x01
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-
             ITEM_VIEW_TYPE_PRODUCT -> OrderProductViewHolder(
                 OrderDetailRowBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
@@ -95,7 +94,6 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         when (holder) {
             is OrderProductViewHolder -> {
                 viewBinderHelper.bind(holder.swipeRevealLayout, position.toString())
@@ -116,7 +114,6 @@ class OrderDetailAdapter(private val viewModel: OrderDetailViewModel) :
             else -> throw ClassCastException("Unknown viewType")
         }
     }
-
 }
 
 sealed class OrderDetail {

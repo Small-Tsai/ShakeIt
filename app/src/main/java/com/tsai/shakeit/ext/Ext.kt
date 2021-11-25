@@ -37,7 +37,6 @@ fun GoogleMap.moveCamera(
     moveMode: GoogleCameraMoveMode
 ) {
     when (moveMode) {
-
         GoogleCameraMoveMode.ANIMATE -> animateCamera(
             CameraUpdateFactory.newLatLngZoom(latLng, zoomFloat)
         )
@@ -46,7 +45,6 @@ fun GoogleMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(latLng, zoomFloat)
         )
     }
-
 }
 
 

@@ -83,20 +83,20 @@ class DefaultShakeItRepository(
         return shakeItDataSource.createNewOrderForShare(order)
     }
 
-    override fun getFilteredShopList(userId: String): MutableLiveData<List<String>> {
-        return shakeItDataSource.getFilteredShopList(userId)
+    override fun getUserFilteredShopList(userId: String): MutableLiveData<List<String>> {
+        return shakeItDataSource.getUserFilteredShopList(userId)
     }
 
-    override fun getFireBaseOrder(userId: String): MutableLiveData<List<Order>> {
+    override fun getUserOrder(userId: String): MutableLiveData<List<Order>> {
         return shakeItDataSource.getFireBaseOrder(userId)
     }
 
-    override fun getShopOrder(orderId: String): MutableLiveData<List<Order>> {
-        return shakeItDataSource.getShopOrder(orderId)
+    override fun getOrderByOrderId(orderId: String): MutableLiveData<List<Order>> {
+        return shakeItDataSource.getOrderByOrderId(orderId)
     }
 
-    override fun getFireBaseOrderProduct(orderId: String): MutableLiveData<List<OrderProduct>> {
-        return shakeItDataSource.getFireBaseOrderProduct(orderId)
+    override fun getOrderProductBySnapShot(orderId: String): MutableLiveData<List<OrderProduct>> {
+        return shakeItDataSource.getOrderProductBySnapShot(orderId)
     }
 
 

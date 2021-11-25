@@ -124,7 +124,7 @@
             app:strokeWidth="1dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/product_rev"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="30dp"
@@ -181,10 +181,10 @@
             android:onClick="@{() ->viewModel.popBack()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="@string/popback" />
+            android:contentDescription="@string/pop_back" />
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/white_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/translucent_white80"
@@ -197,10 +197,10 @@
             android:background="@color/transparent"
             android:scaleType="centerInside"
             android:visibility="@{viewModel.status==LoadApiStatus.LOADING? View.VISIBLE : View.GONE }"
-            app:layout_constraintBottom_toBottomOf="@+id/recyclerView"
+            app:layout_constraintBottom_toBottomOf="@+id/product_rev"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view2"
+            app:layout_constraintTop_toTopOf="@+id/white_view"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/loadingyellowcir"

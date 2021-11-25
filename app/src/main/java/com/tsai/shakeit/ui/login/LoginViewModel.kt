@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.User
 import com.tsai.shakeit.data.source.ShakeItRepository
@@ -41,7 +40,6 @@ class LoginViewModel(private val repository: ShakeItRepository) : ViewModel() {
         repository.updateUserTokenOnFireBase(MyFirebaseService.token.toString())
     }
 
-
     fun joinToOrder(orderId: String) {
         viewModelScope.launch {
             Logger.d("joinOrder")
@@ -52,8 +50,8 @@ class LoginViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     _navToOrder.value = true
                     _navToOrder.value = null
                 }
+                else -> {}
             }
         }
-
     }
 }

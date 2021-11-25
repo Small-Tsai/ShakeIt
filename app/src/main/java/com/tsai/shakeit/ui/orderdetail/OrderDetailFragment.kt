@@ -75,7 +75,7 @@ class OrderDetailFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val adapter = OrderDetailAdapter(viewModel)
-        val friendsAdapter = OrderFriendsAdapter(viewModel)
+        val friendsAdapter = OrderFriendsAdapter()
 
         viewModel.orderProduct.observe(viewLifecycleOwner, { OrderProductList ->
             Logger.d("$OrderProductList")

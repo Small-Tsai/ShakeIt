@@ -58,7 +58,7 @@ class AddMenuItemFragment : Fragment() {
             addSugarAdapter.submitList(it.toMutableList())
         })
 
-        viewModel.addOtherListLiveData.observe(viewLifecycleOwner, {
+        viewModel.addOthersListLiveData.observe(viewLifecycleOwner, {
             addOtherAdapter.submitList(it.toMutableList())
         })
 
@@ -67,7 +67,7 @@ class AddMenuItemFragment : Fragment() {
         })
 
         viewModel.optionPrice.observe(viewLifecycleOwner, {
-            viewModel.setListPrice(it)
+            viewModel.setOptionPrice(it)
         })
 
         viewModel.popBack.observe(viewLifecycleOwner, {

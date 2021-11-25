@@ -53,7 +53,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="32dp"
-            android:visibility="@{viewModel.favoriteIsEmpty? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.isFavoriteEmpty? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/favorite_rev"
@@ -68,7 +68,7 @@
             android:fontFamily="@font/roboto"
             android:text="尚未有任何收藏"
             android:textSize="24sp"
-            android:visibility="@{viewModel.favoriteIsEmpty? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.isFavoriteEmpty? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="@+id/favorite_rev"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lottieAnimationView2" />

@@ -40,7 +40,7 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
 
             val hashKey = date.keys.first()
             val hashValue = date[hashKey]
-            binding.textView10.text = hashKey
+            binding.dateTxt.text = hashKey
 
             hashValue?.let {
                 if (it.length > 6) {
@@ -78,7 +78,6 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
 
                 }, hour, minute, true).show()
             }
-
             binding.executePendingBindings()
         }
     }

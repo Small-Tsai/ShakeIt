@@ -13,17 +13,17 @@ import com.tsai.shakeit.data.notification.PushNotification
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.myToast
 import com.tsai.shakeit.network.ShakeItApi
+import com.tsai.shakeit.ui.order.OrderType
 import com.tsai.shakeit.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val TOPIC = "/topics/"
 
 class OrderDetailViewModel(
     val mOrder: Order?,
     private val repository: ShakeItRepository,
-    val type: String?
+    val type: String?,
 ) : ViewModel() {
 
     private var _orderProduct = MutableLiveData<List<OrderProduct>>()
@@ -49,7 +49,7 @@ class OrderDetailViewModel(
     val isNotifyBtnVisible = MutableLiveData<Boolean>().apply { value = true }
 
     init {
-        if (type == "history") {
+        if (type == OrderType.HISTORY.type) {
             isNotifyBtnVisible.value = false
             getHistoryProduct()
         } else {
@@ -77,7 +77,7 @@ class OrderDetailViewModel(
     private fun getOrderProduct() {
         mOrder?.let {
             viewModelScope.launch {
-                _orderProduct = repository.getFireBaseOrderProduct(it.order_Id)
+                _orderProduct = repository.getOrderProductBySnapShot(it.order_Id)
             }
         }
     }

@@ -42,7 +42,7 @@ class AddMenuItemViewModel(
     private val _addOtherListLiveData = MutableLiveData<MutableList<AddMenuItem>>().apply {
         value = mutableListOf()
     }
-    val addOtherListLiveData: LiveData<MutableList<AddMenuItem>>
+    val addOthersListLiveData: LiveData<MutableList<AddMenuItem>>
         get() = _addOtherListLiveData
 
     private val _popBack = MutableLiveData<Boolean?>()
@@ -114,7 +114,6 @@ class AddMenuItemViewModel(
 
     private var currentSelectedPostion = -1
     fun recordCurrentSelectedPosition(positon: Int) {
-        Logger.d("cu = $positon")
         currentSelectedPostion = positon
     }
 
@@ -170,7 +169,7 @@ class AddMenuItemViewModel(
     //record editText price
     private val capacityOptionPrice = hashMapOf<Int, String>()
     private val othersOptionPrice = hashMapOf<Int, String>()
-    fun setListPrice(price: String) {
+    fun setOptionPrice(price: String) {
         if (price.isNotEmpty()) {
             when (currentSelectedType) {
                 0 -> capacityOptionPrice[currentSelectedPostion] = price
@@ -310,11 +309,11 @@ class AddMenuItemViewModel(
                 is Result.Loading -> _status.value = LoadApiStatus.LOADING
                 is Result.Success -> {
 
-                    val mArray = arrayListOf<String>()
-                    var mString = ""
+                    val shopNameArray = arrayListOf<String>()
+                    var shopName = ""
                     for (i in shop.name.indices) {
-                        mString += shop.name[i].toString()
-                        mArray.add(mString)
+                        shopName += shop.name[i].toString()
+                        shopNameArray.add(shopName)
                     }
 
                     //set product data
@@ -327,7 +326,7 @@ class AddMenuItemViewModel(
                         others = _othersListForPost.value!!,
                         shopId = shop.shop_Id,
                         shopAddress = shop.address,
-                        shop_Name = mArray,
+                        shop_Name = shopNameArray,
                         branch = shop.branch.replace(" ", ""),
                         type = productType,
                         product_Img = result.data
@@ -347,7 +346,6 @@ class AddMenuItemViewModel(
 
     //use to post product img
     val productImageUri = MutableLiveData<Uri>()
-
     private fun mergeOptionNameAndPrice() {
         capacityOptionsName.keys.forEach {
             if (!capacityOptionsName[it].isNullOrEmpty() && it > 0) {
@@ -385,8 +383,7 @@ class AddMenuItemViewModel(
     }
 
     // when onclick addBtn add new list for user to set product data
-    fun onClick(type: Int) {
-        Logger.d(type.toString())
+    fun addOption(type: Int) {
         when (type) {
             0 -> addNewOption(capacityList, CAPACITY.type)
             1 -> addNewOption(iceList, ICE.type)

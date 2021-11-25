@@ -21,7 +21,6 @@ import com.tsai.shakeit.ui.order.sendcomment.CommentDialogViewModel
 import com.tsai.shakeit.ui.orderdetail.OrderDetailViewModel
 import com.tsai.shakeit.ui.setting.SettingViewModel
 
-
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(
     private val product: Product? = null,

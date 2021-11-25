@@ -30,7 +30,7 @@
             android:id="@+id/orderPage_title"
             style="@style/pageTitle"
             android:layout_width="wrap_content"
-            android:text="你的商品"
+            android:text="@string/your_product"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,17 +61,17 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/cardView3"
+            app:layout_constraintBottom_toTopOf="@+id/order_detail_cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView8"
+            app:layout_constraintTop_toBottomOf="@+id/meal_txt"
             app:layout_constraintVertical_bias="0.0"
             tools:itemCount="1"
             tools:listitem="@layout/order_detail_row" />
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cardView3"
+            android:id="@+id/order_detail_cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/white"
@@ -92,7 +92,7 @@
                     android:backgroundTint="@color/gery"
                     android:fontFamily="@font/roboto"
                     android:onClick="@{()->viewModel.navToHome(shop)}"
-                    android:text="導航至店家"
+                    android:text="@string/nav_to_shop"
                     android:textColor="@color/black"
                     app:cornerRadius="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -107,7 +107,7 @@
                     android:layout_marginBottom="16dp"
                     android:backgroundTint="@color/gery"
                     android:fontFamily="@font/roboto"
-                    android:text="電話點餐"
+                    android:text="@string/call_shop"
                     android:textColor="@color/black"
                     app:cornerRadius="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -131,14 +131,14 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/meal_txt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/gery"
             android:fontFamily="@font/roboto"
             android:paddingHorizontal="16dp"
             android:paddingVertical="10dp"
-            android:text="餐點"
+            android:text="@string/meal"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"

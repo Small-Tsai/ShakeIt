@@ -20,7 +20,7 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/appCompatTextView"
+            android:id="@+id/menu_order_title"
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:background="@color/yellow"
@@ -29,7 +29,7 @@
             android:gravity="center"
             android:scaleType="center"
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
-            android:text="訂單名稱"
+            android:text="@string/order_name"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,12 +45,13 @@
             android:layout_marginEnd="16dp"
             android:gravity="center"
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
-            android:hint="輸入訂單名稱"
+            android:hint="@string/import_order_name"
             android:inputType="textEmailAddress"
             android:text="@={viewModel.orderName}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appCompatTextView" />
+            app:layout_constraintTop_toBottomOf="@+id/menu_order_title"
+            android:autofillHints="" />
 
         <com.google.android.material.button.MaterialButton
             android:layout_width="match_parent"
@@ -63,7 +64,7 @@
             android:backgroundTint="@color/gery"
             android:fontFamily="@font/roboto"
             android:onClick="@{()->viewModel.addNewDocToFireBase()}"
-            android:text="建立訂單"
+            android:text="@string/create_order"
             android:textColor="@color/darkgrey"
             app:elevation="10dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +82,8 @@
             android:clickable="@{viewModel.status == LoadApiStatus.LOADING? false : true}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/white_view" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lineLottie"

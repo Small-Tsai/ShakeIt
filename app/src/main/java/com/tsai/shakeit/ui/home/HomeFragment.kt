@@ -69,36 +69,42 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Create Permission class for ask permission
         appPermission = AppPermissions()
     }
 
     override fun onStart() {
         super.onStart()
+        // Binding mainViewModel to layout
         binding.mainViewModel = mainViewModel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Get mainViewModel
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
 
+        // Get user filtered shopList
         if (mainViewModel.firebaseFilteredShopList.value.isNullOrEmpty()) {
             mainViewModel.getFireBaseFilteredShopList()
         }
 
+        // Initialize selected shop when user click shop from favorite page
         if (mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE) {
             mainViewModel.selectedShop.observe(viewLifecycleOwner, {
                 selectedShop = it
             })
         }
 
+        // Initialize selected shop when user click navigation from orderDetail page
         if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
             mainViewModel.selectedShop.observe(viewLifecycleOwner, {
                 selectedShop = it
             })
         }
 
-        // calculate average rating
+        // Calculate average rating
         mainViewModel.ratingAvg.observe(viewLifecycleOwner, { ratingAvg ->
             if (ratingAvg.isNaN()) {
                 binding.avgRating.text = "0"
@@ -109,11 +115,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        // update total comment qty on bottomSheet
+        // Update total comment qty on bottomSheet
         mainViewModel.commentCount.observe(viewLifecycleOwner, { commentCount ->
             "($commentCount)".also { binding.commentCount.text = it }
         })
 
+        // Custom backPressedBehavior
         setBackPressedBehavior()
         mContext = binding.root.context
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
@@ -123,19 +130,19 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        //get map
+        //Create googleMap
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        //when selected shop
+        // Observe when user select shop
         viewModel.selectedShop.observe(viewLifecycleOwner, { shop ->
 
             val favorite = Favorite(shop = shop, user_Id = UserInfo.userId)
@@ -161,7 +168,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
 
 
-        //observe onClick stop navigation
+        // Observe onClick stop navigation
         viewModel.mapNavState.observe(viewLifecycleOwner, {
             it?.let {
                 stopMapNavigation()
@@ -169,7 +176,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //nav to Menu
+        // Nav to Menu
         viewModel.navToMenu.observe(viewLifecycleOwner, {
             it?.let {
                 findNavController().navigate(
@@ -178,12 +185,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //nav to AddShop
+        // Nav to AddShop
         viewModel.navToAddShop.observe(viewLifecycleOwner, {
             it?.let { findNavController().navigate(HomeFragmentDirections.navToAddShop()) }
         })
 
-        //nav to Setting
+        // Nav to Setting
         viewModel.navToSetting.observe(viewLifecycleOwner, {
             it?.let {
                 findNavController().navigate(
@@ -194,23 +201,23 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //Observe ShopData
+        // Observe ShopData
         viewModel.shopListLiveData.observe(viewLifecycleOwner, { shopData ->
 
             allShopData = shopData
 
-            // observe when get currentPosition
+            // Observe when get currentPosition
             viewModel.trafficMode.value?.let { mode ->
                 mainViewModel.currentFragmentType.value?.let { getDirection(mode, it) }
             }
 
-            //observe mainViewModel shopFilteredList from firebase
+            // Observe mainViewModel shopFilteredList from firebase
             mainViewModel.firebaseFilteredShopList.observe(viewLifecycleOwner, { dbList ->
 
-                //set Search bar
+                // Set Search bar
                 setSearchBar(dbList)
 
-                //do if else when user isSearch for something in search bar
+                // AddMarker when user isSearch for something in search bar
                 if (queryShopName.isEmpty()) {
                     addMarkerAfterClearMap(dbList)
                 } else {
@@ -219,12 +226,12 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             })
         })
 
-        //import allShopName from viewModel
+        // Import allShopName from viewModel
         viewModel.allShopName.observe(viewLifecycleOwner, {
             allShopName = it
         })
 
-        //observe getDirectionDone
+        // Observe getDirectionDone
         viewModel.getDirectionDone.observe(viewLifecycleOwner, {
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                 it?.let {
@@ -234,7 +241,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //observe move camera
+        // Observe move camera
         viewModel.isMoveCamera.observe(viewLifecycleOwner, {
             it?.let {
                 moveCameraToCurrentLocation(
@@ -243,20 +250,20 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //observe userSetting traffic time
+        // Observe userSetting traffic time
         viewModel.userSettingTime.observe(viewLifecycleOwner, {
             it?.let { UserInfo.userCurrentSettingTrafficTime = it }
         })
 
-        // observe get google direction done
+        // Observe get google direction done
         viewModel.options.observe(viewLifecycleOwner, {
 
-            //clear polyLine
+            // Clear polyLine
             if (this::polyLine.isInitialized) {
                 polyLine.remove()
             }
 
-            //draw polyLine
+            // Draw polyLine
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.HOME_DIALOG ||
                 mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL
             ) {
@@ -268,13 +275,13 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //observe mode change for getDirection from walk or driving
+        // Observe trafficMode change for getDirection from walk or driving
         viewModel.trafficMode.observe(viewLifecycleOwner, {
 
             if (appPermission.locationPermissionGranted) {
                 Logger.d("mode observe $it")
 
-                MyAnimation.startSearchAnimationOnMap(
+                MyAnimation.startSearchAnimation(
                     UserInfo.userCurrentLocation,
                     mMap,
                     vAnimator,
@@ -291,15 +298,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        //observe User Search Product
+        // Observe User Search Product
         viewModel.userSearchingProduct.observe(viewLifecycleOwner, { product ->
-            doSearch(product)
+            startSearchingNearShops(product)
         })
 
-        //traffic time editText action_done
+        // Traffic time editText action_done
         binding.trafficTimeEdt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == IME_ACTION_DONE) {
-                MyAnimation.startSearchAnimationOnMap(
+                MyAnimation.startSearchAnimation(
                     UserInfo.userCurrentLocation,
                     mMap,
                     vAnimator,
@@ -319,9 +326,9 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     }
 
 
-    //Add Marker On Map
+    // Add Marker On Map
     private fun addMarkerAfterClearMap(
-        dbList: List<String>
+        dbList: List<String>,
     ) {
         mMap.clear()
         allShopData.forEach { shop ->
@@ -345,7 +352,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         vAnimator.pause()
     }
 
-    //set backPressed behavior
+    // Set backPressed behavior
     private fun setBackPressedBehavior() {
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -362,7 +369,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
-    //stop Map navigation
+    // Stop Map navigation
     private fun stopMapNavigation() {
         bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -373,7 +380,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    //map ready
+    // On map ready
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         appPermission.askPermissionToGetDeviceLocation(this)
@@ -381,7 +388,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         moveCameraToSelectedShop()
     }
 
-    //when nav from favorite move camera
+    // When nav from favorite move camera
     private fun moveCameraToSelectedShop() {
         if (this::selectedShop.isInitialized &&
             mainViewModel.currentFragmentType.value == CurrentFragmentType.FAVORITE
@@ -391,25 +398,28 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    //set searchBar
+    // Set searchBar
     private fun setSearchBar(dbList: List<String>) {
 
         val listAdapter = SearchAdapter(viewModel)
 
+        // Observe allProduct then submit to searchBar recycleView
         viewModel.allProduct.observe(viewLifecycleOwner, { list ->
             allProductList = list
             listAdapter.submitList(list)
         })
 
+        // Detect searchView focus
         binding.searchView.setOnQueryTextFocusChangeListener { _, b ->
             viewModel.isSearchBarFocus.value = b
         }
 
+        // Set QueryTextListener
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (filteredProudctList.isNotEmpty()) {
-                    doSearch(filteredProudctList.first())
+                    startSearchingNearShops(filteredProudctList.first())
                 } else {
                     myToast("未搜尋到${binding.searchView.query}")
                     viewModel.isSearchBarFocus.value = false
@@ -438,6 +448,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
+        // Get ClearBtn from searchView
         val clearButton: ImageView =
             binding.searchView.findViewById(androidx.appcompat.R.id.search_close_btn)
 
@@ -453,9 +464,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.searchRev.adapter = listAdapter
     }
 
-    private fun doSearch(product: Product) {
+    // start Search
+    private fun startSearchingNearShops(product: Product) {
 
-        MyAnimation.startSearchAnimationOnMap(
+        MyAnimation.startSearchAnimation(
             UserInfo.userCurrentLocation,
             mMap,
             vAnimator,
@@ -475,7 +487,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         binding.searchRev.visibility(0)
     }
 
-    //set google map UI
+    // Set google map UI
     @SuppressLint("MissingPermission")
     fun setMapUI() {
 
@@ -490,7 +502,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         mMap.uiSettings.isMyLocationButtonEnabled = false
         mMap.isMyLocationEnabled = true
 
-        //marker onClick
+        // Marker onClick
         mMap.setOnMarkerClickListener {
 
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
@@ -508,14 +520,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             return@setOnMarkerClickListener true
         }
 
-        //map onClick
+        // Map onClick
         mMap.setOnMapClickListener {
             if (mainViewModel.currentFragmentType.value != CurrentFragmentType.HOME_NAV) {
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
             }
         }
 
-        //map camera move listener
+        // Map camera move listener
         mMap.setOnCameraMoveListener {
             if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
                 bottomSheetBehavior.halfExpandedRatio = 0.14f
@@ -524,7 +536,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    //getDirection
+    // GetDirectionApi
     private fun getDirection(mode: String, currentFragmentType: CurrentFragmentType) {
 
         Logger.i(appPermission.locationPermissionGranted.toString())
@@ -548,10 +560,10 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    //move camera
+    // Move camera to user current location
     private fun moveCameraToCurrentLocation(
         zoomFloat: Float,
-        googleCameraMoveMode: GoogleCameraMoveMode
+        googleCameraMoveMode: GoogleCameraMoveMode,
     ) {
         when (googleCameraMoveMode) {
             GoogleCameraMoveMode.ANIMATE -> mMap.moveCamera(
@@ -567,14 +579,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    //make custom map marker
+    // Make custom map marker
     private fun setLabelOnMapMarker(label: String, branch: String): Bitmap {
         val iconGenerator = IconGenerator(mContext)
         val markerView: View = LayoutInflater.from(mContext).inflate(R.layout.map_marker, null)
         val imgMarker = markerView.findViewById<ImageView>(R.id.mapIcon)
         val tvLabel = markerView.findViewById<TextView>(R.id.marker_shop)
-        val tvLabel2 = markerView.findViewById<TextView>(R.id.textView38)
-        imgMarker.setImageResource(R.drawable.locationbrown2)
+        val tvLabel2 = markerView.findViewById<TextView>(R.id.marker_branch_name)
+        imgMarker.setImageResource(R.drawable.location_brown2)
         tvLabel.text = label
         tvLabel2.text = branch
         iconGenerator.setContentView(markerView)
@@ -582,6 +594,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         return iconGenerator.makeIcon(label)
     }
 
+    // Change bottomSheet behavior to navigation state
     private fun changeBtsBehaviorToNavigation() {
         bottomSheetNavBehavior.isDraggable = false
         bottomSheetBehavior.halfExpandedRatio = 0.0001f
@@ -591,6 +604,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         bottomSheetNavBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
+    // Set bottomSheet behavior
     private fun setBottomSheetBehavior() {
 
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -644,15 +658,15 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         })
     }
 
-    //set toolbar visibility
+    // Set toolbar visibility
     private fun toolbarVisible() {
-        binding.toolbarConstraint.startAnimation(MyAnimation.fromTop)
+        binding.toolbarConstraint.startAnimation(MyAnimation.fromTopVisibleAnimation)
         binding.toolbarConstraint.visibility(1)
     }
 
-    //set toolbar visibility
+    // Set toolbar visibility
     private fun toolbarGone() {
-        binding.toolbarConstraint.startAnimation(MyAnimation.toTopGone)
+        binding.toolbarConstraint.startAnimation(MyAnimation.toTopGoneAnimation)
         binding.toolbarConstraint.visibility(0)
     }
 }

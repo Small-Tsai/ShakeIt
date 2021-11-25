@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RatingBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -33,7 +31,7 @@ class CommentDialog : AppCompatDialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
 
         binding = CommentDialogFragmentBinding.inflate(inflater, container, false)
@@ -48,40 +46,31 @@ class CommentDialog : AppCompatDialogFragment() {
             viewModel.send(it)
         })
 
-    setRatingBar()
-    return binding.root
-}
+        setRatingBar()
+        return binding.root
+    }
 
 
-@SuppressLint("ClickableViewAccessibility")
-private fun setRatingBar() {
-    binding.sendRatingBar.onRatingBarChangeListener =
-        RatingBar.OnRatingBarChangeListener { p0, p1, p2 ->
-            Toast.makeText(
-                context,
-                "Given rating is: $p1",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-    binding.sendRatingBar.let {
-        it.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                val touchPositionX = event.x
-                val width: Int = it.width
-                val starsf = touchPositionX / width * 5.0f
-                val stars = starsf.toInt() + 1
-                it.rating = stars.toFloat()
-                v.isPressed = false
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setRatingBar() {
+        binding.sendRatingBar.let {
+            it.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    val touchPositionX = event.x
+                    val width: Int = it.width
+                    val starsF = touchPositionX / width * 5.0f
+                    val stars = starsF.toInt() + 1
+                    it.rating = stars.toFloat()
+                    v.isPressed = false
+                }
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    v.isPressed = true
+                }
+                if (event.action == MotionEvent.ACTION_CANCEL) {
+                    v.isPressed = false
+                }
+                true
             }
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                v.isPressed = true
-            }
-            if (event.action == MotionEvent.ACTION_CANCEL) {
-                v.isPressed = false
-            }
-            true
         }
     }
-}
 }

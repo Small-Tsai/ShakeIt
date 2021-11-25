@@ -37,12 +37,12 @@ class CommentDialogViewModel(
         _popBack.value = null
     }
 
-    private val _clickable = MutableLiveData<Boolean>()
-    val clickable: LiveData<Boolean>
-        get() = _clickable
+    private val _publishBtnClickable = MutableLiveData<Boolean>()
+    val publishBtnClickable: LiveData<Boolean>
+        get() = _publishBtnClickable
 
     init {
-        _clickable.value = true
+        _publishBtnClickable.value = true
     }
 
     fun postComment() {
@@ -61,19 +61,20 @@ class CommentDialogViewModel(
     }
 
     fun send(comment: Comment) {
-        _clickable.value = false
+        _publishBtnClickable.value = false
         Logger.d("shop = $shopId")
         viewModelScope.launch {
             shopId?.let {
                 when (val result = repository.postComment(shopId, comment)) {
                     is Result.Success -> {
-                        _clickable.value = true
+                        _publishBtnClickable.value = true
                         leave()
                     }
                     is Result.Fail -> {
                         myToast("fail")
                         leave()
                     }
+                    else -> {}
                 }
             }
         }

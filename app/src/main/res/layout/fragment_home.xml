@@ -29,6 +29,10 @@
             name="viewModel"
             type="com.tsai.shakeit.ui.home.HomeViewModel" />
 
+        <variable
+            name="navOption"
+            type="com.google.android.libraries.maps.model.PolylineOptions" />
+
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -472,7 +476,7 @@
                 style="@style/home_dialog_icon"
                 android:layout_width="0dp"
                 android:drawableTop="@drawable/navigate"
-                android:onClick="@{()->viewModel.startDrawPolyLine()}"
+                android:onClick="@{()->viewModel.startDrawPolyLine(navOption)}"
                 android:text="@string/start_navigation"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:cornerRadius="20dp"

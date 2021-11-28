@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.data.Shop
 
-class SettingViewModel(private val list: Array<Shop>) :
-    ViewModel() {
+class SettingViewModel(private val list: Array<Shop>) : ViewModel() {
 
     private val _shopList = MutableLiveData<List<String>>().apply {
         value = list.map { it.name }

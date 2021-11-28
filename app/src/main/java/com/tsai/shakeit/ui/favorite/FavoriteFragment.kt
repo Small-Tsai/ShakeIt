@@ -10,9 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.MainViewModel
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.databinding.FragmentFavoriteBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.CurrentFragmentType
 
 class FavoriteFragment : Fragment() {
@@ -27,7 +27,7 @@ class FavoriteFragment : Fragment() {
 
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().navigate(MenuFragmentDirections.navToHome())
+                findNavController().navigate(NavDirections.navToHome())
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(

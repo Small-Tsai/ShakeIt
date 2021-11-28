@@ -28,6 +28,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.maps.android.ui.IconGenerator
 import com.tsai.shakeit.BuildConfig.DIRECTION_API_KEY
 import com.tsai.shakeit.MainViewModel
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.R
 import com.tsai.shakeit.app.AppPermissions
 import com.tsai.shakeit.data.Favorite
@@ -41,7 +42,6 @@ import com.tsai.shakeit.ext.visibility
 import com.tsai.shakeit.network.LoadApiStatus
 import com.tsai.shakeit.ui.home.comment.CommentPagerAdapter
 import com.tsai.shakeit.ui.home.search.SearchAdapter
-import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.*
 
 class HomeFragment : Fragment(), OnMapReadyCallback {
@@ -64,6 +64,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
     private lateinit var allShopName: List<String>
     private lateinit var allShopData: List<Shop>
     private lateinit var allProductList: List<Product>
+    private lateinit var navOption: PolylineOptions
     private var queryShopName: String = ""
     private val vAnimator = ValueAnimator()
 
@@ -179,24 +180,24 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.navToMenu.observe(viewLifecycleOwner, {
             it?.let {
                 findNavController().navigate(
-                    MenuFragmentDirections.navToMenu(it, "")
+                    NavDirections.navToMenu(it, "")
                 )
             }
         })
 
         // Nav to AddShop
         viewModel.navToAddShop.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(HomeFragmentDirections.navToAddShop()) }
+            it?.let { findNavController().navigate(NavDirections.navToAddShop()) }
         })
 
         // Nav to Setting
         viewModel.navToSetting.observe(viewLifecycleOwner, {
             it?.let {
-                findNavController().navigate(
-                    HomeFragmentDirections.navToSetting(
-                        viewModel.shopListLiveData.value!!.toTypedArray()
+                viewModel.shopListLiveData.value?.let { shopList ->
+                    findNavController().navigate(
+                        NavDirections.navToSetting(shopList.toTypedArray())
                     )
-                )
+                }
             }
         })
 
@@ -234,7 +235,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         viewModel.getDirectionDone.observe(viewLifecycleOwner, {
             if (mainViewModel.currentFragmentType.value == CurrentFragmentType.ORDER_DETAIL) {
                 it?.let {
-                    viewModel.startDrawPolyLine()
+                    viewModel.startDrawPolyLine(navOption)
                     viewModel.getDirectionDone.value = null
                 }
             }
@@ -337,10 +338,7 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                         .icon(
                             BitmapDescriptorFactory.fromBitmap(
                                 setLabelOnMapMarker(
-                                    shop.name.substring(
-                                        0,
-                                        1
-                                    ),
+                                    shop.name.substring(0, 1),
                                     shop.branch
                                 )
                             )
@@ -549,7 +547,16 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
                     "&key=" + DIRECTION_API_KEY +
                     "&language=zh-TW"
 
-                viewModel.getDirection(url)
+                navOption = PolylineOptions().apply {
+                    width(20f)
+                    color(Util.getColor(R.color.blue))
+                    geodesic(true)
+                    visible(true)
+                }
+
+                binding.navOption = navOption
+
+                viewModel.getDirection(url, navOption)
             }
         } else {
             Logger.e(getString(R.string.getDirectionFail))

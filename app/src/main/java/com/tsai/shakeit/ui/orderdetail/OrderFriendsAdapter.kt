@@ -9,11 +9,10 @@ import com.tsai.shakeit.data.User
 import com.tsai.shakeit.databinding.OrderFriendsRowBinding
 import com.tsai.shakeit.ui.orderdetail.OrderFriendsAdapter.*
 
-class OrderFriendsAdapter :
-    ListAdapter<User, OrderFriendsViewHolder>(DiffCallback) {
+class OrderFriendsAdapter : ListAdapter<User, OrderFriendsViewHolder>(DiffCallback) {
 
     class OrderFriendsViewHolder(
-        private val binding: OrderFriendsRowBinding
+        private val binding: OrderFriendsRowBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(user: User) {

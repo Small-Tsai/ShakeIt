@@ -13,7 +13,6 @@ class OrderHistoryAdapter(val viewModel: OrderHistoryViewModel) :
 
     inner class OrderHistoryViewHolder(
         private var binding: OrderHistoryRowBinding,
-        viewModel: OrderHistoryViewModel
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
@@ -36,8 +35,7 @@ class OrderHistoryAdapter(val viewModel: OrderHistoryViewModel) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderHistoryViewHolder {
         return OrderHistoryViewHolder(
             OrderHistoryRowBinding
-                .inflate(LayoutInflater.from(parent.context), parent, false),
-            viewModel
+                .inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 

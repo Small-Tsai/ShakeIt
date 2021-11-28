@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.databinding.OrderHistoryFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.order.OrderFragmentDirections
 
 class OrderHistoryFragment : Fragment() {
 
@@ -30,7 +30,7 @@ class OrderHistoryFragment : Fragment() {
         val adapter = OrderHistoryAdapter(viewModel)
 
         viewModel.navToOrder.observe(viewLifecycleOwner, {
-            findNavController().navigate(OrderHistoryFragmentDirections.navToOrder())
+            findNavController().navigate(NavDirections.navToOrder())
         })
 
         viewModel.orderHistory.observe(viewLifecycleOwner, {
@@ -40,7 +40,7 @@ class OrderHistoryFragment : Fragment() {
         viewModel.navToOrderDetail.observe(viewLifecycleOwner, {
             it?.let { order ->
                 findNavController().navigate(
-                    OrderFragmentDirections.navToOrderDetail(
+                    NavDirections.navToOrderDetail(
                         order,
                         "history"
                     )

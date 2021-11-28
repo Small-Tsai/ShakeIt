@@ -14,10 +14,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.messaging.FirebaseMessaging
 import com.tsai.shakeit.MainViewModel
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.databinding.OrderDetailFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.favorite.FavoriteFragmentDirections
-import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.Logger
 
 class OrderDetailFragment : Fragment() {
@@ -101,7 +100,7 @@ class OrderDetailFragment : Fragment() {
         viewModel.navToMenu.observe(viewLifecycleOwner, {
             it?.let {
                 viewModel.mOrder?.user_Id?.let { userId ->
-                    findNavController().navigate(MenuFragmentDirections.navToMenu(it, userId))
+                    findNavController().navigate(NavDirections.navToMenu(it, userId))
                 }
             }
         })
@@ -117,7 +116,7 @@ class OrderDetailFragment : Fragment() {
         viewModel.navToHome.observe(viewLifecycleOwner, {
             val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
             mainViewModel.selectedShop.value = it
-            findNavController().navigate(FavoriteFragmentDirections.navToHome())
+            findNavController().navigate(NavDirections.navToHome())
         })
 
         binding.orderDetailRev.adapter = adapter

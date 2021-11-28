@@ -1,11 +1,18 @@
 package com.tsai.shakeit.ext
 
+import android.content.Intent
+import android.graphics.BitmapFactory
 import android.icu.text.SimpleDateFormat
+import android.net.Uri
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.fragment.app.Fragment
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.model.LatLng
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.util.GoogleCameraMoveMode
@@ -34,7 +41,7 @@ fun View.visibility(i: Int) {
 fun GoogleMap.moveCamera(
     latLng: LatLng,
     zoomFloat: Float,
-    moveMode: GoogleCameraMoveMode
+    moveMode: GoogleCameraMoveMode,
 ) {
     when (moveMode) {
         GoogleCameraMoveMode.ANIMATE -> animateCamera(
@@ -46,3 +53,25 @@ fun GoogleMap.moveCamera(
         )
     }
 }
+
+// cropFloatPair = Pair<cropX,cropY>
+fun MaterialButton.setOnClickChoosePhoto(
+    fragment: Fragment,
+    launcher: ActivityResultLauncher<Intent>,
+    cropFloatPair: Pair<Float, Float> = Pair(0f, 0f),
+) {
+    setOnClickListener {
+        ImagePicker.with(fragment)
+            .galleryOnly()
+            .crop(cropFloatPair.first, cropFloatPair.second)
+            .compress(1024)
+            .createIntent { intent ->
+                launcher.launch(intent)
+            }
+    }
+}
+
+fun Uri.getBitmapFromUri() =
+    ShakeItApplication.instance.contentResolver.openFileDescriptor(this, "r")?.use {
+        BitmapFactory.decodeFileDescriptor(it.fileDescriptor)
+    }

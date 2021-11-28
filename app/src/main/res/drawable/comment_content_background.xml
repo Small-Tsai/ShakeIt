@@ -8,7 +8,7 @@
     </item>
     <item
         android:id="@android:id/background" >
-        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <shape>
             <corners android:radius="5dp" />
             <solid android:color="@color/grey2" />
         </shape>

@@ -13,13 +13,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView.SmoothScroller
 import com.google.android.material.tabs.TabLayout
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.R
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.DialogMenuOrderNameBinding
 import com.tsai.shakeit.databinding.MenuFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.ui.menu.detail.DrinksDetailFragmentDirections
-import com.tsai.shakeit.ui.order.OrderFragmentDirections
 
 class MenuFragment : Fragment() {
 
@@ -101,7 +101,7 @@ class MenuFragment : Fragment() {
         })
 
         viewModel.navToOrder.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(OrderFragmentDirections.navToOrder()) }
+            it?.let { findNavController().navigate(NavDirections.navToOrder()) }
         })
 
         viewModel.shop.observe(viewLifecycleOwner, {
@@ -125,7 +125,7 @@ class MenuFragment : Fragment() {
         viewModel.navToAddItem.observe(viewLifecycleOwner, {
             it?.let {
                 findNavController()
-                    .navigate(MenuFragmentDirections.navToAddItem(viewModel.selectedShop))
+                    .navigate(NavDirections.navToAddItem(viewModel.selectedShop))
             }
         })
 

@@ -19,4 +19,6 @@ class ShakeItApplication : Application() {
         super.onCreate()
         instance = this
     }
+
+    fun isLiveDataDesign() = true
 }

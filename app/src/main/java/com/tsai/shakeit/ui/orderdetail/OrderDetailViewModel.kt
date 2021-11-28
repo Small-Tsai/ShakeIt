@@ -66,7 +66,7 @@ class OrderDetailViewModel(
             viewModelScope.launch {
                 when (val result = repository.getHistoryOrderProduct(it.order_Id)) {
                     is Result.Success -> {
-                        _orderProduct.value = result.data
+                        _orderProduct.value = result.data!!
                     }
                     else -> {}
                 }
@@ -87,7 +87,7 @@ class OrderDetailViewModel(
             mOrder?.let {
                 when (val result = repository.getShopInfo(it.shop_Id)) {
                     is Result.Success -> {
-                        _shop.value = result.data
+                        _shop.value = result.data!!
                     }
                     else -> {}
                 }

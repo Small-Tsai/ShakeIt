@@ -8,6 +8,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.databinding.FragmentOrderBinding
 import com.tsai.shakeit.ext.getVmFactory
 import com.tsai.shakeit.util.Logger
@@ -29,7 +30,7 @@ class OrderFragment : Fragment() {
         // set backPressed behavior
         val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                findNavController().navigate(OrderFragmentDirections.navToHome())
+                findNavController().navigate(NavDirections.navToHome())
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -51,7 +52,7 @@ class OrderFragment : Fragment() {
         viewModel.navToOrderDetail.observe(viewLifecycleOwner, {
             it?.let { order ->
                 findNavController().navigate(
-                    OrderFragmentDirections.navToOrderDetail(
+                    NavDirections.navToOrderDetail(
                         order,
                         OrderType.CURRENT.type
                     )
@@ -60,11 +61,11 @@ class OrderFragment : Fragment() {
         })
 
         viewModel.shopId.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(OrderFragmentDirections.navToSendComment(it)) }
+            it?.let { findNavController().navigate(NavDirections.navToSendComment(it)) }
         })
 
         viewModel.navToOrderHistory.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(OrderFragmentDirections.navToOrderHistory()) }
+            it?.let { findNavController().navigate(NavDirections.navToOrderHistory()) }
         })
 
         viewModel.orderProduct.observe(viewLifecycleOwner, {

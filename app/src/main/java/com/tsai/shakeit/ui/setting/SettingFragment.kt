@@ -9,9 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.tsai.shakeit.MainViewModel
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.databinding.SettingFragmentBinding
 import com.tsai.shakeit.ext.getVmFactory
-import com.tsai.shakeit.ui.menu.MenuFragmentDirections
 import com.tsai.shakeit.util.Logger
 
 class SettingFragment : Fragment() {
@@ -63,7 +63,7 @@ class SettingFragment : Fragment() {
         })
 
         viewModel.popBack.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(MenuFragmentDirections.navToHome()) }
+            it?.let { findNavController().navigate(NavDirections.navToHome()) }
         })
 
         binding.settingShopRev.adapter = adapter

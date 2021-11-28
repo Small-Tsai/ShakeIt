@@ -280,7 +280,6 @@ class AddMenuItemViewModel(
         othersOptionPrice[3] = "10"
     }
 
-
     /*
     merge content and price -> postProductImg await to get it's imgUri ->
     split shopName -> setProduct -> post productData to firebase

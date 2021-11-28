@@ -4,27 +4,27 @@ import com.squareup.moshi.Json
 
 data class Leg(
 
-    val distance: Distance,
+    val distance: Distance = Distance(),
 
-    val duration: Duration,
+    val duration: Duration = Duration(),
 
     @Json(name = "end_address")
-    val endAddress: String,
+    val endAddress: String = "",
 
     @Json(name = "end_location")
-    val endLocation: EndLocation,
+    val endLocation: EndLocation? = null,
 
     @Json(name = "start_address")
-    val startAddress: String,
+    val startAddress: String = "",
 
     @Json(name = "start_location")
-    val startLocation: StartLocation,
+    val startLocation: StartLocation? = null,
 
-    val steps: List<Step>,
+    val steps: List<Step> = listOf(),
 
     @Json(name = "traffic_speed_entry")
-    val trafficSpeedEntry: List<Any>,
+    val trafficSpeedEntry: List<Any> = listOf(),
 
     @Json(name = "via_waypoint")
-    val viaWaypoint: List<Any>
+    val viaWaypoint: List<Any> = listOf(),
 )

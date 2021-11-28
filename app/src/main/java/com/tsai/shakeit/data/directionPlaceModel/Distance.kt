@@ -5,6 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Distance(
-    val text: String,
-    val value: Int
+    val text: String = "",
+    val value: Int = 0
 ) : Parcelable

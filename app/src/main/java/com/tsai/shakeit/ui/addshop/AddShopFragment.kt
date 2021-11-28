@@ -1,9 +1,7 @@
 package com.tsai.shakeit.ui.addshop
 
 import android.app.Activity
-import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +10,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.android.material.button.MaterialButton
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.ShakeItApplication
 import com.tsai.shakeit.databinding.AddShopFragmentBinding
+import com.tsai.shakeit.ext.getBitmapFromUri
 import com.tsai.shakeit.ext.getVmFactory
+import com.tsai.shakeit.ext.setOnClickChoosePhoto
 import com.tsai.shakeit.util.Logger
 
 class AddShopFragment : Fragment() {
@@ -47,8 +46,8 @@ class AddShopFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.menuPhoto.menuSetOnClickChoosePhoto()
-        binding.shopPhoto.setOnClickChoosePhoto()
+        binding.menuPhoto.setOnClickChoosePhoto(this, menuActivityLauncher)
+        binding.shopPhoto.setOnClickChoosePhoto(this, shopActivityLauncher, Pair(16f, 9f))
         binding.dateRev.adapter = adapter
 
         viewModel.popBack.observe(viewLifecycleOwner, {
@@ -73,7 +72,7 @@ class AddShopFragment : Fragment() {
 
         viewModel.navToHome.observe(viewLifecycleOwner, {
             it?.let {
-                findNavController().navigate(AddShopFragmentDirections.navToHome())
+                findNavController().navigate(NavDirections.navToHome())
             }
         })
 
@@ -86,7 +85,7 @@ class AddShopFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val resultData = result.data
                 resultData?.data.let { uri ->
-                    val bitmap = uri?.let { getBitmapFromUri(it) }
+                    val bitmap = uri?.getBitmapFromUri()
                     binding.shopPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
                     viewModel.shopImageUri.value = uri
                 }
@@ -98,7 +97,7 @@ class AddShopFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val resultData = result.data
                 resultData?.data.let { uri ->
-                    val bitmap = uri?.let { getBitmapFromUri(it) }
+                    val bitmap = uri?.getBitmapFromUri()
                     binding.menuPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
                     viewModel.menuImageUri.value = uri
                 }
@@ -133,35 +132,6 @@ class AddShopFragment : Fragment() {
                 Logger.d("autoComplete error")
             }
         }
-
-    private fun getBitmapFromUri(uri: Uri) =
-        ShakeItApplication.instance.contentResolver.openFileDescriptor(uri, "r")?.use {
-            BitmapFactory.decodeFileDescriptor(it.fileDescriptor)
-        }
-
-    private fun MaterialButton.setOnClickChoosePhoto() {
-        setOnClickListener {
-            ImagePicker.with(fragment = this@AddShopFragment)
-                .galleryOnly()
-                .crop(16f, 9f)
-                .compress(1024)
-                .createIntent { intent ->
-                    shopActivityLauncher.launch(intent)
-                }
-        }
-    }
-
-    private fun MaterialButton.menuSetOnClickChoosePhoto() {
-        setOnClickListener {
-            ImagePicker.with(fragment = this@AddShopFragment)
-                .galleryOnly()
-                .crop()
-                .compress(1024)
-                .createIntent { intent ->
-                    menuActivityLauncher.launch(intent)
-                }
-        }
-    }
 
     private fun startAutoCompleteIntent() {
 

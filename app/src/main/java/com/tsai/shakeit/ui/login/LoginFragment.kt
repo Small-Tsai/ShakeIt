@@ -23,6 +23,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.tsai.shakeit.NavDirections
 import com.tsai.shakeit.R
 import com.tsai.shakeit.app.TOPIC
 import com.tsai.shakeit.databinding.LoginFragmentBinding
@@ -101,7 +102,7 @@ class LoginFragment : Fragment() {
         }
 
         viewModel.navToOrder.observe(viewLifecycleOwner, {
-            it?.let { findNavController().navigate(LoginFragmentDirections.navToOrder()) }
+            it?.let { findNavController().navigate(NavDirections.navToOrder()) }
         })
 
         return binding.root
@@ -162,7 +163,7 @@ class LoginFragment : Fragment() {
                 if (::orderId.isInitialized) {
                     viewModel.joinToOrder(orderId)
                 } else {
-                    findNavController().navigate(LoginFragmentDirections.navToHome())
+                    findNavController().navigate(NavDirections.navToHome())
                 }
             }
         }

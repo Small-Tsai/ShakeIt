@@ -95,7 +95,7 @@ class OrderViewModel(private val repository: ShakeItRepository) : ViewModel() {
                     }
                 ) {
                     is Result.Success -> {
-                        _orderProduct.value = result.data
+                        _orderProduct.value = result.data!!
                     }
                     else -> {}
                 }

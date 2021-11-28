@@ -37,7 +37,7 @@ class OrderHistoryViewModel(private val repository: ShakeItRepository) : ViewMod
         viewModelScope.launch {
             when (val result = repository.getOrderHistory(UserInfo.userId)) {
                 is Result.Success -> {
-                    _orderHistory.value = result.data
+                    _orderHistory.value = result.data!!
                 }
                 else -> {}
             }

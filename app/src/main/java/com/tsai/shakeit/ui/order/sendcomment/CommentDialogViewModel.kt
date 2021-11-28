@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class CommentDialogViewModel(
     private val repository: ShakeItRepository,
-    private val shopId: String?
+    private val shopId: String?,
 ) : ViewModel() {
 
     private val _popBack = MutableLiveData<Boolean?>()

@@ -22,8 +22,7 @@ class DrinksDetailViewModel(
     private val shop: Shop?,
     private val otherUserId: String?,
     private val hasOrder: Boolean?,
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val _drinksDetailList = MutableLiveData<List<DrinksDetail>>()
     val drinksDetailList: LiveData<List<DrinksDetail>>

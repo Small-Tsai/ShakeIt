@@ -104,7 +104,7 @@ class HomeViewModelTest {
         viewModel.allShopName.observeForever(mockShopNameListObserver)
         viewModel.isInMyFavorite.observeForever(mockIsInMyFavoriteObserver)
         viewModel.selectedShop.observeForever(mockSelectedShopObserver)
-        viewModel.selectShopId.observeForever(mockShopSnippetObserver)
+        viewModel.selectedShopId.observeForever(mockShopSnippetObserver)
         viewModel.trafficMode.observeForever(mockTrafficModeObserver)
         viewModel.getDirectionDone.observeForever(mockGetDirectionDoneObserver)
     }
@@ -138,7 +138,7 @@ class HomeViewModelTest {
         viewModel.checkHasFavorite()
 
         verify { mockFavoriteListObserver.onChanged(listOf()) }
-        assertEquals(false, viewModel.isInMyFavorite.value)
+        assertEquals(false, viewModel.isInMyFavorite.getOrAwaitValue())
     }
 
     @Test
@@ -171,24 +171,24 @@ class HomeViewModelTest {
         // Get ShopId
         viewModel.getSelectedShopSnippet(testShopId)
         verify { mockShopSnippetObserver.onChanged(testShopId) }
-        assertEquals(testShopId, viewModel.selectShopId.value)
+        assertEquals(testShopId, viewModel.selectedShopId.getOrAwaitValue())
 
         // Use mock snippet(shopId) to filter mockShopDataList
         viewModel.filterShopListByShopId(testShopId, shopInfoList)
-        assertEquals(shopInfo, viewModel.selectedShop.value)
+        assertEquals(shopInfo, viewModel.selectedShop.getOrAwaitValue())
         verify { mockSelectedShopObserver.onChanged(shopInfo) }
     }
 
     @Test
     fun selectWalking_isCorrect() = scope.runTest {
         viewModel.selectWalk()
-        assertEquals(WALKING, viewModel.trafficMode.value)
+        assertEquals(WALKING, viewModel.trafficMode.getOrAwaitValue())
     }
 
     @Test
     fun selectDriving_isCorrect() = scope.runTest {
         viewModel.selectDriving()
-        assertEquals(DRIVING, viewModel.trafficMode.value)
+        assertEquals(DRIVING, viewModel.trafficMode.getOrAwaitValue())
     }
 
     @Test
@@ -220,7 +220,7 @@ class HomeViewModelTest {
 
         verify { mockGetDirectionDoneObserver.onChanged(true) }
 
-        assertEquals(testDistance, viewModel.distanceLiveData.value)
-        assertEquals(testDuration, viewModel.trafficTimeLiveData.value)
+        assertEquals(testDistance, viewModel.distanceLiveData.getOrAwaitValue())
+        assertEquals(testDuration, viewModel.trafficTimeLiveData.getOrAwaitValue())
     }
 }

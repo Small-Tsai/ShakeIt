@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
-
+    
     private val _navToMenu = MutableLiveData<Shop?>()
     val navToMenu: LiveData<Shop?>
         get() = _navToMenu
@@ -98,7 +98,7 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
     // Record current user selected shop snippet
     private val _selectedShopId = MutableLiveData<String?>()
-    val selectShopId: LiveData<String?> = _selectedShopId
+    val selectedShopId: LiveData<String?> = _selectedShopId
 
     // Record fragment type from home page
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
@@ -126,7 +126,9 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
     // LiveData for detect getDirection done
     val getDirectionDone = MutableLiveData<Boolean>()
 
-    // Calculate distance from userSettingTime -> distance = averageSpeed * userSettingTime
+    /**
+     * Calculate [distance] from [userSettingTime] -> distance = averageSpeed * userSettingTime
+     */
     val distance: Double
         get() {
             var distance = 0.0
@@ -159,8 +161,11 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    // LiveData for detect search focus
-    // FilterBtn will transform to closeSearchBarBtn By dataBinding it
+
+    /**
+     * LiveData for detect search focus
+     * FilterBtn will transform to closeSearchBarBtn By dataBinding it
+     */
     val isSearchBarFocus = MutableLiveData<Boolean>().apply { value = false }
 
     // CloseSearchBarBtn onClick -> clear searchBar focus , null prevent navigation agin
@@ -178,8 +183,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         _userSearchingProduct.value = product
     }
 
-    // If distance between shopLocation and userLocation smaller then [distance] then get it's data
-    // Distance between shopLocation and userLocation calculate by firebase using GeoLocation
+    /**
+     * If [distance] between shopLocation and userLocation smaller then [distance] then get it's data
+     * Distance between shopLocation and [userLocation] calculate by firebase using GeoLocation
+     */
     fun getShopData(userLocation: LatLng, type: String? = null) {
         viewModelScope.launch {
             repository.getAllShop(userLocation, distance).collect { allShop ->
@@ -227,8 +234,10 @@ class HomeViewModel(private val repository: ShakeItRepository) : ViewModel() {
         }
     }
 
-    // After user select a shop check is favoriteList contains selectedShopId
-    // Yes -> trigger dataBinding to show red heart on bottomSheet, No -> show empty heart
+    /**
+     * After user select a shop check is [favoriteList] contains [selectedShopId]
+     * Yes -> trigger dataBinding to show red heart on bottomSheet, No -> show empty heart
+     */
     fun checkHasFavorite() {
         isInMyFavorite.value =
             _favoriteList.value?.map { it.shop.shop_Id }?.contains(_selectedShopId.value)

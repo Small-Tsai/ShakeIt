@@ -124,15 +124,17 @@ class MenuViewModel(
     private fun shareOrderToLINE() {
         mOrder.order_Id = myId
         val lineUrl = "https://line.me/R/msg/text/快來跟我一起喝${selectedShop.name}吧！" +
-            "https://com.smalltsai.shakeit/${mOrder.order_Id}"
+                "https://com.smalltsai.shakeit/${mOrder.order_Id}"
         val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
         _shareOrder.value = sendIntent
         _shareOrder.value = null
         _status.value = LoadApiStatus.DONE
     }
 
-    // If user doesn't has order in selected shop showDialog for create order
-    // else start share order
+    /**
+     * If user doesn't has order in [selectedShop] showDialog for create order
+     * else start share order
+     */
     fun startShare() {
         if (_hasOrder.value == false) {
             _showDialog.value = true
@@ -143,8 +145,10 @@ class MenuViewModel(
         }
     }
 
-    // Post an order which has no product to firebase
-    // if post success start sharing it to LINE
+    /**
+     * Post an order which has no product to firebase
+     * if post success start sharing it to LINE
+     */
     fun addNewOrderToFireBase() {
         if (!Util.isInternetConnected()) {
             _status.value = LoadApiStatus.ERROR
@@ -204,15 +208,19 @@ class MenuViewModel(
         }
     }
 
-    // When viewModel created getProduct, getOrder, getOrderProduct from firebase
+    /**
+     * When [MenuViewModel] created [getProduct], [getOrderDataByUserId], [getOrderProductByUserId] from firebase
+     */
     fun initProduct() {
         getProduct()
         getOrderDataByUserId()
         getOrderProductByUserId()
     }
 
-    // If otherUserId exist -> current order was created by otherUser -> getOrderData by otherUserId
-    // Else -> current order was created by me -> getOrderData by myId
+    /**
+     * If [otherUserId] exist -> current order was created by otherUser -> getOrderData by [otherUserId]
+     * Else -> current order was created by me -> getOrderData by [myId]
+     */
     private fun getOrderDataByUserId() {
         _orderList = if (otherUserId != UserInfo.userId && otherUserId != "") {
             repository.getOrderByOrderId(otherId)
@@ -221,8 +229,10 @@ class MenuViewModel(
         }
     }
 
-    // If otherUserId exist -> order was created by otherUser -> getOrderProductData by otherUserId
-    // Else -> current order was created by me -> getOrderProductData by myId
+    /**
+     * If [otherUserId] exist -> order was created by otherUser -> getOrderProductData by [otherUserId]
+     * Else -> current order was created by me -> getOrderProductData by [myId]
+     */
     private fun getOrderProductByUserId() {
         _orderProductList = if (otherUserId != UserInfo.userId && otherUserId != "") {
             repository.getOrderProductBySnapShot(otherId)
@@ -256,9 +266,11 @@ class MenuViewModel(
         }
     }
 
-    // After getProduct -> map productList to it's type then filter product with each type
-    // Double forLoop -> add productType then add product By Menu sealed class type
-    // Menu class use for get different viewType in recycleView
+    /**
+     * After [getProduct] -> map [productList] to it's type then filter product with each type
+     * Double forLoop -> add productType then add product By [Menu] sealed class type
+     * [Menu] class use for get different viewType in recycleView
+     */
     fun filterProductList(productList: List<Product>) {
 
         val menuList = mutableListOf<Menu>()

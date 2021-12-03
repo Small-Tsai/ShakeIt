@@ -122,9 +122,9 @@ class AddMenuItemViewModel(
     }
 
     // Use to record adapterPosition which user select on recycleView
-    private var currentSelectedPostion = -1
+    private var currentSelectedPosition = -1
     fun recordCurrentSelectedPosition(position: Int) {
-        currentSelectedPostion = position
+        currentSelectedPosition = position
     }
 
     // Use to record optionType which user select on recycleView
@@ -140,45 +140,53 @@ class AddMenuItemViewModel(
     private val sugarOptionsName = hashMapOf<Int, String?>()
     private val othersOptionsName = hashMapOf<Int, String?>()
 
-    // Set option name when observe optionName change
-    /* Logic ->
-    When user select editText record it's adapterPosition and it's type ->
-    Due to Two-way dataBinding when text change trigger observe to do setOptionName function ->
-    When type=0 -> it means user select on capacityOption ->
-    capacityOptionsName[recordPosition] = userImportContent ->
-    Get result ex. hashMap( 1 to "big" )
-    */
+
+    /**
+     * Set option name when observe optionName change
+     *
+     * Logic ->
+     *
+     * When user select editText record it's adapterPosition and it's type ->
+     *
+     * Due to Two-way dataBinding when text change trigger observe to do [setOptionName] function ->
+     *
+     * When type=0 -> it means user select on capacityOption ->
+     *
+     * capacityOptionsName[currentSelectedPosition] = [userImportContent] ->
+     *
+     * Get result ex. hashMap( 1 to "big" )
+     */
     fun setOptionName(userImportContent: String) {
         when (currentSelectedType) {
             0 -> {
                 if (userImportContent.isNotEmpty()) {
-                    capacityOptionsName[currentSelectedPostion] = userImportContent
+                    capacityOptionsName[currentSelectedPosition] = userImportContent
                 } else {
-                    capacityOptionsName[currentSelectedPostion] = null
+                    capacityOptionsName[currentSelectedPosition] = null
                 }
                 Logger.d("capacityOptionContent = $capacityOptionsName")
             }
             1 -> {
                 if (userImportContent.isNotEmpty()) {
-                    iceOptionsName[currentSelectedPostion] = userImportContent
+                    iceOptionsName[currentSelectedPosition] = userImportContent
                 } else {
-                    iceOptionsName[currentSelectedPostion] = null
+                    iceOptionsName[currentSelectedPosition] = null
                 }
                 Logger.d("iceOptionContent = $iceOptionsName")
             }
             2 -> {
                 if (userImportContent.isNotEmpty()) {
-                    sugarOptionsName[currentSelectedPostion] = userImportContent
+                    sugarOptionsName[currentSelectedPosition] = userImportContent
                 } else {
-                    sugarOptionsName[currentSelectedPostion] = null
+                    sugarOptionsName[currentSelectedPosition] = null
                 }
                 Logger.d("sugarOptionContent = $sugarOptionsName")
             }
             3 -> {
                 if (userImportContent.isNotEmpty()) {
-                    othersOptionsName[currentSelectedPostion] = userImportContent
+                    othersOptionsName[currentSelectedPosition] = userImportContent
                 } else {
-                    othersOptionsName[currentSelectedPostion] = null
+                    othersOptionsName[currentSelectedPosition] = null
                 }
                 Logger.d("othersOptionContent = $othersOptionsName")
             }
@@ -192,15 +200,19 @@ class AddMenuItemViewModel(
     fun setOptionPrice(price: String) {
         if (price.isNotEmpty()) {
             when (currentSelectedType) {
-                0 -> capacityOptionPrice[currentSelectedPostion] = price
-                3 -> othersOptionPrice[currentSelectedPostion] = price
+                0 -> capacityOptionPrice[currentSelectedPosition] = price
+                3 -> othersOptionPrice[currentSelectedPosition] = price
             }
         }
     }
 
-    // Use for implement common options
-    // clear old options -> set new options -> set new data for post -> refresh UI
-    // Get result ex. hashMap( 1 to "50" )
+    /**
+     * Use for implement common options
+     *
+     * clear old options -> set new options -> set new data for post -> refresh UI
+     *
+     * Get result ex. hashMap( 1 to "50" )
+     */
     fun implementCommonOptions() {
         clearAllOption()
         setNewOptions()
@@ -209,7 +221,7 @@ class AddMenuItemViewModel(
     }
 
     private fun clearAllOption() {
-        currentSelectedPostion = -1
+        currentSelectedPosition = -1
         capacityList.clear()
         iceList.clear()
         sugarList.clear()
@@ -280,55 +292,56 @@ class AddMenuItemViewModel(
         othersOptionPrice[3] = "10"
     }
 
-    /*
-    merge content and price -> postProductImg await to get it's imgUri ->
-    split shopName -> setProduct -> post productData to firebase
-    Ex.
-    capacityOptionsName = hashMap( 1 to "big" ) , capacityOptionsPrice = hashMap( 1 to "50" )
-    merge result -> capacityListForPost = hashMap( "big" to "50" )
-    shopName split -> ex. 可不可熟成紅茶 to ["可","可不","可不可"....]
-    setProduct -> put shopNameArray & imgUri & capacityListForPost... to Product data class
-    -> post product
-    */
+    /**
+     * merge content and price -> postProductImg await to get it's imgUri -> split shopName -> setProduct -> post productData to firebase
+     *
+     * Ex.
+     *
+     * [capacityOptionsName] = hashMap( 1 to "big" ) , [capacityOptionPrice] = hashMap( 1 to "50" )
+     *
+     * merge result -> [_capacityListForPost] = hashMap( "big" to "50" )
+     *
+     * shopName split -> ex. 可不可熟成紅茶 to `["可","可不","可不可"....]`
+     *
+     * setProduct -> put shopNameArray & imgUri & [_capacityListForPost]... to [Product] data class-> post product
+     */
     @FlowPreview
     fun setProductDataThenPost() {
-
-        if (capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()) {
-            myToast("請至少填寫一組容量與價格選項")
-        } else if (iceOptionsName.isNullOrEmpty()) {
-            myToast("請至少填寫一組冰量選項")
-        } else if (sugarOptionsName.isNullOrEmpty()) {
-            myToast("請至少填寫一組甜度選項")
-        } else if (productName.isEmpty() || productType.isEmpty()) {
-            myToast("商品名稱與類別不可留白喔")
-        } else {
-            viewModelScope.launch {
+        when {
+            capacityOptionsName.isNullOrEmpty() || capacityOptionPrice.isNullOrEmpty()
+            -> myToast("請至少填寫一組容量與價格選項")
+            iceOptionsName.isNullOrEmpty()
+            -> myToast("請至少填寫一組冰量選項")
+            sugarOptionsName.isNullOrEmpty()
+            -> myToast("請至少填寫一組甜度選項")
+            productName.isEmpty() || productType.isEmpty()
+            -> myToast("商品名稱與類別不可留白喔")
+            productImageUri.value == null
+            -> myToast("請上傳一張商品圖片")
+            else
+            -> viewModelScope.launch {
 
                 mergeOptionNameAndPrice()
+                val productImg = repository.postImage(productImageUri.value!!)
 
-                if (productImageUri.value == null) {
-                    myToast("請上傳一張商品圖片")
-                } else {
-                    val productImg = repository.postImage(productImageUri.value!!)
-                    productImg
-                        .flatMapConcat {
-                            setProductData(shop!!, it)
-                        }.flatMapConcat {
-                            repository.postProduct(it)
-                        }.collect { result ->
-                            when (result) {
-                                is Result.Success -> {
-                                    myToast("上傳商品成功", "long")
-                                    _status.value = LoadApiStatus.DONE
-                                    _navToMenu.value = true
-                                    _navToMenu.value = null
-                                }
-                                is Result.Fail -> _status.value = LoadApiStatus.ERROR
-                                is Result.Error -> Logger.e(result.exception.toString())
-                                else -> {}
+                productImg
+                    .flatMapConcat {
+                        setProductData(shop!!, it)
+                    }.flatMapConcat {
+                        repository.postProduct(it)
+                    }.collect { result ->
+                        when (result) {
+                            is Result.Success -> {
+                                myToast("上傳商品成功", "long")
+                                _status.value = LoadApiStatus.DONE
+                                _navToMenu.value = true
+                                _navToMenu.value = null
                             }
+                            is Result.Fail -> _status.value = LoadApiStatus.ERROR
+                            is Result.Error -> Logger.e(result.exception.toString())
+                            else -> {}
                         }
-                }
+                    }
             }
         }
     }
@@ -432,16 +445,16 @@ class AddMenuItemViewModel(
         refreshLiveData()
     }
 
-    /*
-    When recycleView addNewOption it will re use same layout so if editText already has text on it
-    it will duplicate that text on new option editText so before addOption have to setText to empty
-    but setText to empty will trigger Two-way dataBinding and trigger setOptionName & price function
-    it cause old data set to empty so before addNewOption set selectedType and selectedPosition to
-    new optionType and set new position to lastIndex to prevent old data set to empty
+    /**
+    When recycleView [addNewOption] it will re use same layout so if editText already has text on it
+    it will duplicate that text on new option editText so before [addOption] have to setText to empty
+    but setText to empty will trigger Two-way dataBinding and trigger [setOptionName] & price function
+    it cause old data set to empty so before [addNewOption] set [currentSelectedType] and [currentSelectedPosition] to
+    new [optionType] and set new position to [lastIndex] to prevent old data set to empty
      */
     private fun addNewOption(optionsList: MutableList<AddMenuItem>, optionType: Int) {
         currentSelectedType = optionType
-        currentSelectedPostion = optionsList.lastIndex
+        currentSelectedPosition = optionsList.lastIndex
         optionsList.add(optionsList.lastIndex, AddMenuItem.Detail(hashMapOf(), optionType))
     }
 

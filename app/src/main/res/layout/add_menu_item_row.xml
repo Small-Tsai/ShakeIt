@@ -38,6 +38,7 @@
             android:layout_marginTop="2dp"
             android:gravity="center_horizontal"
             android:hint="@string/import_options"
+            android:maxLength="8"
             getCurrentType="@{type}"
             gerCurrentPosition="@{position}"
             viewModel="@{viewModel}"

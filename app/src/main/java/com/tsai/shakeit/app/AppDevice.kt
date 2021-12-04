@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.android.gms.location.*
 import com.tsai.shakeit.ShakeItApplication.Companion.instance
 import com.tsai.shakeit.ui.home.HomeFragment
+import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 
 class AppDevice(private val fragment: HomeFragment) {
@@ -29,6 +30,7 @@ class AppDevice(private val fragment: HomeFragment) {
                     object : LocationCallback() {
                         override fun onLocationResult(locationResult: LocationResult?) {
                             locationResult ?: return
+                            Logger.d("get device location")
                             UserInfo.userCurrentLat = locationResult.lastLocation.latitude
                             UserInfo.userCurrentLng = locationResult.lastLocation.longitude
                             fragment.setMapUI()

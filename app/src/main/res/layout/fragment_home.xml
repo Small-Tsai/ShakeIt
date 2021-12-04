@@ -421,27 +421,30 @@
                 android:textSize="12sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
+                app:layout_constraintEnd_toStartOf="@+id/traffic_mode_icon"
                 app:layout_constraintStart_toEndOf="@+id/ratingBar" />
 
             <TextView
                 android:id="@+id/shopName"
                 branch="@{shop.branch}"
                 shopName="@{shop.name}"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="24dp"
+                android:layout_marginEnd="20dp"
                 android:fontFamily="@font/roboto"
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="20sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
+                app:layout_constraintEnd_toStartOf="@+id/imageButton"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/shopAddress"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/noto_sans"
@@ -449,6 +452,7 @@
                 android:text="@{shop.address}"
                 android:textSize="14sp"
                 android:visibility="@{viewModel.bottomStatus==LoadApiStatus.LOADING? View.GONE : View.VISIBLE }"
+                app:layout_constraintEnd_toEndOf="@+id/shopName"
                 app:layout_constraintStart_toStartOf="@+id/shopName"
                 app:layout_constraintTop_toBottomOf="@+id/shopName" />
 

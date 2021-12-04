@@ -70,18 +70,23 @@
 
             <TextView
                 android:id="@+id/order_product_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:fontFamily="@font/roboto"
                 android:text="@{orderProduct.name}"
                 android:textColor="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/product_user_name"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/order_detail_cv"
                 app:layout_constraintTop_toTopOf="@+id/order_detail_cv" />
 
             <TextView
                 android:id="@+id/productPrice"
                 priceText="@{orderProduct.price}"
+                android:singleLine="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
@@ -89,6 +94,7 @@
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/product_detail"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/product_detail"
                 app:layout_constraintTop_toTopOf="@+id/product_detail" />
 
             <View
@@ -105,10 +111,12 @@
             <TextView
                 android:id="@+id/product_qty_txt"
                 qtyText="@{orderProduct.qty}"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/roboto"
+                app:layout_constraintEnd_toEndOf="@+id/order_product_title"
                 app:layout_constraintStart_toStartOf="@+id/order_product_title"
                 app:layout_constraintTop_toBottomOf="@+id/order_product_title" />
 
@@ -129,10 +137,12 @@
             <TextView
                 android:id="@+id/product_user_name"
                 android:layout_width="wrap_content"
+                android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="@{orderProduct.user.user_Name}"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/order_product_title"
                 app:layout_constraintTop_toTopOf="@+id/order_product_title" />
 
 

@@ -51,7 +51,7 @@
 
 > Add new shop
 
-<img src="../../Downloads/addShop.gif" alt="addShop" style="zoom:20%;" /> 
+<img src="ScreenShot/addShop.gif" alt="addShop" style="width:20%;" /> 
 
 - #### Menu Page
 
@@ -65,7 +65,7 @@
 
 > Add new product
 
-<img src="../../Documents/newProduct.png" alt="newProduct" style="zoom:20%;" /> 
+<img src="ScreenShot/newProduct.png" alt="newProduct" style="width:20%;" /> 
 
 - #### Order Page
 
@@ -77,14 +77,14 @@
 
 
 
-<img src="ScreenShot/sendNoti.gif" alt="sendNoti" style="zoom:20%;" /><img src="ScreenShot/backNoti.gif" alt="backNoti" style="zoom:20%;" />
+<img src="ScreenShot/sendNoti.gif" alt="sendNoti" style="width:20%;" /><img src="ScreenShot/backNoti.gif" alt="backNoti" style="width:20%;" />
 
 > Complete order and leave comment 
 
-<img src="ScreenShot/leaveComments.gif" alt="leaveComments" style="zoom:20%;" /> <img src="ScreenShot/comment.png" alt="comment" style="zoom:20%;" />
+<img src="ScreenShot/leaveComments.gif" alt="leaveComments" style="width:20%;" /> <img src="ScreenShot/comment.png" alt="comment" style="width:20%;" />
 
 - #### Favorite Page
 
   > Add to favorites 
 
-  <img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="zoom:20%;"/> 
+  <img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="width:20%;"/> 

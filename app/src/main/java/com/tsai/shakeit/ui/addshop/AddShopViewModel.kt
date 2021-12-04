@@ -171,7 +171,7 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
 
                 val shopImg = repository.postImage(shopImageUri.value!!)
                 val menuImg = repository.postImage(menuImageUri.value!!)
-                menuImg.zip(shopImg) { shopImgResult, menuImgResult ->
+                menuImg.zip(shopImg) { menuImgResult, shopImgResult ->
                     if (shopImgResult is Result.Success && menuImgResult is Result.Success) {
                         val shop = Shop(
                             name = name.replace(" ", ""),

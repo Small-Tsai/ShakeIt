@@ -1,8 +1,5 @@
 # 報茗牌 ShakeIt
 
-
-
-
 <p align="center">
 <img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/SHAKEIT.png?alt=media&token=3716d909-65d4-4e29-a3fa-0f8525c99274" style="width:12%" /></center>
 </p>
@@ -36,55 +33,74 @@
 >Filter out the shop and Search for the beverage 
 
 <p>
-<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E9%A1%AF%E7%A4%BA%E5%95%86%E5%AE%B6%E5%8E%BB%E8%83%8C.gif" alt="oie_2201296Yo3Apfq (1)" style="width:20%" />
-<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E6%90%9C%E5%B0%8B%E5%8E%BB%E8%83%8C.gif" alt="4" style="width:20%" /> 
+<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E9%A1%AF%E7%A4%BA%E5%95%86%E5%AE%B6%E5%8E%BB%E8%83%8C.gif" alt="oie_2201296Yo3Apfq (1)" style="width:17%" />
+&nbsp&nbsp
+<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E6%90%9C%E5%B0%8B%E5%8E%BB%E8%83%8C.gif" alt="4" style="width:17%" /> 
 </p>
 
 
 >Choose your transportation and setting your traffic time
 
-<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E6%99%82%E9%96%93%E5%8E%BB%E8%83%8C.gif?raw=true" alt="時間去背" style="width:20%;padding-left:100px" /> 
+<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E6%99%82%E9%96%93%E5%8E%BB%E8%83%8C.gif?raw=true" alt="時間去背" style="width:17%;padding-left:100px" /> 
 
 > Start navigation ( Walking or Driving )
 
-<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/Blue Modern New App Promotion Instagram Post.svg?alt=media&token=796317ef-3ab2-4128-b934-f6c858e36c85" style="width:20%;padding-left:70px" /> <img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/carNAv.png?alt=media&token=63a44786-aa35-47a4-bad9-2561044c3887" style="width:20%;padding-left:36px" />
+<p>
+<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/Blue Modern New App Promotion Instagram Post.svg?alt=media&token=796317ef-3ab2-4128-b934-f6c858e36c85" style="width:17%;padding-left:70px" />
+&nbsp&nbsp
+<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/carNAv.png?alt=media&token=63a44786-aa35-47a4-bad9-2561044c3887" style="width:17%;padding-left:36px" />
+</p>
 
 > Add new shop
 
-<img src="ScreenShot/addShop.gif" alt="addShop" style="width:20%;" /> 
+<img src="ScreenShot/addShop.gif" alt="addShop" style="width:17%;" /> 
 
 - #### Menu Page
 
 > Select beverage which you want and choose amount of ice, sugar and capacity 
 
- <img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/Menu.png?alt=media&token=0c7cad16-118c-4e21-acee-e3d618a9d1d0" style="width:20%;padding-left:70px" /><img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/detail.png?alt=media&token=235d795e-954e-447d-841d-dc75a6e7705a" style="width:20%;padding-left:50px" />
+<p>
+<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/Menu.png?alt=media&token=0c7cad16-118c-4e21-acee-e3d618a9d1d0" style="width:17%;padding-left:70px" />
+&nbsp&nbsp
+<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/detail.png?alt=media&token=235d795e-954e-447d-841d-dc75a6e7705a" style="width:17%;padding-left:50px" />
+ </p>
 
 > Share orders to your friends with LINE message
 
-<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/line.png?alt=media&token=cf8b9365-21a4-41ad-838f-46530b5d649d" style="width:20%;" /> 
+<img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/line.png?alt=media&token=cf8b9365-21a4-41ad-838f-46530b5d649d" style="width:17%;" /> 
 
 > Add new product
 
-<img src="ScreenShot/newProduct.png" alt="newProduct" style="width:20%;" /> 
+<img src="ScreenShot/newProduct.png" alt="newProduct" style="width:17%;" /> 
 
 - #### Order Page
 
 > Check and edit your order
 
-<img src="ScreenShot/order.png" alt="order" style="width:20%;" /> <img src="ScreenShot/addNew.gif" alt="addNew" style="width:20%;" />
+<p>
+<img src="ScreenShot/order.png" alt="order" style="width:17%;" />
+&nbsp&nbsp
+<img src="ScreenShot/addNew.gif" alt="addNew" style="width:17%;" />
+ </p>
 
 > Send notifications to other members who make the order together by FCM service
 
-
-
-<img src="ScreenShot/sendNoti.gif" alt="sendNoti" style="width:20%;" /><img src="ScreenShot/backNoti.gif" alt="backNoti" style="width:20%;" />
+<p>
+<img src="ScreenShot/sendNoti.gif" alt="sendNoti" style="width:17%;" />
+&nbsp&nbsp
+<img src="ScreenShot/backNoti.gif" alt="backNoti" style="width:17%;" />
+</p>
 
 > Complete order and leave comment 
 
-<img src="ScreenShot/leaveComments.gif" alt="leaveComments" style="width:20%;" /> <img src="ScreenShot/comment.png" alt="comment" style="width:20%;" />
+<p>
+<img src="ScreenShot/leaveComments.gif" alt="leaveComments" style="width:17%;" />
+&nbsp&nbsp
+<img src="ScreenShot/comment.png" alt="comment" style="width:17%;" />
+</p>
 
 - #### Favorite Page
 
   > Add to favorites 
 
-<img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="width:20%;"/> 
+<img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="width:17%;"/> 

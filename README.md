@@ -87,4 +87,4 @@
 
   > Add to favorites 
 
-  <img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="width:20%;"/> 
+<img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="width:20%;"/> 

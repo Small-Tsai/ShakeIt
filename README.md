@@ -4,6 +4,11 @@
 <img src="https://firebasestorage.googleapis.com/v0/b/shakeit-329401.appspot.com/o/SHAKEIT.png?alt=media&token=3716d909-65d4-4e29-a3fa-0f8525c99274" style="width:12%" /></center>
 </p>
 
+<p align="center">
+   <img src="https://img.shields.io/badge/release-5.0-blue"> 
+   <img src="https://img.shields.io/badge/platform-android-green"> 
+</p>
+
 <p align="center">A map that you can use several ways to search for nearby beverage shops which includes</p>
 <p align="center">your transportation, traffic time or filter out your favorite stores</p>
 <p align="center">then uses the menu system to create your orders. Also, you can share your orders by LINE messages</p>
@@ -104,3 +109,44 @@
   > Add to favorites 
 
 <img src="ScreenShot/addFavoriteB.gif" alt="addFavoriteB" style="width:17%;"/> 
+
+## :bulb: Technical Highlights
+
+- Implemented MVVM pattern to make code further decoupled
+- Deployed GoogleMaps SDK to embed maps inside the app and customized map markers style. Also customized map camera to move and build markerOnClick function to interact with BottomSheet
+- Deployed FCM Service to subscribe app token on the server and received messages from the server to show notification even when App is closed
+Share user orders on LINE by Deep-Links
+- Control thread switching by Coroutine and Flow Get server data by Retrofit and parse it with Moshi
+- Download images from URL and store them in the temporary storage by Glide
+- Performed Unit Tests with JUnit and Mockito to ensure the App's stability
+
+## Libraries
+
+- [Notify-Android](https://github.com/Isradeleon/Notify-Android)
+- [Image Picker](https://github.com/Dhaval2404/ImagePicker)
+- [lottie-Android](https://github.com/airbnb/lottie-android)
+- [PermissionX](https://github.com/guolindev/PermissionX)
+- [Maps SDK for Android Utility Library](https://github.com/googlemaps/android-maps-utils)
+- [SwipeRevealLayout](https://github.com/chthai64/SwipeRevealLayout)
+- [Meow Bottom Navigation](https://github.com/oneHamidreza/MeowBottomNavigation)
+- [Glide](https://github.com/bumptech/glide)
+- [Mock K](https://github.com/mockk/mockk)
+
+## Release Notes
+
+| Version | Date | Description                                                                                     |
+| :-------| :----|:------------------------------------------------------------------------------------------------|
+| 5.0   | 2021.11.22 | Minor bug fixes |
+| 4.0   | 2021.11.21 | Minor bug fixes |
+| 3.0   | 2021.11.21 | Update shop name data structure |
+| 2.0   | 2021.11.20 | Set new logo |
+| 1.0   | 2021.11.15 | Launched in google play Store|
+
+## Requirement
+
+- Android SDK 26
+
+## Contact
+
+TsungTing Tsai
+[s7025311@gmail.com](s7025311@gmail.com)

@@ -83,7 +83,7 @@
 
 <img src="ScreenShot/leaveComments.gif" alt="leaveComments" style="zoom:20%;" /> <img src="ScreenShot/comment.png" alt="comment" style="zoom:20%;" />
 
-- Favorite Page
+- #### Favorite Page
 
   > Add to favorites 
 

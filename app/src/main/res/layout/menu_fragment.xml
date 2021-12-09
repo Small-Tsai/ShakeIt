@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="174dp"
             android:alpha="0.65"
-            android:background="@color/black"
+            android:background="@color/menuImgBack"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -95,7 +95,7 @@
             android:elevation="5dp"
             android:fontFamily="@font/noto_sans"
             android:text="@string/loading"
-            android:textColor="@color/white"
+            android:textColor="@color/navTextColor"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/addOrder_img"
@@ -112,7 +112,7 @@
             android:onClick="@{()->viewModel.navToAddMenuItem()}"
             android:padding="0dp"
             android:text="@string/add_new_product"
-            android:textColor="@color/white"
+            android:textColor="@color/navTextColor"
             android:visibility="@{viewModel.status==LoadApiStatus.ERROR? View.GONE : View.VISIBLE }"
             android:textSize="12sp"
             app:cornerRadius="20dp"
@@ -120,7 +120,7 @@
             app:layout_constraintStart_toStartOf="@+id/menu_title"
             app:layout_constraintTop_toBottomOf="@+id/menu_title"
             app:rippleColor="@color/white"
-            app:strokeColor="@color/white"
+            app:strokeColor="@color/navTextColor"
             app:strokeWidth="1dp" />
 
         <androidx.recyclerview.widget.RecyclerView

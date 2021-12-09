@@ -22,4 +22,6 @@
     <color name="marker_branch_color">#88000000</color>
     <color name="navOverColor">#88000000</color>
     <color name="navTextColor">#FFFFFFFF</color>
+    <color name="menuImgBack">#FF000000</color>
+    <color name="add_menuItem">#88000000</color>
 </resources>

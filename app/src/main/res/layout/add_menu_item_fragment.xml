@@ -87,7 +87,7 @@
                         android:layout_height="200dp"
                         android:clickable="@{viewModel.status==LoadApiStatus.LOADING ? false : true }"
                         android:text="@string/click_upload_productImg"
-                        android:textColor="@color/darkgrey"
+                        android:textColor="@color/add_menuItem"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -234,7 +234,7 @@
                     android:onClick="@{()->viewModel.implementCommonOptions()}"
                     android:text="@string/implement_common_set"
                     android:clickable="@{viewModel.status==LoadApiStatus.LOADING ? false : true }"
-                    android:textColor="@color/black"
+                    android:textColor="@color/addBtnColor"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/productDes_input_layout" />
 

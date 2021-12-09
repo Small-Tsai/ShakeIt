@@ -55,7 +55,7 @@
             app:mbn_defaultIconColor="@color/darkgrey"
             app:mbn_rippleColor="#2f424242"
             app:mbn_selectedIconColor="#f9aa33"
-            app:mbn_shadowColor="#1f212121" />
+            app:mbn_shadowColor="@color/bottomNavShadowColor" />
 
     </FrameLayout>
 </layout>

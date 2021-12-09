@@ -16,4 +16,10 @@
     <color name="loginblueff">#75B2C5</color>
     <color name="light_yellow">#F1A534</color>
     <color name="dark_orange">#F9AA33</color>
+    <color name="separateLineGrey">#CCCCCC</color>
+    <color name="bottomNavShadowColor">#1f212121</color>
+    <color name="addBtnColor">#FF000000</color>
+    <color name="marker_branch_color">#88000000</color>
+    <color name="navOverColor">#88000000</color>
+    <color name="navTextColor">#FFFFFFFF</color>
 </resources>

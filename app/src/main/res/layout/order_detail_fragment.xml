@@ -120,11 +120,13 @@
                     totalPrice="@{totalPrice}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toTopOf="@+id/order_tel_btn"
-                    app:layout_constraintStart_toStartOf="@+id/order_tel_btn" />
+                    app:layout_constraintStart_toStartOf="@+id/order_tel_btn"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

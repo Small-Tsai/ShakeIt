@@ -65,25 +65,27 @@
                 <TextView
                     android:id="@+id/addOrder_Title"
                     style="@style/black_shadow"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
                     android:autoSizeTextType="uniform"
                     android:text="@{viewModel.data.name}"
                     android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/addOrder_img" />
 
                 <TextView
                     android:id="@+id/addOrder_content"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
                     android:text="@{viewModel.data.content}"
                     android:textSize="16sp"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/addOrder_Title"
+                    app:layout_constraintStart_toStartOf="@+id/addOrder_Title"
                     app:layout_constraintTop_toBottomOf="@+id/addOrder_Title" />
 
                 <View

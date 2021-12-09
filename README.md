@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-   <img src="https://img.shields.io/badge/release-5.0-blue"> 
+   <img src="https://img.shields.io/badge/release-6.0-blue"> 
    <img src="https://img.shields.io/badge/platform-android-green"> 
 </p>
 
@@ -38,11 +38,10 @@
 >Filter out the shop and Search for the beverage 
 
 <p>
-<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E9%A1%AF%E7%A4%BA%E5%95%86%E5%AE%B6%E5%8E%BB%E8%83%8C.gif" alt="oie_2201296Yo3Apfq (1)" style="width:17%" />
+<img src="ScreenShot/%E9%A1%AF%E7%A4%BA%E5%95%86%E5%AE%B6%E5%8E%BB%E8%83%8C.gif" alt="addShop" style="width:17%;" /> 
 &nbsp&nbsp
-<img src="https://github.com/s7025311/ShakeIt/blob/main/ScreenShot/%E6%90%9C%E5%B0%8B%E5%8E%BB%E8%83%8C.gif" alt="4" style="width:17%" /> 
+<img src="ScreenShot/%E6%90%9C%E5%B0%8B%E5%8E%BB%E8%83%8C.gif" alt="4" style="width:17%" /> 
 </p>
-
 
 >Choose your transportation and setting your traffic time
 
@@ -136,6 +135,7 @@ Share user orders on LINE by Deep-Links
 
 | Version | Date | Description                                                                                     |
 | :-------| :----|:------------------------------------------------------------------------------------------------|
+| 6.0   | 2021.11.22 | Enable dark mode |
 | 5.0   | 2021.11.22 | Minor bug fixes |
 | 4.0   | 2021.11.21 | Minor bug fixes |
 | 3.0   | 2021.11.21 | Update shop name data structure |

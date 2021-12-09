@@ -17,8 +17,8 @@ android {
         applicationId "com.tsai.shakeit"
         minSdk 26
         targetSdk 31
-        versionCode 13
-        versionName "12.1"
+        versionCode 14
+        versionName "13.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

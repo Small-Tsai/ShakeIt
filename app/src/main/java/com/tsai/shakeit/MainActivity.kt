@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     val viewModel by viewModels<MainViewModel> { getVmFactory() }
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -110,3 +110,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 }
+
+
+

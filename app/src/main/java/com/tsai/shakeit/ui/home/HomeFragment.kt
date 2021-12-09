@@ -74,12 +74,6 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         appPermission = AppPermissions()
     }
 
-    override fun onStart() {
-        super.onStart()
-        // Binding mainViewModel to layout
-        binding.mainViewModel = mainViewModel
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -124,6 +118,8 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
         // Custom backPressedBehavior
         setBackPressedBehavior()
         mContext = binding.root.context
+        // Binding mainViewModel to layout
+        binding.mainViewModel = mainViewModel
         bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
         bottomSheetNavBehavior = BottomSheetBehavior.from(binding.bottomSheetNav)
     }

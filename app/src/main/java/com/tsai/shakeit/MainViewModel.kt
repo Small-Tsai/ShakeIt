@@ -15,14 +15,14 @@ class MainViewModel(private val repository: ShakeItRepository) : ViewModel() {
     // Record current fragment to support data binding
     val currentFragmentType = MutableLiveData<CurrentFragmentType>()
 
-    // use to display total comment number
+    // Use to display total comment number
     val commentCount = MutableLiveData<Int>()
 
-    // use to display average rating
+    // Use to display average rating
     val ratingAvg = MutableLiveData<Float>()
 
     // Record current filtered shop and update to firebase
-    var localShopFilteredList = MutableLiveData<List<String>>()
+    var localFilteredShopList = MutableLiveData<List<String>>()
 
     // Record current selected shop
     val selectedShop = MutableLiveData<Shop>()

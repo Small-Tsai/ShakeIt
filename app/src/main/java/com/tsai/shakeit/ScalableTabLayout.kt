@@ -20,7 +20,14 @@ class ScalableTabLayout : TabLayout {
         val childCount = tabLayout.childCount
         if (childCount > 0) {
             val widthPixels = MeasureSpec.getSize(widthMeasureSpec)
+
+            // Every Tab's width = screen width / Tab's amount
             val tabMinWidth = widthPixels / childCount
+
+            /**
+             * If remainderPixel != 0 means tab's width can't fill the screen so loop plus 1 pixel
+             * until remainderPixel = 0
+             */
             var remainderPixels = widthPixels % childCount
             tabLayout.forEach {
                 if (remainderPixels > 0) {

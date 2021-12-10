@@ -40,7 +40,6 @@
             app:tabIndicator="@drawable/shape_indicator"
             app:tabSelectedTextColor="@color/light_yellow"
             app:tabTextColor="@color/orange"
-
             app:layout_constraintTop_toBottomOf="@+id/addOrder_img" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

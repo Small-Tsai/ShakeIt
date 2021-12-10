@@ -28,7 +28,7 @@ class SettingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
 
         binding = SettingFragmentBinding.inflate(inflater, container, false)
@@ -36,29 +36,27 @@ class SettingFragment : Fragment() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         val mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-
         val adapter = SettingAdapter(viewModel, mainViewModel)
 
         viewModel.shopList.observe(viewLifecycleOwner, {
-            adapter.submitList(it.distinct())
+            adapter.submitList(it)
         })
 
-        viewModel.doCheck.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                viewModel.filterShop(it, mainViewModel)
-            } else if (viewModel.isAllChecked.value == true) {
-                mainViewModel.localShopFilteredList.value = viewModel.shopList.value?.distinct()
-            } else {
-                mainViewModel.localShopFilteredList.value = mutableListOf()
+        viewModel.filteredShopName.observe(viewLifecycleOwner, {
+            when {
+                it.isNotEmpty() -> viewModel.filterShop(it, mainViewModel)
+
+                viewModel.isAllChecked.value == true ->
+                    mainViewModel.localFilteredShopList.value = viewModel.shopList.value?.distinct()
+
+                else -> mainViewModel.localFilteredShopList.value = mutableListOf()
             }
         })
-
-        binding.mainViewModel = mainViewModel
 
         mainViewModel.firebaseFilteredShopList.observe(viewLifecycleOwner, {
             Logger.d("filteredShop--->$it")
             viewModel.filteredShopList = it as MutableList<String>
-            viewModel.isAllChecked.value = viewModel.filteredShopList.isEmpty()
+            viewModel.checkIsFilteredShopListEmpty(it)
             adapter.notifyDataSetChanged()
         })
 
@@ -66,6 +64,7 @@ class SettingFragment : Fragment() {
             it?.let { findNavController().navigate(NavDirections.navToHome()) }
         })
 
+        binding.mainViewModel = mainViewModel
         binding.settingShopRev.adapter = adapter
         return binding.root
     }

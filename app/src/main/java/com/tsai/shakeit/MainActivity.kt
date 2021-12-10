@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             Logger.d("current fragment type = $it")
         })
 
-        viewModel.localShopFilteredList.observe(this, {
+        viewModel.localFilteredShopList.observe(this, {
             viewModel.updateFilterShopList(it)
         })
 

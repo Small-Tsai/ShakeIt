@@ -68,7 +68,7 @@
                 android:elevation="5dp"
                 android:fontFamily="@font/roboto"
                 android:letterSpacing="0.1"
-                android:onClick="@{()->viewModel.doCheck(@string/empty)}"
+                android:onClick="@{()->viewModel.getFilterShopName(@string/empty)}"
                 android:text="@{viewModel.isAllChecked? @string/show_nothing : @string/show_all}"
                 android:textColor="@color/darkgrey"
 

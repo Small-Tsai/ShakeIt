@@ -7,18 +7,25 @@ import kotlin.properties.Delegates
 
 class ShakeItApplication : Application() {
 
-    // Depends on the flavor,
+    // Create Repo instance in Application
     val shakeItRepository: ShakeItRepository
         get() = ServiceLocator.provideTasksRepository(this)
 
+    // Global context object
     companion object {
         var instance: ShakeItApplication by Delegates.notNull()
     }
 
+    /**
+     * Initialize [instance] when Application onCreate
+     */
     override fun onCreate() {
         super.onCreate()
         instance = this
     }
 
+    /**
+     * For testing HomeViewModel
+     */
     fun isLiveDataDesign() = true
 }

@@ -45,11 +45,13 @@ class OrderDetailViewModel(
     val navToMenu: LiveData<Shop?>
         get() = _navToMenu
 
-    val isNotifyBtnVisible = MutableLiveData<Boolean>().apply { value = true }
+    private val _isNotifyBtnVisible = MutableLiveData<Boolean>().apply { value = true }
+    val isNotifyBtnVisible: LiveData<Boolean>
+        get() = _isNotifyBtnVisible
 
     init {
         if (type == OrderType.HISTORY.type) {
-            isNotifyBtnVisible.value = false
+            _isNotifyBtnVisible.value = false
             getHistoryProduct()
         } else {
             getOrderProduct()
@@ -131,53 +133,54 @@ class OrderDetailViewModel(
     }
 
     fun sendNotification() = viewModelScope.launch {
-
         withContext(Dispatchers.IO) {
+
             _orderProduct.value?.let { orderProduct ->
+                orderProduct
+                    .map { it.user.user_Token }
+                    .distinct()
+                    .also { allToken ->
+                        for (token in allToken) {
 
-                val allToken =
-                    orderProduct
-                        .map { it.user.user_Token }
-//                        .filter { it != MyFirebaseService.token }
-                        .distinct()
+                            var notifyContent = "\n"
 
-                for (token in allToken) {
-                    val userProduct = _orderProduct.value?.filter { it.user.user_Token == token }
-                    val userDrinks = userProduct?.map { it.name + it.price + " x${it.qty}" }
-                    val totalPrice = userProduct?.sumOf { it.price * it.qty }
-                    var notifyContent = "\n"
+                            _orderProduct.value?.filter { it.user.user_Token == token }
+                                ?.run {
+                                    this
+                                        .map { it.name + it.price + " x${it.qty}" }
+                                        .forEach { notifyContent += "$it\n" }
+                                    this.sumOf { it.price * it.qty }
+                                }.also {
+                                    PushNotification(
+                                        to = token,
+                                        data = NotificationData(
+                                            "飲料到囉 ！",
+                                            "你的飲料有" + "\n" +
+                                                    "-----------------------------" +
+                                                    notifyContent +
+                                                    "-----------------------------" + "\n" +
+                                                    "總共 $it 元"
+                                        )
+                                    ).also {
+                                        try {
+                                            val response =
+                                                ShakeItApi.firebaseService.postNotification(it)
+                                            if (response.isSuccessful) {
+                                                Logger.d(response.message())
+                                            } else {
+                                                Logger.e(response.errorBody().toString())
+                                            }
+                                        } catch (e: Exception) {
+                                            Logger.e(e.toString())
+                                        }
+                                    }
+                                }
 
-                    userDrinks?.forEach {
-                        notifyContent += "$it\n"
-                    }
-
-                    val notification = PushNotification(
-                        to = token,
-                        data = NotificationData(
-                            "飲料到囉 ！",
-                            "你的飲料有" + "\n" +
-                                "-----------------------------" +
-                                notifyContent +
-                                "-----------------------------" + "\n" +
-                                "總共 $totalPrice 元"
-                        )
-                    )
-
-                    withContext(Dispatchers.Main) {
-                        myToast("已發送商品抵達推播給所有成員")
-                    }
-
-                    try {
-                        val response = ShakeItApi.firebaseService.postNotification(notification)
-                        if (response.isSuccessful) {
-                            Logger.d(response.message())
-                        } else {
-                            Logger.e(response.errorBody().toString())
+                            withContext(Dispatchers.Main) {
+                                myToast("已發送商品抵達推播給所有成員")
+                            }
                         }
-                    } catch (e: Exception) {
-                        Logger.e(e.toString())
                     }
-                }
             }
         }
     }

@@ -63,7 +63,7 @@
 
                 <data
                     android:host="com.smalltsai.shakeit"
-                    android:scheme="shakeit" />
+                    android:scheme="https" />
             </intent-filter>
 
         </activity>

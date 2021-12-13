@@ -55,7 +55,7 @@ class AddShopFragment : Fragment() {
         })
 
         viewModel.timeOpen.observe(viewLifecycleOwner, { timeOpen ->
-            viewModel.adapterPostion.value?.let { adapterPosition ->
+            viewModel.adapterPosition.value?.let { adapterPosition ->
                 viewModel.timeClose.value?.let { timeClose ->
                     viewModel.setTimeList(timeOpen, timeClose, adapterPosition)
                 }
@@ -63,7 +63,7 @@ class AddShopFragment : Fragment() {
         })
 
         viewModel.timeClose.observe(viewLifecycleOwner, { timeClose ->
-            viewModel.adapterPostion.value?.let { adapterPosition ->
+            viewModel.adapterPosition.value?.let { adapterPosition ->
                 viewModel.timeOpen.value?.let { timeOpen ->
                     viewModel.setTimeList(timeOpen, timeClose, adapterPosition)
                 }
@@ -84,10 +84,10 @@ class AddShopFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val resultData = result.data
-                resultData?.data.let { uri ->
-                    val bitmap = uri?.getBitmapFromUri()
+                resultData?.data?.let { uri ->
+                    val bitmap = uri.getBitmapFromUri()
                     binding.shopPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
-                    viewModel.shopImageUri.value = uri
+                    viewModel.getShopImageUri(uri)
                 }
             }
         }
@@ -96,10 +96,10 @@ class AddShopFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val resultData = result.data
-                resultData?.data.let { uri ->
-                    val bitmap = uri?.getBitmapFromUri()
+                resultData?.data?.let { uri ->
+                    val bitmap = uri.getBitmapFromUri()
                     binding.menuPhoto.foreground = ((BitmapDrawable(resources, bitmap)))
-                    viewModel.menuImageUri.value = uri
+                    viewModel.getMenuImgUri(uri)
                 }
             }
         }

@@ -20,16 +20,13 @@ import kotlinx.coroutines.flow.*
 
 class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() {
 
-    private val _isDateOpen = MutableLiveData<Boolean>()
+    private val _isDateOpen = MutableLiveData<Boolean>().apply { value = false }
     val isDateOpen: LiveData<Boolean>
         get() = _isDateOpen
 
     private val _popBack = MutableLiveData<Boolean?>()
     val popBack: LiveData<Boolean?>
         get() = _popBack
-
-    val shopImageUri = MutableLiveData<Uri>()
-    val menuImageUri = MutableLiveData<Uri>()
 
     private val _navToHome = MutableLiveData<Boolean?>()
     val navToHome: LiveData<Boolean?>
@@ -46,8 +43,36 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
     val timeHashList: LiveData<MutableList<HashMap<String, String>>>
         get() = _timeHashList
 
-    init {
-        _isDateOpen.value = false
+    private val _adapterPosition = MutableLiveData<Int>()
+    val adapterPosition: LiveData<Int>
+        get() = _adapterPosition
+
+    private val shopImageUri = MutableLiveData<Uri>()
+    private val menuImageUri = MutableLiveData<Uri>()
+
+    private val _timeList =
+        MutableLiveData<HashMap<String, String>>().apply { value = hashMapOf() }
+
+    var timeOpen = MutableLiveData<String>().apply { value = "" }
+    var timeClose = MutableLiveData<String>().apply { value = "" }
+
+    var name = ""
+    var branch = ""
+    var address = ""
+    var tel = ""
+    var lat = 0.0
+    var lon = 0.0
+
+    fun getAdapterPosition(position: Int) {
+        _adapterPosition.value = position
+    }
+
+    fun getShopImageUri(uri: Uri) {
+        shopImageUri.value = uri
+    }
+
+    fun getMenuImgUri(uri: Uri) {
+        menuImageUri.value = uri
     }
 
     fun openDate() {
@@ -58,25 +83,6 @@ class AddShopViewModel(private val repository: ShakeItRepository) : ViewModel() 
         _popBack.value = true
         _popBack.value = null
     }
-
-    private val _timeList =
-        MutableLiveData<HashMap<String, String>>().apply { value = hashMapOf() }
-
-    var timeOpen = MutableLiveData<String>()
-    var timeClose = MutableLiveData<String>()
-    var adapterPostion = MutableLiveData<Int>()
-
-    init {
-        timeOpen.value = ""
-        timeClose.value = ""
-    }
-
-    var name = ""
-    var branch = ""
-    var address = ""
-    var tel = ""
-    var lat = 0.0
-    var lon = 0.0
 
     fun setTimeListByAutoComplete(periods: MutableList<Period>) {
         _timeHashList.value?.clear()

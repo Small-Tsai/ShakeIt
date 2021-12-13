@@ -25,6 +25,7 @@ class AppDevice(private val fragment: HomeFragment) {
                 val locationRequest = LocationRequest.create()
                 locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
+                // requestLocationUpdates (request, callback, looper)
                 fusedLocationProviderClient.requestLocationUpdates(
                     locationRequest,
                     object : LocationCallback() {

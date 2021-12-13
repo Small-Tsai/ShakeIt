@@ -124,7 +124,7 @@ class MenuViewModel(
     private fun shareOrderToLINE() {
         mOrder.order_Id = myId
         val lineUrl = "https://line.me/R/msg/text/快來跟我一起喝${selectedShop.name}吧！" +
-                "https://com.smalltsai.shakeit/${mOrder.order_Id}"
+                "shakeit://com.smalltsai.shakeit/${mOrder.order_Id}"
         val sendIntent = Intent.parseUri(lineUrl, Intent.URI_INTENT_SCHEME)
         _shareOrder.value = sendIntent
         _shareOrder.value = null

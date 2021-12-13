@@ -59,7 +59,7 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
                 // Launch Time Picker Dialog
                 TimePickerDialog(binding.root.context, { _, hour, minute ->
 
-                    viewModel.adapterPostion.value = absoluteAdapterPosition
+                    viewModel.getAdapterPosition(absoluteAdapterPosition)
 
                     binding.openTime.setText(String.format("%02d:%02d", hour, minute))
                 }, hour, minute, true).show()
@@ -69,7 +69,7 @@ class AddShopAdapter(private val viewModel: AddShopViewModel) :
                     // Launch Time Picker Dialog
                     TimePickerDialog(binding.root.context, { _, hour, minute ->
 
-                        viewModel.adapterPostion.value = absoluteAdapterPosition
+                        viewModel.getAdapterPosition(absoluteAdapterPosition)
 
                         binding.closeTime.setText(String.format("%02d:%02d", hour, minute))
                     }, hour, minute, true).show()

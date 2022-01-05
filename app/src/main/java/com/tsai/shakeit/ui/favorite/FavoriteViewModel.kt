@@ -10,6 +10,7 @@ import com.tsai.shakeit.data.Result
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.data.source.ShakeItRepository
 import com.tsai.shakeit.ext.myToast
+import com.tsai.shakeit.util.Logger
 import com.tsai.shakeit.util.UserInfo
 import com.tsai.shakeit.util.Util
 import kotlinx.coroutines.flow.collect
@@ -58,12 +59,12 @@ class FavoriteViewModel(private val repository: ShakeItRepository) : ViewModel()
 
         titleList.let { title ->
             title.forEach { name ->
-                favorite.let {
+                favorite.let { favorite ->
                     favoriteList.add(FavoriteItem.ShopName(name))
                     favoriteList.add(
                         FavoriteItem.ShopImg(
-                            favorite.filter { it.shop.name == name }
-                                .map { it.shop }
+                            favorite.filter { it.shop.name == name }.map { it.shop },
+                            FavoriteImageAdapter(this)
                         )
                     )
                 }

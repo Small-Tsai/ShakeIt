@@ -8,14 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tsai.shakeit.data.Shop
 import com.tsai.shakeit.databinding.FavoriteShopimgRowBinding
 import com.tsai.shakeit.databinding.FavoriteShoptitleRowBinding
+import com.tsai.shakeit.util.Logger
 
 class FavoriteAdapter(val viewModel: FavoriteViewModel) :
     ListAdapter<FavoriteItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     inner class ShopImageViewHolder(private var binding: FavoriteShopimgRowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(favorite: List<Shop>) {
-            val adapter = FavoriteImageAdapter(viewModel)
+        fun bind(favorite: List<Shop>, adapter: FavoriteImageAdapter) {
             adapter.submitList(favorite)
             binding.favoriteShopImgRev.adapter = adapter
             binding.viewModel = viewModel
@@ -63,7 +63,10 @@ class FavoriteAdapter(val viewModel: FavoriteViewModel) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is ShopImageViewHolder -> {
-                holder.bind((getItem(position) as FavoriteItem.ShopImg).img)
+                holder.bind(
+                    (getItem(position) as FavoriteItem.ShopImg).img,
+                    (getItem(position) as FavoriteItem.ShopImg).adapter
+                )
             }
             is TitleViewHolder -> {
                 holder.bind((getItem(position) as FavoriteItem.ShopName).name)
@@ -82,5 +85,5 @@ class FavoriteAdapter(val viewModel: FavoriteViewModel) :
 
 sealed class FavoriteItem {
     data class ShopName(val name: String) : FavoriteItem()
-    data class ShopImg(val img: List<Shop>) : FavoriteItem()
+    data class ShopImg(val img: List<Shop>, val adapter: FavoriteImageAdapter) : FavoriteItem()
 }

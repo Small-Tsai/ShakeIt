@@ -3,6 +3,7 @@ package com.tsai.shakeit.ui.setting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tsai.shakeit.MainViewModel
 import com.tsai.shakeit.data.Shop
 
